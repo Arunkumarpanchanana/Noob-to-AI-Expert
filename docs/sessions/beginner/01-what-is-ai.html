@@ -1,523 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>What is AI? — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/session.css">
-  <link rel="stylesheet" href="/assets/css/quiz.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
-  <script>
-  window.SESSION_META = {
-    id: 1,
-    slug: "01-what-is-ai",
-    section: "beginner",
-    title: "What is AI?",
-    nextSlug: "/sessions/beginner/02-prompt-engineering.html",
-    quizData: [
-      {
-        type: "mcq",
-        question: "Which best describes the relationship between AI, ML, and Deep Learning?",
-        options: [
-          "AI contains ML which contains Deep Learning",
-          "ML contains AI which contains Deep Learning",
-          "They are three separate fields",
-          "Deep Learning contains ML which contains AI"
-        ],
-        correct: 0,
-        explanation: "Deep Learning is a subset of Machine Learning, which is a subset of Artificial Intelligence. AI is the broadest field; ML is one approach to achieving AI; Deep Learning is a specific ML technique using neural networks."
-      },
-      {
-        type: "truefalse",
-        question: "Large Language Models like GPT-4 are a type of Machine Learning model.",
-        options: ["True", "False"],
-        correct: 0,
-        explanation: "LLMs are trained using ML techniques (specifically deep learning with transformer architecture). They are among the most sophisticated ML models ever built, trained on massive datasets to predict the next token."
-      },
-      {
-        type: "mcq",
-        question: "What does an AI model do during 'training'?",
-        options: [
-          "Memorizes all data exactly",
-          "Learns patterns from examples to make future predictions",
-          "Downloads knowledge from the internet",
-          "Gets programmed with explicit rules"
-        ],
-        correct: 1,
-        explanation: "Training is the process of adjusting a model's parameters by exposing it to many examples so it can generalize to new data. The model doesn't memorize — it finds statistical patterns that transfer to unseen inputs."
-      },
-      {
-        type: "multi",
-        question: "Which of these are real limitations of current AI systems? (Select all that apply)",
-        options: [
-          "Can hallucinate (confidently make things up)",
-          "Cannot learn new information after training without retraining",
-          "Cannot process images or audio",
-          "May reflect biases present in training data"
-        ],
-        correct: [0, 1, 3],
-        explanation: "Many modern AI systems CAN process images and audio (multimodal). But hallucination, training cutoffs, and bias are genuine limitations. Hallucinations occur because models predict likely text, not factual truth."
-      },
-      {
-        type: "ordering",
-        question: "Order the AI hierarchy from broadest to most specific:",
-        options: ["Machine Learning", "Deep Learning", "Artificial Intelligence", "Generative AI"],
-        correct: ["Artificial Intelligence", "Machine Learning", "Deep Learning", "Generative AI"],
-        explanation: "AI is the broadest field encompassing any technique that makes machines 'intelligent'. ML is a subset using statistical learning. Deep Learning is a subset of ML using neural networks. Generative AI (like LLMs) is built on deep learning."
-      }
-    ]
-  };
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 01: What AI Really Is — Noob to AI Expert</title>
+  <meta name="description" content="Understand the AI landscape: AI vs ML vs Deep Learning vs Generative AI. Real examples, hands-on lab, and quiz." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/session.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/quiz.css" />
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="session-layout">
+<div id="nav-placeholder"></div>
 
-    <!-- Left sidebar -->
-    <aside class="session-sidebar" id="session-sidebar"></aside>
+<div class="session-page-wrapper">
+  <!-- LEFT SIDEBAR -->
+  <aside id="session-sidebar"></aside>
 
-    <!-- Main content -->
-    <main class="session-main" id="main">
-
-      <!-- Header -->
-      <div class="session-header">
-        <div class="session-breadcrumb">
-          <a href="/index.html">Home</a>
-          <span class="sep"><i class="ri-arrow-right-s-line"></i></span>
-          <a href="/sections/beginner.html">Beginner</a>
-          <span class="sep"><i class="ri-arrow-right-s-line"></i></span>
-          <span>Session 1</span>
-        </div>
-        <h1 class="session-title">What is AI?</h1>
-        <div class="session-meta-bar">
-          <span class="badge badge-beginner"><i class="ri-seedling-line"></i> Beginner</span>
-          <span><i class="ri-time-line"></i> 45 min</span>
-          <span><i class="ri-question-answer-line"></i> 5 quiz questions</span>
-          <span><i class="ri-flask-line"></i> 1 lab</span>
-        </div>
+  <!-- MAIN CONTENT -->
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb">
+        <a href="/Noob-to-AI-Expert/">Home</a><span class="sep">›</span>
+        <a href="/Noob-to-AI-Expert/sections/beginner.html">Beginner</a><span class="sep">›</span>
+        <span>Session 01</span>
       </div>
+      <h1 class="session-title">What AI Really Is</h1>
+      <p class="session-tagline">Cut through the hype. Understand the actual landscape of AI, ML, Deep Learning, and Generative AI.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 45 min</span>
+        <span><span class="badge badge-beginner"><i class="fas fa-seedling"></i> Beginner</span></span>
+        <span><i class="fas fa-flask"></i> 1 Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
 
-      <!-- ==========================================
-           CONCEPT 1: The AI Landscape
-           ========================================== -->
-      <div class="concept-section" id="ai-landscape">
-        <h2>
-          <i class="ri-globe-line" style="color:var(--accent)"></i>
-          The AI Landscape
-          <a href="#ai-landscape" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+    <!-- TABS -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
 
-        <p>The terms "AI," "Machine Learning," "Deep Learning," and "Generative AI" get thrown around interchangeably — but they're not the same thing. They form a <strong>nested hierarchy</strong>, where each inner field is a more specific subset of the outer one.</p>
+    <!-- LEARN TAB -->
+    <div class="tab-panel learn-content" data-panel="learn">
 
-        <!-- Hierarchy Diagram -->
-        <div class="diagram">
-          <div class="hierarchy-chart">
-            <div style="width:100%;max-width:460px;background:rgba(129,140,248,0.08);border:2px solid #818CF8;border-radius:12px;padding:1.5rem;text-align:center">
-              <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#818CF8;margin-bottom:0.5rem">Artificial Intelligence</div>
-              <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem">Any technique that enables machines to mimic human intelligence</div>
-              <div style="background:rgba(56,189,248,0.08);border:2px solid #38BDF8;border-radius:10px;padding:1.25rem">
-                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#38BDF8;margin-bottom:0.5rem">Machine Learning</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem">Systems that learn from data without being explicitly programmed</div>
-                <div style="background:rgba(52,211,153,0.08);border:2px solid #34D399;border-radius:8px;padding:1rem">
-                  <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#34D399;margin-bottom:0.5rem">Deep Learning</div>
-                  <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem">Neural networks with many layers learning hierarchical representations</div>
-                  <div style="background:rgba(251,191,36,0.08);border:2px solid #FBBF24;border-radius:6px;padding:0.75rem">
-                    <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#FBBF24;margin-bottom:0.25rem">Generative AI</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted)">Models that generate new content: text, images, audio, code</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-faint)">Every LLM is Deep Learning. Every Deep Learning model is ML. Every ML system is AI. But not every AI system uses ML.</p>
-        </div>
+      <div class="concept-section">
+        <h2 id="the-big-picture">The Big Picture: What Everyone Gets Wrong</h2>
+        <p>When most people hear "AI", they imagine robots, sci-fi, or magic black boxes. The reality is more interesting — and more accessible. AI is a <strong style="color:#e2e8f0">collection of techniques</strong> for making computers learn from data and make decisions.</p>
+        <p>Here's the confusion: people use "AI", "Machine Learning", "Deep Learning", and "ChatGPT" interchangeably. They're not the same thing. Understanding the difference is the foundation of everything else in this course.</p>
 
-        <h3>Breaking Down Each Layer</h3>
-        <p><strong>Artificial Intelligence (1950s→)</strong> is the broad field of creating machines that appear intelligent. Early AI was mostly rule-based: "if the user asks about weather, fetch the forecast." These systems are brittle — they can only handle what their rules explicitly cover.</p>
-
-        <p><strong>Machine Learning (1980s→)</strong> flipped the script. Instead of writing rules, you show the system thousands of examples and let it discover the patterns itself. A spam filter doesn't have explicit rules for every spam message — it learns from millions of labeled emails what spam looks like.</p>
-
-        <p><strong>Deep Learning (2010s→)</strong> uses <em>artificial neural networks</em> with many layers ("deep" refers to the depth of these networks). Each layer learns increasingly abstract representations. In image recognition: layer 1 detects edges, layer 2 detects shapes, layer 3 detects objects. This breakthrough enabled dramatically better performance on complex tasks like speech recognition and image classification.</p>
-
-        <p><strong>Generative AI (2020s→)</strong> is the most recent wave. These deep learning models can generate new content — not just classify inputs. GPT-4, Claude, Stable Diffusion, and Midjourney all fall here. They're trained on internet-scale data and have learned to produce coherent text, images, and code.</p>
-
-        <div class="callout callout-concept">
-          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+        <div class="callout callout-info">
+          <span class="callout-icon">💡</span>
           <div class="callout-body">
-            <strong>Key Insight</strong>
-            <p>When someone says "AI" in 2024, they usually mean Generative AI or a specific ML application. When a researcher says "AI," they might mean the broader field. Context matters — the word AI is genuinely ambiguous.</p>
+            <h4>The Key Mental Model</h4>
+            <p>Think of it as nested circles: AI is the biggest circle. Machine Learning lives inside it. Deep Learning lives inside Machine Learning. Generative AI is a specific application of Deep Learning.</p>
           </div>
         </div>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 2: How AI Makes Decisions
-           ========================================== -->
-      <div class="concept-section" id="how-ai-decides">
-        <h2>
-          <i class="ri-settings-3-line" style="color:var(--accent)"></i>
-          How AI Makes Decisions
-          <a href="#how-ai-decides" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+      <div class="concept-section">
+        <h2 id="ai-vs-ml-vs-dl">AI vs ML vs Deep Learning vs GenAI</h2>
 
-        <p>AI systems don't think the way humans do. There's no reasoning, no common sense, no understanding. What they do is <strong>find and apply statistical patterns</strong> — an idea that sounds simple but enables remarkably powerful behavior.</p>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <div class="card-icon">🧠</div>
+            <h4 style="color:#38bdf8">Artificial Intelligence (AI)</h4>
+            <p>The broad field of making machines simulate human intelligence. Includes rule-based systems, search algorithms, planning, and more. Been around since the 1950s.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#0ea5e9;">Example: Chess engine that uses rules + search</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">📊</div>
+            <h4 style="color:#4ade80">Machine Learning (ML)</h4>
+            <p>A subset of AI where systems <em>learn patterns from data</em> instead of being explicitly programmed with rules. The machine figures out the rules itself.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#22c55e;">Example: Spam filter that learns from 10,000 spam emails</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">🕸️</div>
+            <h4 style="color:#c084fc">Deep Learning (DL)</h4>
+            <p>A subset of ML using multi-layer neural networks. Excels at unstructured data: images, audio, text. Powers face recognition, speech-to-text, translation.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#a855f7;">Example: Image classifier that recognizes cats vs dogs</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">✨</div>
+            <h4 style="color:#fb923c">Generative AI (GenAI)</h4>
+            <p>A type of Deep Learning that <em>creates new content</em> — text, images, audio, code — rather than just classifying existing content. ChatGPT, DALL-E, Stable Diffusion.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#f97316;">Example: GPT-4 writing an essay from a prompt</p>
+          </div>
+        </div>
 
-        <h3>The Core Loop: Training and Inference</h3>
-        <p>Every ML system goes through two phases:</p>
-        <ul>
-          <li><strong>Training:</strong> The model is shown millions of examples with correct answers. It adjusts its internal parameters to minimize errors. This can take weeks on thousands of GPUs.</li>
-          <li><strong>Inference:</strong> The trained model is given new inputs and produces outputs based on the patterns it learned. This happens in real-time when you use ChatGPT or Google Translate.</li>
-        </ul>
+        <h3 id="traditional-vs-ml">Traditional Programming vs Machine Learning</h3>
+        <p>This contrast is the most important concept in ML. Understanding it unlocks everything else.</p>
 
-        <h3>Three Concrete Examples</h3>
-
-        <div class="card card-sm" style="margin-bottom:1rem">
-          <div style="display:flex;align-items:flex-start;gap:0.75rem">
-            <div style="width:36px;height:36px;border-radius:var(--radius);background:rgba(248,113,113,0.12);color:#F87171;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ri-spam-2-line"></i></div>
-            <div>
-              <h4 style="margin-bottom:0.25rem">Spam Detection</h4>
-              <p style="margin:0;font-size:0.875rem">A spam filter is trained on millions of emails labeled "spam" or "not spam." It learns that phrases like "CLICK HERE NOW," excessive caps, and certain sender patterns correlate with spam. On new emails, it computes a probability score and decides which folder to use — without any explicit rules about what spam looks like.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.5rem 0;">
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
+            <div style="font-weight:700; color:#f8fafc; margin-bottom:0.75rem;">🔧 Traditional Programming</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.7;">
+              <strong style="color:#e2e8f0;">Input:</strong> Data + Rules<br>
+              <strong style="color:#e2e8f0;">Output:</strong> Answers<br><br>
+              You write explicit if/else rules. The computer follows them exactly. Changes require a programmer to update the rules.
+            </div>
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
+            <div style="font-weight:700; color:#f8fafc; margin-bottom:0.75rem;">🤖 Machine Learning</div>
+            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.7;">
+              <strong style="color:#e2e8f0;">Input:</strong> Data + Answers<br>
+              <strong style="color:#e2e8f0;">Output:</strong> Rules (= the model)<br><br>
+              You provide examples. The machine discovers the rules. Can generalize to new data it's never seen.
             </div>
           </div>
         </div>
 
-        <div class="card card-sm" style="margin-bottom:1rem">
-          <div style="display:flex;align-items:flex-start;gap:0.75rem">
-            <div style="width:36px;height:36px;border-radius:var(--radius);background:rgba(56,189,248,0.12);color:var(--code-hl);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ri-image-line"></i></div>
-            <div>
-              <h4 style="margin-bottom:0.25rem">Image Recognition</h4>
-              <p style="margin:0;font-size:0.875rem">A model trained on millions of labeled images (cats, dogs, cars...) learns which pixel patterns correspond to which objects. It doesn't know what a cat "is" — it knows that a certain distribution of edge patterns, colors, and shapes correlates with the label "cat" in its training data.</p>
-            </div>
+        <div class="callout callout-tip">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <h4>Why This Matters</h4>
+            <p>Writing rules for spam detection is impossibly complex — spammers change constantly. But ML can learn "what spam looks like" from millions of examples and adapt automatically.</p>
           </div>
         </div>
+      </div>
 
-        <div class="card card-sm" style="margin-bottom:1rem">
-          <div style="display:flex;align-items:flex-start;gap:0.75rem">
-            <div style="width:36px;height:36px;border-radius:var(--radius);background:rgba(52,211,153,0.12);color:var(--beginner);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ri-translate-2"></i></div>
-            <div>
-              <h4 style="margin-bottom:0.25rem">Language Translation</h4>
-              <p style="margin:0;font-size:0.875rem">Google Translate was trained on billions of parallel sentence pairs (the same sentence in two languages). It learns the statistical relationships between word patterns across languages. It doesn't understand grammar rules — it has learned which sequences of words in one language tend to correspond to which sequences in another.</p>
-            </div>
+      <div class="concept-section">
+        <h2 id="real-world-examples">Real-World Examples Decoded</h2>
+        <p>Let's classify real products you've used and understand which bucket they fall into.</p>
+
+        <table class="def-table">
+          <thead>
+            <tr><th>Product / Feature</th><th>Type</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gmail Spam Filter</td><td><span class="badge badge-beginner" style="font-size:0.7rem;">ML</span></td><td>Learns spam patterns from labeled data (supervised learning)</td></tr>
+            <tr><td>Netflix "Because you watched..."</td><td><span class="badge badge-beginner" style="font-size:0.7rem;">ML</span></td><td>Collaborative filtering — finds patterns in viewing behavior</td></tr>
+            <tr><td>Face Unlock on your phone</td><td><span class="badge badge-intermediate" style="font-size:0.7rem;">DL</span></td><td>Deep CNN recognizes facial features from images</td></tr>
+            <tr><td>Google Translate</td><td><span class="badge badge-intermediate" style="font-size:0.7rem;">DL</span></td><td>Transformer model (seq-to-seq) trained on parallel text corpora</td></tr>
+            <tr><td>ChatGPT / Claude / Gemini</td><td><span class="badge badge-expert" style="font-size:0.7rem;">GenAI</span></td><td>Large Language Model that generates text token by token</td></tr>
+            <tr><td>DALL-E / Midjourney</td><td><span class="badge badge-expert" style="font-size:0.7rem;">GenAI</span></td><td>Diffusion model that generates images from text prompts</td></tr>
+            <tr><td>Thermostat with schedule learning</td><td><span class="badge badge-beginner" style="font-size:0.7rem;">ML</span></td><td>Learns temperature preferences from historical usage patterns</td></tr>
+            <tr><td>Siri / Alexa / Google Assistant</td><td><span class="badge badge-intermediate" style="font-size:0.7rem;">DL</span></td><td>Speech recognition (DL) + NLU + rule-based responses combined</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="anatomy-of-an-ai-system">Anatomy of an AI System</h3>
+        <p>Every AI application — from spam filters to ChatGPT — has the same core anatomy:</p>
+
+        <ol class="step-list">
+          <li><strong style="color:#e2e8f0;">Data</strong> — The fuel. Could be text, images, numbers, audio, or anything measurable.</li>
+          <li><strong style="color:#e2e8f0;">Model</strong> — The learned function. Takes input, produces output. Lives in memory as a file of numbers (weights).</li>
+          <li><strong style="color:#e2e8f0;">Training</strong> — The process of adjusting model weights until outputs match expected answers.</li>
+          <li><strong style="color:#e2e8f0;">Inference</strong> — Using the trained model on new data to make predictions or generate content.</li>
+          <li><strong style="color:#e2e8f0;">Evaluation</strong> — Measuring how good the model is (accuracy, F1, human rating, etc.).</li>
+        </ol>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="types-of-ml">The Three Families of Machine Learning</h2>
+
+        <div class="compare-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
+          <div class="compare-card">
+            <div class="card-icon">🏷️</div>
+            <h4 style="color:#4ade80">Supervised Learning</h4>
+            <p>Trained on labeled examples. For every input, there's a correct answer. The model learns to predict the label.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#22c55e;">Used for: spam detection, image classification, price prediction</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">🔍</div>
+            <h4 style="color:#60a5fa">Unsupervised Learning</h4>
+            <p>No labels. The model finds patterns and structure in raw data on its own. Clusters, groups, anomalies.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#3b82f6;">Used for: customer segmentation, anomaly detection, compression</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">🎮</div>
+            <h4 style="color:#c084fc">Reinforcement Learning</h4>
+            <p>An agent takes actions in an environment and receives rewards or penalties. Learns by trial and error to maximize reward.</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#a855f7;">Used for: game-playing AI, robotics, RLHF in LLMs</p>
           </div>
         </div>
 
         <div class="callout callout-info">
-          <div class="callout-icon"><i class="ri-information-line"></i></div>
+          <span class="callout-icon">🔗</span>
           <div class="callout-body">
-            <strong>Important to Understand</strong>
-            <p>AI doesn't have intuition — it finds patterns in data it was trained on. When you ask an LLM a factual question, it doesn't "look up" the answer. It generates the most statistically likely next tokens based on its training data. This is why AI can be confidently wrong.</p>
+            <h4>How GenAI Connects</h4>
+            <p>Large Language Models like GPT-4 are trained with supervised learning (predict next token) and then refined with reinforcement learning from human feedback (RLHF) to make them helpful and safe. That's why they can both generate code and refuse harmful requests.</p>
           </div>
         </div>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 3: Types of AI Systems
-           ========================================== -->
-      <div class="concept-section" id="types-of-ai">
-        <h2>
-          <i class="ri-git-branch-line" style="color:var(--accent)"></i>
-          Types of AI Systems
-          <a href="#types-of-ai" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+      <div class="concept-section">
+        <h2 id="why-now">Why Is AI Exploding Right Now?</h2>
+        <p>AI has been around since the 1950s. So why is 2020–2025 different? Three things converged:</p>
 
-        <p>Not all AI is created equal. The type of system matters enormously for understanding its capabilities and failure modes. Here are the three main paradigms you'll encounter:</p>
-
-        <div style="overflow-x:auto">
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>How It Works</th>
-                <th>Strengths</th>
-                <th>Weaknesses</th>
-                <th>Example</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Rule-Based</strong></td>
-                <td>Explicit if/then logic written by engineers</td>
-                <td>Predictable, auditable, no training data needed</td>
-                <td>Brittle, can't handle edge cases, doesn't improve</td>
-                <td>Chess engine rules, tax calculator, decision trees</td>
-              </tr>
-              <tr>
-                <td><strong>Classical ML</strong></td>
-                <td>Learns statistical patterns from labeled examples</td>
-                <td>Generalizes, improves with more data, explainable models available</td>
-                <td>Needs lots of labeled data, feature engineering required</td>
-                <td>Spam filter, credit scoring, recommendation systems</td>
-              </tr>
-              <tr>
-                <td><strong>Large Language Models</strong></td>
-                <td>Transformer neural nets trained on internet-scale text to predict next tokens</td>
-                <td>Incredibly versatile, few-shot learning, handles language nuance</td>
-                <td>Hallucinations, opaque, expensive, training data cutoff</td>
-                <td>ChatGPT, Claude, Gemini, GitHub Copilot</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="compare-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="compare-card" style="text-align:center;">
+            <div class="card-icon">💾</div>
+            <h4 style="color:#f8fafc">Massive Data</h4>
+            <p>The internet created an ocean of text, images, and behavior data that models can learn from.</p>
+          </div>
+          <div class="compare-card" style="text-align:center;">
+            <div class="card-icon">⚡</div>
+            <h4 style="color:#f8fafc">GPU Compute</h4>
+            <p>NVIDIA GPUs made training billion-parameter models practical. Cost dropped 1000x in 10 years.</p>
+          </div>
+          <div class="compare-card" style="text-align:center;">
+            <div class="card-icon">🔬</div>
+            <h4 style="color:#f8fafc">The Transformer</h4>
+            <p>A 2017 architecture breakthrough ("Attention Is All You Need") that made LLMs possible.</p>
+          </div>
         </div>
 
-        <h3>When to Use Which</h3>
-        <p>A common mistake is reaching for LLMs when a simpler rule-based or classical ML approach is better. If you need to validate an email address — use a regex (rule-based). If you need to classify sentiment in millions of product reviews — classical ML may be more efficient. If you need to understand nuanced customer feedback and generate personalized responses — LLMs shine.</p>
-
-        <div class="callout callout-tip">
-          <div class="callout-icon"><i class="ri-lightbulb-flash-line"></i></div>
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
           <div class="callout-body">
-            <strong>Pro Tip</strong>
-            <p>The best AI engineers use the simplest tool that gets the job done. LLMs are powerful but slow and expensive. For structured prediction tasks with labeled data, classical ML is often faster, cheaper, and more reliable.</p>
+            <h4>AI Is a Tool, Not Magic</h4>
+            <p>AI systems fail in predictable ways: they hallucinate, they're biased by training data, they can't reason about things outside their training distribution. Understanding the hype vs. reality is part of being an AI engineer.</p>
           </div>
         </div>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 4: Real-World AI Applications
-           ========================================== -->
-      <div class="concept-section" id="real-world-ai">
-        <h2>
-          <i class="ri-map-pin-2-line" style="color:var(--accent)"></i>
-          Real-World AI Applications
-          <a href="#real-world-ai" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+      <!-- Inline practice -->
+      <div class="concept-section">
+        <h2 id="quick-check">Quick Check: Test Your Understanding</h2>
 
-        <p>AI is already embedded in the products you use daily. Understanding where AI is — and what type — helps you become a more effective builder and a more informed citizen.</p>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin:1.5rem 0">
-          <div class="card card-sm" style="border-top:2px solid #F87171">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🏥</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#F87171;margin-bottom:0.25rem">Healthcare</div>
-            <p style="font-size:0.8rem;margin:0">Medical image analysis, drug discovery, patient risk prediction, clinical note summarization</p>
+        <div class="reveal-block">
+          <div class="reveal-question">
+            <span>❓ A credit card fraud detection system learns from millions of past transactions labeled "fraud" or "legitimate". What type of AI is this?</span>
+            <span class="reveal-icon">▼</span>
           </div>
-          <div class="card card-sm" style="border-top:2px solid #34D399">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">💰</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#34D399;margin-bottom:0.25rem">Finance</div>
-            <p style="font-size:0.8rem;margin:0">Fraud detection, algorithmic trading, credit scoring, document extraction from filings</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #FBBF24">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🛍️</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#FBBF24;margin-bottom:0.25rem">Retail</div>
-            <p style="font-size:0.8rem;margin:0">Personalized recommendations, demand forecasting, visual search, dynamic pricing</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #818CF8">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🎨</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#818CF8;margin-bottom:0.25rem">Creative</div>
-            <p style="font-size:0.8rem;margin:0">Image generation, music composition, video editing, scriptwriting assistance, code generation</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #38BDF8">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🚗</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#38BDF8;margin-bottom:0.25rem">Transportation</div>
-            <p style="font-size:0.8rem;margin:0">Autonomous vehicles, route optimization, traffic prediction, predictive maintenance</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #C084FC">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">📚</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#C084FC;margin-bottom:0.25rem">Education</div>
-            <p style="font-size:0.8rem;margin:0">Personalized tutoring, essay feedback, adaptive learning paths, language learning apps</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #F472B6">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🔒</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#F472B6;margin-bottom:0.25rem">Security</div>
-            <p style="font-size:0.8rem;margin:0">Intrusion detection, malware classification, deepfake detection, biometric authentication</p>
-          </div>
-          <div class="card card-sm" style="border-top:2px solid #6EE7B7">
-            <div style="font-size:1.5rem;margin-bottom:0.5rem">🌍</div>
-            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6EE7B7;margin-bottom:0.25rem">Climate</div>
-            <p style="font-size:0.8rem;margin:0">Weather forecasting, energy grid optimization, satellite image analysis for deforestation</p>
+          <div class="reveal-answer" style="display:none">
+            <strong style="color:#4ade80;">✓ Supervised Machine Learning</strong> — It uses labeled training data (fraud/not fraud) to learn a classification rule. Not deep learning unless it uses neural networks, and not generative AI because it's classifying, not generating content.
           </div>
         </div>
 
-        <p>Notice that these applications span the full spectrum of AI types — from simple rule-based systems to classical ML to the most advanced large models. The common thread is that <strong>data drives everything</strong>. Each of these applications required vast amounts of domain-specific training data before it became useful.</p>
-      </div>
-
-      <!-- ==========================================
-           CONCEPT 5: AI vs Human Intelligence
-           ========================================== -->
-      <div class="concept-section" id="ai-vs-human">
-        <h2>
-          <i class="ri-scales-3-line" style="color:var(--accent)"></i>
-          AI vs Human Intelligence
-          <a href="#ai-vs-human" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
-
-        <p>AI is often framed as either "just a tool" or "about to surpass us." The reality is more nuanced. Current AI systems are <strong>superhuman in narrow domains</strong> and <strong>surprisingly brittle in others</strong>.</p>
-
-        <h3>What AI Does Better Than Humans</h3>
-        <ul>
-          <li><strong>Scale and speed:</strong> Process millions of documents, images, or data points in the time a human could read one.</li>
-          <li><strong>Consistency:</strong> Performs the same at 3am as at 9am — no fatigue, no cognitive load effects.</li>
-          <li><strong>Pattern recognition at scale:</strong> Spots correlations in high-dimensional data that humans would never find manually.</li>
-          <li><strong>Specific narrow tasks:</strong> Beating world champions at Go, chess, protein folding prediction, weather forecasting.</li>
-        </ul>
-
-        <h3>What Humans Do Better (For Now)</h3>
-        <ul>
-          <li><strong>Common sense reasoning:</strong> Understanding that a cup can't hold water if it has a hole in the bottom, without needing millions of examples.</li>
-          <li><strong>Causal reasoning:</strong> Understanding that removing a cause prevents an effect, not just correlation.</li>
-          <li><strong>Embodied understanding:</strong> Knowing what "hot" feels like, why being late is stressful, why humor is funny.</li>
-          <li><strong>Novel problem solving:</strong> Inventing entirely new approaches to problems outside the training distribution.</li>
-          <li><strong>Adaptive learning:</strong> Humans learn from very few examples; LLMs need vast data to learn new skills.</li>
-        </ul>
-
-        <div class="callout callout-warning">
-          <div class="callout-icon"><i class="ri-alert-line"></i></div>
-          <div class="callout-body">
-            <strong>Hallucinations: The Critical Limitation</strong>
-            <p>AI systems can confidently produce wrong answers — a phenomenon called "hallucination." An LLM doesn't know what it doesn't know. It will generate a plausible-sounding but completely fabricated citation, statistic, or historical event with the same confident tone as a correct answer. Always verify AI outputs on matters of fact.</p>
+        <div class="reveal-block">
+          <div class="reveal-question">
+            <span>❓ A system groups 10 million customers into "segments" without any predefined categories. Which type?</span>
+            <span class="reveal-icon">▼</span>
+          </div>
+          <div class="reveal-answer" style="display:none">
+            <strong style="color:#4ade80;">✓ Unsupervised Learning</strong> — Specifically clustering (like K-means or DBSCAN). No labels, no predefined segments — the algorithm discovers structure on its own.
           </div>
         </div>
 
-        <h3>The Practical Takeaway</h3>
-        <p>Think of current AI not as artificial general intelligence, but as a very powerful <em>pattern completion engine</em>. It's extraordinary at tasks where the answer is "what would a human expert typically say here?" It struggles when the correct answer requires true reasoning, real-world embodied understanding, or anything significantly outside its training distribution.</p>
-
-        <div class="callout callout-concept">
-          <div class="callout-icon"><i class="ri-tools-line"></i></div>
-          <div class="callout-body">
-            <strong>The Right Mental Model</strong>
-            <p>The most productive way to think about current AI: it's an extremely well-read, very fast intern who has read everything but experienced nothing, and who is confident even when wrong. Your job is to provide the judgment, verification, and domain context they lack.</p>
+        <div class="reveal-block">
+          <div class="reveal-question">
+            <span>❓ GitHub Copilot suggests code as you type. What type of AI is powering it?</span>
+            <span class="reveal-icon">▼</span>
+          </div>
+          <div class="reveal-answer" style="display:none">
+            <strong style="color:#4ade80;">✓ Generative AI (LLM)</strong> — Copilot is powered by an LLM (based on OpenAI Codex / GPT-4) that was trained on billions of lines of code and generates new tokens (code) based on your context.
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- ==========================================
-           LAB SECTION
-           ========================================== -->
-      <div class="lab-section" id="lab-section">
-        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
-          <div class="lab-header-left">
-            <div class="lab-icon"><i class="ri-flask-line"></i></div>
-            <div>
-              <div class="lab-title">Classify 20 Apps</div>
-              <div class="lab-subtitle">Identify which type of AI powers each real application</div>
+    <!-- LAB TAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9; margin-right:0.5rem;"></i>Lab: Classify 20 Real AI Apps</h3>
+          <p>Estimated time: 20 minutes · No coding required</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-01-lab.ipynb"
+               target="_blank" class="btn-colab" data-track="lab-start">
+              <i class="fab fa-google" style="margin-right:0.3rem;"></i>Open in Google Colab
+            </a>
+            <button class="btn-secondary" onclick="startBrowserLab()">
+              <i class="fas fa-globe"></i> Do it in Browser
+            </button>
+          </div>
+        </div>
+
+        <h3 style="color:#e2e8f0; margin:1.5rem 0 1rem;">Lab Objective</h3>
+        <p style="color:#94a3b8; margin-bottom:1.5rem;">You'll be given 20 real AI-powered products. Your job: classify each one as <strong style="color:#4ade80">AI/Rule-based</strong>, <strong style="color:#60a5fa">ML</strong>, <strong style="color:#c084fc">Deep Learning</strong>, or <strong style="color:#fb923c">Generative AI</strong>. Then check your answers.</p>
+
+        <!-- Browser-based lab -->
+        <div id="browser-lab" style="display:none;">
+          <div id="lab-questions"></div>
+          <div style="text-align:center; margin-top:1.5rem;">
+            <button class="quiz-submit-btn" onclick="checkLabAnswers()">Check My Answers</button>
+          </div>
+          <div id="lab-results" style="display:none; margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- Step instructions for Colab -->
+        <div id="colab-instructions">
+          <div class="lab-step">
+            <div class="lab-step-header">
+              <span class="step-num">1</span>
+              <h4>Open the Colab Notebook</h4>
+            </div>
+            <p>Click "Open in Google Colab" above. Sign in with your Google account (free). You'll get a copy of the lab notebook.</p>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header">
+              <span class="step-num">2</span>
+              <h4>Read Each Product Description</h4>
+            </div>
+            <p>The notebook has 20 cells — each describes a real AI product. Read the description carefully.</p>
+            <div style="position:relative; margin-top:0.75rem;">
+              <button class="copy-btn">Copy</button>
+              <pre><code class="language-python"># Example cell in the notebook:
+product = "Spotify's Discover Weekly playlist"
+description = """
+  Every Monday, Spotify generates a unique playlist of 30 songs
+  tailored to each user based on their listening history.
+  No human curators are involved.
+"""
+# Your answer:
+classification = ???  # "ML", "DL", "GenAI", or "Rule-based"</code></pre>
             </div>
           </div>
-          <i class="ri-arrow-down-s-line lab-chevron"></i>
+          <div class="lab-step">
+            <div class="lab-step-header">
+              <span class="step-num">3</span>
+              <h4>Fill in Your Classification</h4>
+            </div>
+            <p>Replace <code>???</code> with your answer for each product. Run the cell to record it.</p>
+          </div>
+          <div class="lab-step">
+            <div class="lab-step-header">
+              <span class="step-num">4</span>
+              <h4>Run the Answer Check Cell</h4>
+            </div>
+            <p>The final cell reveals correct answers with explanations. Score yourself — aim for 15+ correct.</p>
+          </div>
         </div>
-        <div class="lab-body">
-          <ol class="lab-steps">
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Review the classification framework</div>
-                <div class="lab-step-desc">
-                  For each app, classify it as one of three types:
-                  <ul style="margin-top:0.5rem">
-                    <li><strong>Rule-Based:</strong> Explicit if/then logic, no learning from data</li>
-                    <li><strong>Classical ML:</strong> Learns statistical patterns from labeled training data</li>
-                    <li><strong>Generative AI:</strong> Creates new content; trained on massive datasets via deep learning</li>
-                  </ul>
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Work through the full list of 20 apps</div>
-                <div class="lab-step-desc">
-                  Think about each app before revealing the answer. Ask yourself: Does it generate new content? Does it learn from user behavior? Does it follow explicit rules?
-                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.5rem;margin:0.75rem 0">
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Netflix recommendations</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Gmail spam filter</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">ChatGPT</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Google Translate</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Siri voice recognition</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Tesla Autopilot</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">GitHub Copilot</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Instagram image tagging</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Grammarly</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Medical imaging AI</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Credit card fraud detection</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">TikTok for-you page</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Stable Diffusion</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Stockfish chess engine</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Weather.gov forecast</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Zendesk AI support</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Apple Face ID</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">VS Code Intellisense</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">AlphaFold (proteins)</div>
-                    <div style="font-size:0.8rem;color:var(--text-muted);padding:0.35rem 0.6rem;background:var(--card);border-radius:4px">Suno music generation</div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Check your answers for these 4 examples</div>
-                <div class="lab-step-desc">Reveal each answer only after you've made your classification.</div>
 
-                <div class="reveal-block" style="margin-top:0.75rem">
-                  <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                    <span>What type of AI is Netflix recommendations?</span>
-                    <i class="ri ri-arrow-down-s-line"></i>
-                  </div>
-                  <div class="reveal-content">
-                    <strong style="color:var(--intermediate)">Classical ML</strong> — Netflix uses collaborative filtering and matrix factorization models trained on user watch history, ratings, and behavior. The model predicts which content each user is likely to enjoy based on patterns from similar users. No generative AI involved — it's predicting preferences, not creating content.
-                  </div>
-                </div>
-
-                <div class="reveal-block">
-                  <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                    <span>What type of AI is GitHub Copilot?</span>
-                    <i class="ri ri-arrow-down-s-line"></i>
-                  </div>
-                  <div class="reveal-content">
-                    <strong style="color:var(--expert)">Generative AI</strong> — Copilot is powered by OpenAI Codex (a descendant of GPT), which is a large language model fine-tuned on billions of lines of public code. It generates new code completions, not just retrieving cached snippets. Training data includes GitHub repos, documentation, and Stack Overflow.
-                  </div>
-                </div>
-
-                <div class="reveal-block">
-                  <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                    <span>What type of AI is Stockfish (chess engine)?</span>
-                    <i class="ri ri-arrow-down-s-line"></i>
-                  </div>
-                  <div class="reveal-content">
-                    <strong style="color:var(--beginner)">Rule-Based + Search</strong> — Traditional chess engines like Stockfish use hand-crafted evaluation functions (piece values, position heuristics) combined with minimax search with alpha-beta pruning. It doesn't learn from data — the rules were written by expert chess programmers. Note: AlphaZero / Leela Chess Zero DO use ML (self-play reinforcement learning), which is different.
-                  </div>
-                </div>
-
-                <div class="reveal-block">
-                  <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                    <span>What type of AI is Apple Face ID?</span>
-                    <i class="ri ri-arrow-down-s-line"></i>
-                  </div>
-                  <div class="reveal-content">
-                    <strong style="color:var(--intermediate)">Classical ML / Deep Learning</strong> — Face ID uses a neural network trained to recognize your face from an infrared dot-grid scan. The model learned to distinguish your unique facial geometry during setup. It's deep learning (a convolutional neural network) but not generative AI — it's classifying "is this the authorized user?" not generating anything.
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Reflect on patterns</div>
-                <div class="lab-step-desc">
-                  After classifying all 20, you should notice a pattern: most recommendation systems are Classical ML; most chatbots and code tools are Generative AI; most rule-based systems are either legacy tech or highly constrained domains (medical devices, avionics). The lines are blurring — many modern systems combine all three approaches.
-                </div>
-              </div>
-            </li>
-          </ol>
+        <div class="callout callout-tip" style="margin-top:1.5rem;">
+          <span class="callout-icon">🎯</span>
+          <div class="callout-body">
+            <h4>Strategy Tip</h4>
+            <p>Ask yourself: Does it <em>create new content</em>? → GenAI. Does it <em>learn from labeled examples</em>? → ML. Does it use images/audio/complex patterns? → likely DL. Does it just follow if/else rules? → Rule-based AI.</p>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- ==========================================
-           QUIZ SECTION
-           ========================================== -->
-      <div id="quiz-section"></div>
+    <!-- QUIZ TAB -->
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
 
-      <!-- Session nav injected by session.js -->
-      <div id="session-nav"></div>
+    <!-- BOTTOM NAV -->
+    <div class="session-nav-bottom">
+      <span></span>
+      <a href="/Noob-to-AI-Expert/sessions/beginner/02-prompt-engineering.html" class="session-nav-btn next" id="next-session">
+        <div>
+          <span class="nav-label">Session 02</span>
+          <span class="nav-title">Prompt Engineering Foundations</span>
+        </div>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </main>
 
-    </main>
+  <!-- RIGHT TOC -->
+  <aside id="toc-sidebar">
+    <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin-bottom:0.75rem; font-weight:600;">On This Page</p>
+    <nav id="toc"></nav>
+  </aside>
+</div>
 
-    <!-- Right TOC -->
-    <aside class="session-toc" id="session-toc"></aside>
-  </div>
+<div id="footer-placeholder"></div>
 
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/lab.js"></script>
-  <script src="/assets/js/quiz.js"></script>
-  <script src="/assets/js/session.js"></script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/quiz.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/lab.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/session.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+
+<script>
+window.SESSION_META = {
+  id: 1,
+  slug: '01-what-is-ai',
+  section: 'beginner',
+  nextPath: '/sessions/beginner/02-prompt-engineering.html',
+  quizData: [
+    {
+      id: 's01q01', type: 'mcq', points: 1,
+      question: 'A recommendation engine suggests movies based on what similar users have watched. No human writes the recommendation rules. Which category best describes this system?',
+      options: [
+        { id: 'a', text: 'Rule-based AI (traditional programming)' },
+        { id: 'b', text: 'Machine Learning', correct: true },
+        { id: 'c', text: 'Generative AI' },
+        { id: 'd', text: 'Reinforcement Learning' }
+      ],
+      explanation: 'This is Machine Learning — specifically collaborative filtering. The system learns patterns from user behavior data without any explicit rules being programmed. It\'s not Generative AI because it classifies/ranks rather than creating new content.',
+      hint: 'Think about: is it generating new content, or predicting/ranking existing options?'
+    },
+    {
+      id: 's01q02', type: 'multi', points: 2,
+      question: 'Which of the following are TRUE subsets or applications of Artificial Intelligence? (Select all that apply)',
+      options: [
+        { id: 'a', text: 'Machine Learning', correct: true },
+        { id: 'b', text: 'SQL Database Queries', correct: false },
+        { id: 'c', text: 'Deep Learning', correct: true },
+        { id: 'd', text: 'Generative AI', correct: true },
+        { id: 'e', text: 'Excel spreadsheet formulas', correct: false }
+      ],
+      explanation: 'ML, Deep Learning, and Generative AI are all branches of AI. SQL queries and Excel formulas are traditional programming — they follow explicit rules and do not learn from data.'
+    },
+    {
+      id: 's01q03', type: 'truefalse', points: 1,
+      question: 'All Machine Learning models require labeled training data (a dataset where the correct answer is provided for each example).',
+      correctAnswer: false,
+      explanation: 'FALSE. Only Supervised Learning requires labeled data. Unsupervised Learning (clustering, dimensionality reduction) finds patterns in unlabeled data. Self-supervised learning (used in LLMs) creates its own labels from raw data.'
+    },
+    {
+      id: 's01q04', type: 'mcq', points: 1,
+      question: 'In Traditional Programming, you provide Data + Rules → the computer produces Answers. In Machine Learning, what do you provide, and what does the computer produce?',
+      options: [
+        { id: 'a', text: 'You provide Answers + Rules → the computer produces Data' },
+        { id: 'b', text: 'You provide Data + Answers → the computer produces Rules (the model)', correct: true },
+        { id: 'c', text: 'You provide Rules + Models → the computer produces Training Data' },
+        { id: 'd', text: 'You provide Rules → the computer produces both Data and Answers' }
+      ],
+      explanation: 'This is the fundamental inversion of ML. Instead of writing rules manually, you show the machine many (data, correct answer) pairs. The machine discovers the rules — that\'s the trained model. Then you use those rules to get answers on new data.',
+      hint: 'Think about what ML "learns" — it produces something you didn\'t write yourself.'
+    },
+    {
+      id: 's01q05', type: 'mcq', points: 1,
+      question: 'ChatGPT, Claude, and Gemini are all examples of which specific AI category?',
+      options: [
+        { id: 'a', text: 'Supervised ML classifiers' },
+        { id: 'b', text: 'Unsupervised clustering models' },
+        { id: 'c', text: 'Large Language Models (LLMs) — a type of Generative AI', correct: true },
+        { id: 'd', text: 'Rule-based chatbots (like ELIZA from the 1960s)' }
+      ],
+      explanation: 'ChatGPT, Claude, and Gemini are Large Language Models — a type of Generative AI built on the Transformer architecture. They generate text by predicting the next token, trained on massive datasets of internet text and refined with RLHF. They are NOT rule-based (they have no explicit if/else rules).',
+      hint: 'They generate new text rather than classifying existing text.'
+    }
+  ]
+};
+
+// Browser-based lab
+const LAB_ITEMS = [
+  { product: 'Spotify Discover Weekly', answer: 'ML', explanation: 'Collaborative filtering — finds patterns in what users with similar tastes enjoy.' },
+  { product: 'Gmail Smart Compose (sentence completion)', answer: 'GenAI', explanation: 'An LLM predicts and generates the rest of your sentence.' },
+  { product: 'Gmail Spam Folder', answer: 'ML', explanation: 'Supervised classifier trained on millions of labeled spam/ham emails.' },
+  { product: 'Google Photos face grouping', answer: 'DL', explanation: 'Deep CNN recognizes and clusters faces from image pixels.' },
+  { product: 'Tesla Autopilot lane keeping', answer: 'DL', explanation: 'Convolutional neural networks process camera images for lane detection.' },
+  { product: 'Amazon product recommendations', answer: 'ML', explanation: 'Collaborative filtering + content-based filtering ML models.' },
+  { product: 'DALL-E generating art from text', answer: 'GenAI', explanation: 'Diffusion model creates new images from text prompts.' },
+  { product: 'Credit card fraud alert', answer: 'ML', explanation: 'Anomaly detection / supervised classifier on transaction patterns.' },
+  { product: 'YouTube auto-captions', answer: 'DL', explanation: 'Speech-to-text using deep recurrent/transformer neural networks.' },
+  { product: 'Google Translate', answer: 'DL', explanation: 'Sequence-to-sequence Transformer model trained on parallel text.' },
+];
+
+function startBrowserLab() {
+  document.getElementById('colab-instructions').style.display = 'none';
+  document.getElementById('browser-lab').style.display = 'block';
+  const container = document.getElementById('lab-questions');
+  container.innerHTML = LAB_ITEMS.map((item, i) => `
+    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
+      <div style="font-size:0.85rem; color:#e2e8f0; font-weight:600; margin-bottom:0.5rem;">${i+1}. ${item.product}</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        ${['ML','DL','GenAI','Rule-based'].map(t => `
+          <label style="display:flex; align-items:center; gap:0.4rem; padding:0.35rem 0.75rem; border:1px solid #334155; border-radius:6px; cursor:pointer; font-size:0.8rem; color:#94a3b8; transition:all 0.15s;"
+            onmouseover="this.style.borderColor='#0ea5e9'" onmouseout="this.style.borderColor='#334155'">
+            <input type="radio" name="lab-${i}" value="${t}" style="accent-color:#0ea5e9;"> ${t}
+          </label>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function checkLabAnswers() {
+  let correct = 0;
+  const results = LAB_ITEMS.map((item, i) => {
+    const sel = document.querySelector(`input[name="lab-${i}"]:checked`);
+    const given = sel ? sel.value : 'No answer';
+    const isCorrect = given === item.answer;
+    if (isCorrect) correct++;
+    return `<div style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid #1e293b;">
+      <span style="color:${isCorrect ? '#4ade80' : '#f87171'}; font-size:1rem; margin-top:0.1rem;">${isCorrect ? '✓' : '✗'}</span>
+      <div>
+        <div style="font-size:0.85rem; font-weight:600; color:#e2e8f0;">${item.product}</div>
+        <div style="font-size:0.8rem; color:#64748b;">Your answer: <span style="color:${isCorrect ? '#4ade80' : '#f87171'}">${given}</span> · Correct: <span style="color:#4ade80">${item.answer}</span></div>
+        <div style="font-size:0.8rem; color:#94a3b8; margin-top:0.25rem;">${item.explanation}</div>
+      </div>
+    </div>`;
+  });
+
+  const resultEl = document.getElementById('lab-results');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `
+    <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.5rem;">
+      <div style="text-align:center; margin-bottom:1.25rem;">
+        <div style="font-size:2rem; font-weight:800; color:${correct >= 8 ? '#4ade80' : '#f87171'}">${correct} / ${LAB_ITEMS.length}</div>
+        <div style="color:#94a3b8; font-size:0.9rem;">${correct >= 8 ? '🎉 Great work!' : 'Keep reviewing — try the session again!'}</div>
+      </div>
+      ${results.join('')}
+    </div>`;
+}
+</script>
 </body>
 </html>

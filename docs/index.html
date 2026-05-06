@@ -1,350 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>Noob to AI Expert — Complete AI Engineering Course</title>
-  <meta name="description" content="Learn AI from zero to production. 20 sessions covering prompt engineering, ML, LLMs, RAG, agents, fine-tuning, and deployment.">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noob to AI Expert — Free Hands-On AI Course</title>
+  <meta name="description" content="Go from zero to AI engineer in 20 structured sessions. Beginner to Expert. Real labs, real code, real quizzes." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" />
+
+  <style>
+    /* ===== HOMEPAGE SPECIFIC ===== */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 1.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(2,132,199,0.1) 0%, transparent 60%),
+                  radial-gradient(ellipse 60% 50% at 80% 80%, rgba(124,58,237,0.07) 0%, transparent 50%),
+                  radial-gradient(ellipse 50% 50% at 20% 60%, rgba(22,163,74,0.05) 0%, transparent 50%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; opacity: 0.5;
+      background-image: linear-gradient(rgba(148,163,184,0.15) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(148,163,184,0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(2,132,199,0.08); border: 1px solid rgba(2,132,199,0.2);
+      color: var(--brand); padding: 0.4rem 1rem; border-radius: 999px;
+      font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800; color: var(--text);
+      letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 1.25rem;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #0ea5e9, #8b5cf6, #22c55e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem; color: var(--text-muted); max-width: 600px;
+      margin: 0 auto 2.5rem; line-height: 1.7;
+    }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+      color: #fff; padding: 0.85rem 2rem; border-radius: 12px;
+      font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(14,165,233,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(14,165,233,0.4); text-decoration: none; color: #fff; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--surface); color: var(--text-muted);
+      padding: 0.85rem 2rem; border-radius: 12px;
+      font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: var(--surface-2); color: var(--text); text-decoration: none; border-color: var(--border-strong); }
+
+    .hero-stats { display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat .stat-num { font-size: 1.75rem; font-weight: 800; color: var(--text); }
+    .hero-stat .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    /* SECTION CARDS */
+    .section-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .section-card {
+      border-radius: 18px; padding: 2rem;
+      border: 1px solid; position: relative; overflow: hidden;
+      text-decoration: none; display: block; transition: all 0.3s;
+    }
+    .section-card:hover { transform: translateY(-4px); text-decoration: none; }
+    .section-card.beginner { background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.2); }
+    .section-card.beginner:hover { box-shadow: 0 12px 40px rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); }
+    .section-card.intermediate { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); }
+    .section-card.intermediate:hover { box-shadow: 0 12px 40px rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); }
+    .section-card.expert { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); }
+    .section-card.expert:hover { box-shadow: 0 12px 40px rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); }
+
+    .section-card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .section-card h3 { margin: 0 0 0.25rem; font-size: 1.4rem; color: var(--text); }
+    .section-card .tagline { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .section-card.beginner .tagline { color: #16a34a; }
+    .section-card.intermediate .tagline { color: #1d4ed8; }
+    .section-card.expert .tagline { color: #7c3aed; }
+    .section-card p { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 1.25rem; line-height: 1.6; }
+    .section-card .session-count { font-size: 0.8rem; color: var(--text-muted); }
+    .section-card .progress-mini { margin-top: 1rem; }
+
+    /* SESSION GRID */
+    .sessions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .s-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.1rem 1.25rem; text-decoration: none; display: block; transition: all 0.2s;
+      position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .s-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+    .s-card.beginner::before { background: #22c55e; }
+    .s-card.intermediate::before { background: #3b82f6; }
+    .s-card.expert::before { background: #a855f7; }
+    .s-card:hover { background: var(--surface-2); transform: translateY(-2px); border-color: var(--border-strong); text-decoration: none; box-shadow: var(--shadow-md); }
+    .s-card .s-num { font-size: 0.7rem; color: var(--text-light); font-weight: 700; margin-bottom: 0.35rem; }
+    .s-card .s-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .s-card .s-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); }
+    .s-card .s-done { color: #16a34a; }
+    .s-card.completed { border-color: #bbf7d0; background: #f0fdf4; }
+
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.5rem; text-align: center; box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); transform: translateY(-2px); }
+    .feature-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .feature-card h4 { margin: 0 0 0.4rem; font-size: 0.95rem; color: var(--text); }
+    .feature-card p { margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* TECH LOGOS */
+    .tech-strip { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .tech-logo {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 0.6rem 1.25rem; border-radius: 8px;
+      font-size: 0.85rem; color: var(--text-muted); font-weight: 500;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: all 0.2s; box-shadow: var(--shadow-sm);
+    }
+    .tech-logo:hover { border-color: var(--border-strong); color: var(--text); box-shadow: var(--shadow-md); }
+
+    /* PROGRESS DASHBOARD */
+    #progress-dashboard { display: none; }
+    #progress-dashboard.visible { display: block; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .section-head { margin-bottom: 2.5rem; }
+    .section-head h2 { font-size: 2rem; color: var(--text); margin: 0 0 0.5rem; }
+    .section-head p { color: var(--text-muted); margin: 0; }
+
+    .page-section { padding: 5rem 1.5rem; }
+    .page-section.alt { background: var(--surface-2); }
+  </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
   <div id="nav-placeholder"></div>
 
-  <main id="main">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container hero-content">
-        <div class="hero-eyebrow">
-          <i class="ri-rocket-line"></i>
-          Free · Self-Paced · No Sign-up Required
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-pill">
+        <span>🆕</span> 20 Sessions · 3 Tracks · Completely Free
+      </div>
+      <h1>From <span class="gradient-text">Zero to AI Engineer</span><br>in 20 Sessions</h1>
+      <p>Hands-on AI education that actually works. Real code, real labs, real quizzes. No fluff, no gatekeeping — just you and the skills that matter.</p>
+      <div class="hero-ctas">
+        <a href="/Noob-to-AI-Expert/sessions/beginner/01-what-is-ai.html" class="btn-primary">
+          <i class="fas fa-play"></i> Start Learning Free
+        </a>
+        <a href="#sessions" class="btn-outline">
+          <i class="fas fa-list"></i> Browse All Sessions
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="stat-num">20</div>
+          <div class="stat-label">Deep Sessions</div>
         </div>
-        <h1>From Zero to<br>AI Engineering Expert</h1>
-        <p class="hero-tagline">
-          20 hands-on sessions covering everything from prompt engineering to building production AI systems. No background required — just curiosity.
-        </p>
-        <div class="hero-ctas">
-          <a href="/sessions/beginner/01-what-is-ai.html" class="btn btn-primary btn-lg">
-            <i class="ri-play-circle-line"></i> Start Learning
-          </a>
-          <a href="#sessions" class="btn btn-ghost btn-lg">
-            <i class="ri-layout-grid-line"></i> Browse Sessions
-          </a>
+        <div class="hero-stat">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Skill Levels</div>
         </div>
-        <div class="hero-meta">
-          <div class="hero-stat">
-            <div class="hero-stat-val">20</div>
-            <div class="hero-stat-label">Sessions</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val">20+</div>
-            <div class="hero-stat-label">Hours of Content</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val">20</div>
-            <div class="hero-stat-label">Lab Notebooks</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val">100</div>
-            <div class="hero-stat-label">Quiz Questions</div>
-          </div>
+        <div class="hero-stat">
+          <div class="stat-num">20+</div>
+          <div class="stat-label">Live Labs</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Free Forever</div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Progress Dashboard (shown when progress exists) -->
-    <section class="container" id="progress-section" style="display:none; margin-bottom:2rem">
-      <div class="progress-dashboard">
-        <div class="progress-chart-wrap">
-          <canvas id="progress-canvas" width="100" height="100"></canvas>
-          <div class="progress-chart-label">
-            <span id="progress-pct">0%</span>
-            <small>complete</small>
+  <!-- PROGRESS DASHBOARD (shown after first visit) -->
+  <div class="container" style="padding-top: 2rem;">
+    <div id="progress-dashboard">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:1.75rem 2rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; box-shadow:var(--shadow-md);">
+        <div style="flex:1; min-width:200px;">
+          <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Your Progress</div>
+          <div style="font-size:1.75rem; font-weight:800; color:var(--text);" id="dash-count">0 / 20</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">sessions completed</div>
+        </div>
+        <div style="flex:2; min-width:250px;">
+          <div class="progress-bar-wrap" style="height:10px; margin-bottom:0.5rem;">
+            <div class="progress-bar-fill" id="dash-bar" style="width:0%"></div>
           </div>
+          <div style="font-size:0.8rem; color:var(--text-muted);" id="dash-pct">0% complete</div>
         </div>
-        <div style="flex:1;min-width:0">
-          <h3 style="margin-bottom:.5rem">Your Progress</h3>
-          <p id="progress-summary" style="margin-bottom:1rem">Keep going!</p>
-          <a id="continue-btn" href="#" class="btn btn-primary btn-sm">
-            <i class="ri-arrow-right-line"></i> Continue Learning
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <a href="#" id="dash-continue" class="btn-primary" style="padding:0.7rem 1.5rem; font-size:0.9rem;">
+            <i class="fas fa-arrow-right"></i> Continue
           </a>
+          <button onclick="Progress.reset()" class="btn-outline" style="padding:0.7rem 1rem; font-size:0.85rem;">Reset</button>
         </div>
-        <button onclick="if(confirm('Reset all progress?')){Progress.reset();location.reload()}" class="btn btn-ghost btn-sm" title="Reset progress">
-          <i class="ri-refresh-line"></i>
-        </button>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <!-- Section Cards -->
-    <section class="container" style="margin-bottom:3rem">
-      <div class="section-heading">
-        <h2 style="margin:0">Learning Tracks</h2>
-        <div class="section-divider"></div>
+  <!-- SECTIONS -->
+  <section class="page-section" id="tracks">
+    <div class="container">
+      <div class="section-head">
+        <h2>Three Tracks, One Journey</h2>
+        <p>Follow the path that fits you — or start at the beginning and go all the way to expert.</p>
       </div>
       <div class="section-cards">
-        <a href="/sections/beginner.html" class="section-card beginner">
+        <a href="/Noob-to-AI-Expert/sections/beginner.html" class="section-card beginner">
           <div class="section-card-icon">🌱</div>
-          <div>
-            <div class="section-card-title">Beginner</div>
-            <div class="badge badge-beginner" style="margin:.4rem 0">Sessions 1–5</div>
-            <p class="section-card-desc">Start here. Learn what AI is, how to write effective prompts, Python basics for AI, and build your first AI app.</p>
-          </div>
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--beginner)">
-            <i class="ri-arrow-right-line"></i> 5 Sessions · ~4 hours
-          </div>
-        </a>
-        <a href="/sections/intermediate.html" class="section-card intermediate">
-          <div class="section-card-icon">⚙️</div>
-          <div>
-            <div class="section-card-title">Intermediate</div>
-            <div class="badge badge-intermediate" style="margin:.4rem 0">Sessions 6–12</div>
-            <p class="section-card-desc">Dive into ML fundamentals, neural networks, transformers, embeddings, RAG pipelines, and AI app development.</p>
-          </div>
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--intermediate)">
-            <i class="ri-arrow-right-line"></i> 7 Sessions · ~8 hours
+          <h3>Beginner</h3>
+          <div class="tagline">AI User → AI Builder</div>
+          <p>Understand AI concepts, master prompt engineering, learn Python basics, and ship your first AI app.</p>
+          <div class="session-count"><i class="fas fa-layer-group" style="margin-right:0.4rem;"></i>5 sessions · ~5 hours</div>
+          <div class="progress-mini" id="prog-beginner">
+            <div class="progress-bar-wrap" style="margin-top:0.75rem; height:4px;">
+              <div class="progress-bar-fill" style="width:0%; background:#22c55e;"></div>
+            </div>
           </div>
         </a>
-        <a href="/sections/expert.html" class="section-card expert">
+
+        <a href="/Noob-to-AI-Expert/sections/intermediate.html" class="section-card intermediate">
+          <div class="section-card-icon">💻</div>
+          <h3>Intermediate</h3>
+          <div class="tagline">AI Developer</div>
+          <p>Learn how ML actually works, build neural networks, understand LLMs, and deploy RAG pipelines.</p>
+          <div class="session-count"><i class="fas fa-layer-group" style="margin-right:0.4rem;"></i>7 sessions · ~10 hours</div>
+          <div class="progress-mini" id="prog-intermediate">
+            <div class="progress-bar-wrap" style="margin-top:0.75rem; height:4px;">
+              <div class="progress-bar-fill" style="width:0%; background:#3b82f6;"></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="/Noob-to-AI-Expert/sections/expert.html" class="section-card expert">
           <div class="section-card-icon">🚀</div>
-          <div>
-            <div class="section-card-title">Expert</div>
-            <div class="badge badge-expert" style="margin:.4rem 0">Sessions 13–20</div>
-            <p class="section-card-desc">Master advanced prompting, AI agents, evaluation, fine-tuning, responsible AI, multimodal, and production deployment.</p>
-          </div>
-          <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--expert)">
-            <i class="ri-arrow-right-line"></i> 8 Sessions · ~9 hours
+          <h3>Expert</h3>
+          <div class="tagline">AI Engineer / Architect</div>
+          <p>Build production AI systems with agents, evaluation pipelines, fine-tuning, security, and observability.</p>
+          <div class="session-count"><i class="fas fa-layer-group" style="margin-right:0.4rem;"></i>8 sessions · ~15 hours</div>
+          <div class="progress-mini" id="prog-expert">
+            <div class="progress-bar-wrap" style="margin-top:0.75rem; height:4px;">
+              <div class="progress-bar-fill" style="width:0%; background:#a855f7;"></div>
+            </div>
           </div>
         </a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- All Sessions Grid -->
-    <section class="container" id="sessions" style="margin-bottom:3rem">
-      <div class="section-heading">
-        <h2 style="margin:0">All 20 Sessions</h2>
-        <div class="section-divider"></div>
-      </div>
-
-      <!-- Beginner -->
-      <div style="margin-bottom:2rem">
-        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-          <span class="badge badge-beginner">Beginner</span>
-          <span class="text-sm text-muted">Sessions 1–5</span>
+  <!-- ALL SESSIONS -->
+  <section class="page-section alt" id="sessions">
+    <div class="container">
+      <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2>All 20 Sessions</h2>
+          <p>Click any session to start. No signup. No paywall.</p>
         </div>
-        <div class="session-grid" id="grid-beginner"></div>
-      </div>
-
-      <!-- Intermediate -->
-      <div style="margin-bottom:2rem">
-        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-          <span class="badge badge-intermediate">Intermediate</span>
-          <span class="text-sm text-muted">Sessions 6–12</span>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn-outline" style="padding:0.5rem 1rem; font-size:0.8rem;" onclick="filterSessions('all')">All</button>
+          <button class="btn-outline" style="padding:0.5rem 1rem; font-size:0.8rem; color:#16a34a; border-color:#bbf7d0; background:#f0fdf4;" onclick="filterSessions('beginner')">🌱 Beginner</button>
+          <button class="btn-outline" style="padding:0.5rem 1rem; font-size:0.8rem; color:#1d4ed8; border-color:#bfdbfe; background:#eff6ff;" onclick="filterSessions('intermediate')">💻 Intermediate</button>
+          <button class="btn-outline" style="padding:0.5rem 1rem; font-size:0.8rem; color:#7c3aed; border-color:#ddd6fe; background:#faf5ff;" onclick="filterSessions('expert')">🚀 Expert</button>
         </div>
-        <div class="session-grid" id="grid-intermediate"></div>
       </div>
-
-      <!-- Expert -->
-      <div>
-        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-          <span class="badge badge-expert">Expert</span>
-          <span class="text-sm text-muted">Sessions 13–20</span>
-        </div>
-        <div class="session-grid" id="grid-expert"></div>
+      <div class="sessions-grid" id="sessions-grid">
+        <!-- Populated by JS -->
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- What you'll learn -->
-    <section class="container" style="margin-bottom:3rem">
-      <div class="section-heading">
-        <h2 style="margin:0">What You'll Learn</h2>
-        <div class="section-divider"></div>
+  <!-- FEATURES -->
+  <section class="page-section">
+    <div class="container">
+      <div class="section-head" style="text-align:center; max-width:600px; margin:0 auto 2.5rem;">
+        <h2>Built Different</h2>
+        <p>Not another YouTube playlist. Not a $2,000 bootcamp. This is the course we wished existed.</p>
       </div>
       <div class="features-grid">
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-chat-3-line"></i></div>
-          <div class="feature-text">
-            <h4>Prompt Engineering</h4>
-            <p>Master the art of writing effective prompts, chains, and system instructions.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h4>Real Labs Every Session</h4>
+          <p>Every session has a hands-on lab — browser-based or Google Colab. Learn by doing, not watching.</p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-brain-line"></i></div>
-          <div class="feature-text">
-            <h4>ML & Deep Learning</h4>
-            <p>Understand how models learn, from linear regression to transformer architectures.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h4>Concept-First, Deep-Dive</h4>
+          <p>Each session picks one concept and goes deep. Not a survey course — you'll actually understand what you build.</p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-search-eye-line"></i></div>
-          <div class="feature-text">
-            <h4>RAG Systems</h4>
-            <p>Build retrieval-augmented generation pipelines that ground LLMs in your data.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h4>Quizzes That Test Thinking</h4>
+          <p>Not memorization tests. Quizzes that challenge you to apply concepts to real scenarios.</p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-robot-2-line"></i></div>
-          <div class="feature-text">
-            <h4>AI Agents</h4>
-            <p>Design tool-calling, memory-equipped agents and multi-agent workflows.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏗️</div>
+          <h4>Production-Ready Skills</h4>
+          <p>RAG pipelines, AI agents, evaluation suites, deployment. The stuff you need for actual jobs.</p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-test-tube-line"></i></div>
-          <div class="feature-text">
-            <h4>Evaluation & Testing</h4>
-            <p>Build golden datasets, automated eval suites, and hallucination checks.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h4>Progress Tracking</h4>
+          <p>Your progress is saved locally. Pick up exactly where you left off, across any session.</p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-server-line"></i></div>
-          <div class="feature-text">
-            <h4>Production Deployment</h4>
-            <p>Ship AI apps with proper caching, observability, retries, and cost controls.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-image-ai-line"></i></div>
-          <div class="feature-text">
-            <h4>Multimodal AI</h4>
-            <p>Work with vision, audio, and video models alongside text-based LLMs.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon"><i class="ri-shield-check-line"></i></div>
-          <div class="feature-text">
-            <h4>Responsible AI</h4>
-            <p>Learn about bias, prompt injection, data privacy, and safety best practices.</p>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h4>100% Free, Forever</h4>
+          <p>No paywall, no email signup, no upsell. Great AI education should be accessible to everyone.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Tech Stack Strip -->
-    <section class="container" style="margin-bottom:4rem">
-      <div class="section-heading">
-        <h2 style="margin:0">Technologies You'll Use</h2>
-        <div class="section-divider"></div>
-      </div>
+  <!-- TECH STACK -->
+  <section class="page-section alt">
+    <div class="container" style="text-align:center;">
+      <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); margin-bottom:1.5rem; font-weight:600;">Technologies You'll Work With</div>
       <div class="tech-strip">
-        <div class="tech-item">
-          <span style="font-size:2rem">🐍</span>
-          <span>Python</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">🤖</span>
-          <span>OpenAI API</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">🤗</span>
-          <span>HuggingFace</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">🦜</span>
-          <span>LangChain</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">🔥</span>
-          <span>PyTorch</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">⚡</span>
-          <span>FastAPI</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">📊</span>
-          <span>Streamlit</span>
-        </div>
-        <div class="tech-item">
-          <span style="font-size:2rem">🔬</span>
-          <span>Google Colab</span>
-        </div>
+        <div class="tech-logo">🐍 Python</div>
+        <div class="tech-logo">🤖 OpenAI API</div>
+        <div class="tech-logo">🤗 HuggingFace</div>
+        <div class="tech-logo">🦜 LangChain</div>
+        <div class="tech-logo">🗄️ ChromaDB</div>
+        <div class="tech-logo">📊 scikit-learn</div>
+        <div class="tech-logo">🔥 PyTorch</div>
+        <div class="tech-logo">🌐 Streamlit</div>
+        <div class="tech-logo">☁️ Google Colab</div>
+        <div class="tech-logo">📦 GitHub Pages</div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <!-- CTA BOTTOM -->
+  <section class="page-section" style="text-align:center;">
+    <div class="container" style="max-width:600px; margin:0 auto;">
+      <div style="font-size:3rem; margin-bottom:1rem;">🚀</div>
+      <h2 style="font-size:2.25rem; margin:0 0 1rem;">Ready to become an AI engineer?</h2>
+      <p style="color:var(--text-muted); margin-bottom:2rem;">Join thousands of learners who went from curious to capable. Start your first session now — no account needed.</p>
+      <a href="/Noob-to-AI-Expert/sessions/beginner/01-what-is-ai.html" class="btn-primary" style="font-size:1.1rem; padding:1rem 2.5rem;">
+        <i class="fas fa-rocket"></i> Start Session 1 Now
+      </a>
+    </div>
+  </section>
 
   <div id="footer-placeholder"></div>
 
-  <!-- Chart.js for progress doughnut -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="/assets/js/main.js"></script>
+  <script src="/Noob-to-AI-Expert/assets/js/progress.js"></script>
+  <script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
   <script>
-    // Build session grids
-    (async function () {
-      let sessions = [];
-      try {
-        const res = await fetch('/data/sessions.json');
-        if (res.ok) sessions = await res.json();
-      } catch {}
+    // Sessions data for homepage
+    const SESSIONS = [
+      { id:1, title:'What AI Really Is', section:'beginner', path:'/Noob-to-AI-Expert/sessions/beginner/01-what-is-ai.html', duration:'45 min' },
+      { id:2, title:'Prompt Engineering Foundations', section:'beginner', path:'/Noob-to-AI-Expert/sessions/beginner/02-prompt-engineering.html', duration:'60 min' },
+      { id:3, title:'Python for AI', section:'beginner', path:'/Noob-to-AI-Expert/sessions/beginner/03-python-for-ai.html', duration:'90 min' },
+      { id:4, title:'Data Basics for AI', section:'beginner', path:'/Noob-to-AI-Expert/sessions/beginner/04-data-basics.html', duration:'60 min' },
+      { id:5, title:'Your First AI App', section:'beginner', path:'/Noob-to-AI-Expert/sessions/beginner/05-first-ai-app.html', duration:'90 min' },
+      { id:6, title:'Machine Learning Fundamentals', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/06-ml-fundamentals.html', duration:'90 min' },
+      { id:7, title:'Model Evaluation', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/07-model-evaluation.html', duration:'60 min' },
+      { id:8, title:'Neural Networks', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/08-neural-networks.html', duration:'90 min' },
+      { id:9, title:'LLMs and Transformers', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/09-llms-transformers.html', duration:'75 min' },
+      { id:10, title:'Embeddings & Semantic Search', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/10-embeddings-search.html', duration:'60 min' },
+      { id:11, title:'RAG: Retrieval-Augmented Generation', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/11-rag.html', duration:'90 min' },
+      { id:12, title:'AI App Development', section:'intermediate', path:'/Noob-to-AI-Expert/sessions/intermediate/12-ai-app-development.html', duration:'90 min' },
+      { id:13, title:'Advanced Prompting & Context Engineering', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/13-advanced-prompting.html', duration:'75 min' },
+      { id:14, title:'AI Agents', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/14-ai-agents.html', duration:'90 min' },
+      { id:15, title:'LLM Evaluation', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/15-llm-evaluation.html', duration:'75 min' },
+      { id:16, title:'Fine-Tuning & Model Customization', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/16-fine-tuning.html', duration:'90 min' },
+      { id:17, title:'Responsible AI & Security', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/17-responsible-ai.html', duration:'75 min' },
+      { id:18, title:'Multimodal AI', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/18-multimodal-ai.html', duration:'75 min' },
+      { id:19, title:'Production Deployment', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/19-production-deployment.html', duration:'90 min' },
+      { id:20, title:'Capstone Project', section:'expert', path:'/Noob-to-AI-Expert/sessions/expert/20-capstone.html', duration:'4+ hrs' }
+    ];
 
-      const sections = ['beginner','intermediate','expert'];
-      sections.forEach(sec => {
-        const grid = document.getElementById('grid-' + sec);
-        if (!grid) return;
-        const list = sessions.filter(s => s.section === sec);
-        grid.innerHTML = list.map(s => {
-          const passed = Progress.isQuizPassed(s.id);
-          const viewed = Progress.isViewed(s.id);
-          const sectionColor = { beginner: 'var(--beginner)', intermediate: 'var(--intermediate)', expert: 'var(--expert)' }[sec];
-          return `
-            <a href="/sessions/${s.section}/${s.slug}.html" class="session-card${passed ? ' completed' : ''}">
-              <div class="session-card-header">
-                <span class="session-num">SESSION ${String(s.id).padStart(2,'0')}</span>
-                <div class="checkmark${passed ? ' done' : ''}" title="${passed ? 'Completed' : ''}">
-                  ${passed ? '<i class="ri-check-line"></i>' : ''}
-                </div>
-              </div>
-              <div class="session-card-title">${s.title}</div>
-              <div class="session-card-meta">
-                <span><i class="ri-time-line"></i> ${s.duration}</span>
-                ${viewed ? '<span style="color:var(--text-faint)"><i class="ri-eye-line"></i> Viewed</span>' : ''}
-              </div>
-            </a>
-          `;
-        }).join('');
-      });
+    let _currentFilter = 'all';
 
-      // Progress dashboard
+    function renderSessions(filter) {
+      _currentFilter = filter;
+      const grid = document.getElementById('sessions-grid');
+      const list = filter === 'all' ? SESSIONS : SESSIONS.filter(s => s.section === filter);
+      const sectionIcons = { beginner: '🌱', intermediate: '💻', expert: '🚀' };
+      grid.innerHTML = list.map(s => {
+        const state = Progress.getSession(s.id);
+        const done = state.quizPassed;
+        return `
+          <a href="${s.path}" class="s-card ${s.section} ${done ? 'completed' : ''}">
+            <div class="s-num">${sectionIcons[s.section]} Session ${String(s.id).padStart(2,'0')}</div>
+            <div class="s-title">${s.title}</div>
+            <div class="s-meta">
+              <span><i class="fas fa-clock" style="margin-right:0.3rem;opacity:0.6;"></i>${s.duration}</span>
+              ${done ? '<span class="s-done"><i class="fas fa-check-circle"></i> Done</span>' : '<span></span>'}
+            </div>
+          </a>`;
+      }).join('');
+    }
+
+    function filterSessions(filter) { renderSessions(filter); }
+
+    function updateDashboard() {
+      const count = Progress.getCompletedCount();
       const pct = Progress.getCompletionPercent();
-      const passed = Progress.getPassedCount();
-      const viewed = Progress.getViewedCount();
+      const lastId = Progress.getLastVisitedId();
+      const dash = document.getElementById('progress-dashboard');
 
-      if (viewed > 0 || passed > 0) {
-        document.getElementById('progress-section').style.display = '';
-        document.getElementById('progress-pct').textContent = pct + '%';
-        document.getElementById('progress-summary').textContent =
-          `${passed} of 20 quizzes passed · ${viewed} sessions viewed`;
-
-        // Find first incomplete session for continue button
-        const incomplete = sessions.find(s => !Progress.isQuizPassed(s.id));
-        if (incomplete) {
-          document.getElementById('continue-btn').href = `/sessions/${incomplete.section}/${incomplete.slug}.html`;
-        }
-
-        // Draw donut chart
-        const canvas = document.getElementById('progress-canvas');
-        if (canvas) {
-          new Chart(canvas, {
-            type: 'doughnut',
-            data: {
-              datasets: [{
-                data: [pct, 100 - pct],
-                backgroundColor: ['#818CF8', 'rgba(255,255,255,0.05)'],
-                borderWidth: 0,
-              }]
-            },
-            options: {
-              cutout: '75%',
-              responsive: false,
-              plugins: { tooltip: { enabled: false }, legend: { display: false } }
-            }
-          });
+      if (count > 0 || lastId) {
+        dash.classList.add('visible');
+        document.getElementById('dash-count').textContent = `${count} / 20`;
+        document.getElementById('dash-bar').style.width = pct + '%';
+        document.getElementById('dash-pct').textContent = pct + '% complete';
+        if (lastId) {
+          const s = SESSIONS.find(s => String(s.id) === String(lastId));
+          if (s) document.getElementById('dash-continue').href = s.path;
         }
       }
-    })();
+
+      // Section progress bars
+      ['beginner','intermediate','expert'].forEach(sec => {
+        const sectionSessions = SESSIONS.filter(s => s.section === sec);
+        const done = sectionSessions.filter(s => Progress.getSession(s.id).quizPassed).length;
+        const pct = Math.round((done / sectionSessions.length) * 100);
+        const bar = document.querySelector(`#prog-${sec} .progress-bar-fill`);
+        if (bar) bar.style.width = pct + '%';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSessions('all');
+      updateDashboard();
+    });
   </script>
 </body>
 </html>

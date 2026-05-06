@@ -1,123 +1,97 @@
-/* ===========================
-   main.js — Nav injection, theme, mobile menu
-   =========================== */
-(async function () {
-  // ---- Base path (GitHub Pages support) ----
-  const BASE = document.querySelector('meta[name="base-path"]')?.content || '';
+/* ===== MAIN SITE CONTROLLER ===== */
 
-  // Rewrite all internal absolute links to include the base path.
-  // Runs immediately so links work before any user interaction.
-  function rewriteLinks(root) {
-    if (!BASE) return;
-    (root || document).querySelectorAll('a[href]').forEach(a => {
-      const h = a.getAttribute('href');
-      // Only rewrite absolute paths that don't already have the base prefix
-      if (h && h.startsWith('/') && !h.startsWith('//') && !h.startsWith(BASE)) {
-        a.setAttribute('href', BASE + h);
-      }
-    });
-  }
-
-  // Rewrite links already in the page
-  document.addEventListener('DOMContentLoaded', () => rewriteLinks(document));
-  // Also rewrite immediately in case DOM is already ready
-  if (document.readyState !== 'loading') rewriteLinks(document);
-
-  // ---- Theme toggle ----
-  const THEME_KEY = 'noob2ai_theme';
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-
-  function applyTheme(t) {
-    document.documentElement.setAttribute('data-theme', t);
-    localStorage.setItem(THEME_KEY, t);
-    document.querySelectorAll('.theme-icon').forEach(el => {
-      el.className = 'theme-icon ' + (t === 'light' ? 'ri-sun-line' : 'ri-moon-line');
-    });
-  }
-
-  // ---- Inject nav ----
-  const navHolder = document.getElementById('nav-placeholder');
-  if (navHolder) {
-    try {
-      const res = await fetch(BASE + '/components/nav.html');
-      if (res.ok) {
-        navHolder.innerHTML = await res.text();
-        rewriteLinks(navHolder); // Fix nav links too
-        initNav();
-      }
-    } catch {}
-  }
-
-  // ---- Inject footer ----
-  const footerHolder = document.getElementById('footer-placeholder');
-  if (footerHolder) {
-    try {
-      const res = await fetch(BASE + '/components/footer.html');
-      if (res.ok) {
-        footerHolder.innerHTML = await res.text();
-        rewriteLinks(footerHolder); // Fix footer links too
-      }
-    } catch {}
-  }
-
-  function initNav() {
-    // Theme toggle buttons
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      btn.querySelector('.theme-icon')?.classList.add(current === 'light' ? 'ri-sun-line' : 'ri-moon-line');
-      btn.addEventListener('click', () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        applyTheme(next);
-      });
-    });
-
-    // Mobile menu
-    const mobileBtn = document.querySelector('.mobile-menu-btn');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    if (mobileBtn && mobileMenu) {
-      mobileBtn.addEventListener('click', () => {
-        const open = mobileMenu.style.display === 'flex';
-        mobileMenu.style.display = open ? 'none' : 'flex';
-      });
-    }
-
-    // Active link highlight
-    const path = window.location.pathname;
-    document.querySelectorAll('.navbar-links a, .mobile-menu a').forEach(a => {
-      const href = a.getAttribute('href');
-      if (href && path.includes(href.replace(BASE, '').replace(/^\//, ''))) {
-        a.classList.add('active');
-      }
-    });
-
-    updateTopProgress();
-  }
-
-  // ---- Top progress bar ----
-  function updateTopProgress() {
-    const bar = document.getElementById('top-progress');
-    if (!bar || !window.Progress) return;
-    bar.style.width = Progress.getCompletionPercent() + '%';
-  }
-
-  // ---- Page scroll progress (for session pages) ----
-  const scrollBar = document.getElementById('top-progress');
-  if (scrollBar && document.querySelector('.session-main')) {
-    window.addEventListener('scroll', () => {
-      const scrolled = window.scrollY;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      if (total > 0) scrollBar.style.width = ((scrolled / total) * 100) + '%';
-    });
-  }
-
-  // ---- Mark session viewed ----
-  if (window.SESSION_META?.id && window.Progress) {
-    Progress.markViewed(SESSION_META.id);
-    updateTopProgress();
-  }
-
-  // Expose for use by session.js
-  window.BASE_PATH = BASE;
-  window.rewriteLinks = rewriteLinks;
+// Detect base path for GitHub Pages compatibility.
+// On GitHub Pages the repo is at /Noob-to-AI-Expert/
+// Locally it's at /
+// Strategy: find the /assets/ segment in any script src to determine root.
+(function () {
+  let base = '';
+  document.querySelectorAll('script[src]').forEach(s => {
+    const m = s.src.match(/^(https?:\/\/[^/]+)(\/.*?)\/assets\//);
+    if (m) base = m[2]; // e.g. '/Noob-to-AI-Expert' or ''
+  });
+  window.BASE_PATH = base; // '' for local, '/Noob-to-AI-Expert' for GH Pages
 })();
+
+function resolveUrl(path) {
+  // path must start with '/', e.g. '/components/nav.html'
+  return window.BASE_PATH + path;
+}
+
+// Rewrite all internal absolute href/src attributes after injecting HTML fragments
+function rewriteLinks(el) {
+  if (!window.BASE_PATH) return; // no prefix needed on local
+  el.querySelectorAll('a[href], link[href]').forEach(a => {
+    const h = a.getAttribute('href');
+    if (h && h.startsWith('/') && !h.startsWith('//') && !h.startsWith(window.BASE_PATH)) {
+      a.setAttribute('href', window.BASE_PATH + h);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadComponent('nav-placeholder', resolveUrl('/components/nav.html'), initNav);
+  loadComponent('footer-placeholder', resolveUrl('/components/footer.html'), null);
+  updateProgressPill();
+});
+
+async function loadComponent(placeholderId, url, callback) {
+  const el = document.getElementById(placeholderId);
+  if (!el) return;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return;
+    el.innerHTML = await res.text();
+    rewriteLinks(el); // Fix any absolute paths injected via HTML fragment
+    if (callback) callback();
+  } catch (e) {
+    console.warn(`Could not load component: ${url}`, e);
+  }
+}
+
+function initNav() {
+  // Highlight active nav link
+  const path = window.location.pathname;
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    // Strip base path prefix for comparison
+    const normalHref = href.replace(window.BASE_PATH, '') || '/';
+    const normalPath = path.replace(window.BASE_PATH, '') || '/';
+    const isActive = normalPath === normalHref || (normalHref !== '/' && normalPath.startsWith(normalHref));
+    link.classList.toggle('active', isActive);
+  });
+
+  // Mobile menu toggle
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => menu.classList.toggle('open'));
+  }
+
+  updateProgressPill();
+}
+
+function updateProgressPill() {
+  if (!window.Progress) return;
+  const count = Progress.getCompletedCount();
+  document.querySelectorAll('.nav-progress-count').forEach(p => {
+    p.textContent = `${count}/20 completed`;
+  });
+}
+
+// Smooth scroll for anchor links
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  const id = link.getAttribute('href').slice(1);
+  const target = document.getElementById(id);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+window.loadComponent = loadComponent;
+window.resolveUrl = resolveUrl;
+window.rewriteLinks = rewriteLinks;

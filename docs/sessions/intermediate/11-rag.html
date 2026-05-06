@@ -1,447 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>RAG Pipelines — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/session.css">
-  <link rel="stylesheet" href="/assets/css/quiz.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
-  <script>
-  window.SESSION_META = {
-    id: 11,
-    slug: "11-rag",
-    section: "intermediate",
-    title: "RAG Pipelines",
-    nextSlug: "/sessions/intermediate/12-ai-app-development.html",
-    quizData: [
-      {
-        type: "mcq",
-        question: "What is the primary purpose of chunking documents in a RAG pipeline?",
-        options: [
-          "Saving storage space",
-          "Breaking documents into LLM-sized pieces for embedding and retrieval",
-          "Encrypting sensitive content",
-          "Removing duplicate content"
-        ],
-        correct: 1,
-        explanation: "LLMs have context window limits, and embeddings work better on focused passages. Chunking breaks documents into pieces that can be individually embedded, stored, and retrieved."
-      },
-      {
-        type: "ordering",
-        question: "Order the RAG pipeline stages correctly:",
-        options: [
-          "Store in vector DB",
-          "Chunk documents",
-          "Retrieve relevant chunks",
-          "Embed chunks",
-          "Augment prompt + generate"
-        ],
-        correct: ["Chunk documents", "Embed chunks", "Store in vector DB", "Retrieve relevant chunks", "Augment prompt + generate"],
-        explanation: "RAG: first chunk → embed → store (offline indexing), then at query time: retrieve → augment → generate."
-      },
-      {
-        type: "truefalse",
-        question: "RAG completely eliminates hallucination in LLM responses.",
-        options: ["True", "False"],
-        correct: 1,
-        explanation: "RAG significantly reduces hallucination by grounding the model in retrieved facts, but doesn't eliminate it. The model can still misinterpret retrieved content or hallucinate when retrieved context doesn't contain the answer."
-      },
-      {
-        type: "mcq",
-        question: "What does 'top-k' mean in RAG retrieval?",
-        options: [
-          "The k highest-scoring training examples",
-          "The k most similar chunks retrieved for a query",
-          "The k best model checkpoints",
-          "The first k tokens of each document"
-        ],
-        correct: 1,
-        explanation: "After embedding the query, the system retrieves the k most semantically similar chunks from the vector database. k=3 to 5 is a common starting point."
-      },
-      {
-        type: "multi",
-        question: "What are valid strategies for chunking documents? (Select all that apply)",
-        options: [
-          "Fixed-size with overlap",
-          "Sentence-boundary aware chunking",
-          "Splitting by markdown/HTML headers",
-          "One chunk per entire document"
-        ],
-        correct: [0, 1, 2],
-        explanation: "Fixed-size, sentence-aware, and structure-aware chunking are all valid strategies. Keeping an entire document as one chunk defeats the purpose — it likely exceeds context limits and retrieval doesn't help narrow down relevant sections."
-      }
-    ]
-  };
-  </script>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 11: RAG — Retrieval-Augmented Generation — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/session.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/quiz.css" />
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="session-layout">
-    <aside class="session-sidebar" id="session-sidebar"></aside>
-    <main class="session-main" id="main">
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Noob-to-AI-Expert/">Home</a><span class="sep">›</span><a href="/Noob-to-AI-Expert/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 11</span></div>
+      <h1 class="session-title">RAG: Retrieval-Augmented Generation</h1>
+      <p class="session-tagline">The #1 production AI pattern. Ground your LLM in real documents — eliminate hallucination, stay current, build enterprise knowledge bots.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
 
-      <div class="session-header">
-        <div class="session-breadcrumb">
-          <a href="/">Home</a><span class="sep">›</span>
-          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
-          <span>RAG Pipelines</span>
-        </div>
-        <h1 class="session-title">RAG Pipelines</h1>
-        <div class="session-meta-bar">
-          <span class="badge badge-intermediate">Intermediate</span>
-          <span><i class="ri-time-line"></i> 65 min</span>
-          <span><i class="ri-number-1"></i> Session 11 of 20</span>
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="why-rag">Why RAG Exists</h2>
+        <p>LLMs have two fundamental problems for enterprise use: they hallucinate, and their knowledge is frozen at training cutoff. RAG solves both by giving the model fresh, real documents at inference time.</p>
+        <div class="compare-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="compare-card"><div class="card-icon">❌</div><h4 style="color:#f87171">Without RAG</h4><p>"What is our refund policy?" → LLM guesses or hallucinates a policy that doesn't exist. Knowledge cutoff makes it unable to answer about recent events.</p></div>
+          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#4ade80">With RAG</h4><p>"What is our refund policy?" → System retrieves your actual policy document → LLM reads it and answers accurately with citations. Always current, never hallucinated.</p></div>
         </div>
       </div>
 
-      <!-- Section 1: The Problem RAG Solves -->
-      <div class="concept-section" id="rag-problem">
-        <h2>The Problem RAG Solves</h2>
-        <p>
-          Large language models are trained on data up to a knowledge cutoff date. They also have no idea your internal documents exist — your company's Confluence wiki, Slack history, product specs, and legal contracts are invisible to the base model. When users ask about these, the model either refuses or, worse, invents plausible-sounding but false answers.
-        </p>
-        <p>
-          <strong>Retrieval-Augmented Generation (RAG)</strong> fixes this by giving the model a set of relevant documents at query time. Instead of relying purely on trained weights, the model reads the retrieved context and bases its answer on it. This grounds the model in real, up-to-date, private information without the cost of fine-tuning.
-        </p>
-
-        <div class="callout callout-info">
-          <span class="callout-icon"><i class="ri-information-line"></i></span>
-          <div class="callout-body">
-            <strong>Why RAG beats fine-tuning for knowledge</strong>
-            <p>Without RAG, asking an LLM about your internal docs is like asking someone who's never read them. Fine-tuning can help with style and format, but it doesn't reliably store factual knowledge — and the knowledge goes stale the moment your docs update. RAG keeps knowledge current at zero retraining cost.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 2: RAG Pipeline: 4 Stages -->
-      <div class="concept-section" id="rag-pipeline">
-        <h2>RAG Pipeline: 4 Stages</h2>
-        <p>
-          A RAG pipeline has a clear separation between <strong>offline indexing</strong> (done once, or on document update) and <strong>online retrieval</strong> (done per query). Here's the complete flow:
-        </p>
-
-        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 1.5rem 0; justify-content: center;">
-          <div style="background: var(--primary, #6c63ff); color: #fff; border-radius: 8px; padding: 0.6rem 1.1rem; font-weight: 600; text-align: center; min-width: 100px;">1. Chunk</div>
-          <span style="font-size: 1.4rem; color: var(--text-muted, #888);">→</span>
-          <div style="background: var(--primary, #6c63ff); color: #fff; border-radius: 8px; padding: 0.6rem 1.1rem; font-weight: 600; text-align: center; min-width: 100px;">2. Embed</div>
-          <span style="font-size: 1.4rem; color: var(--text-muted, #888);">→</span>
-          <div style="background: var(--primary, #6c63ff); color: #fff; border-radius: 8px; padding: 0.6rem 1.1rem; font-weight: 600; text-align: center; min-width: 100px;">3. Store</div>
-          <span style="font-size: 1.4rem; color: var(--text-muted, #888);">→</span>
-          <div style="background: var(--accent, #ff6584); color: #fff; border-radius: 8px; padding: 0.6rem 1.1rem; font-weight: 600; text-align: center; min-width: 140px;">4. Retrieve + Generate</div>
-        </div>
-        <p style="text-align:center; color: var(--text-muted); font-size: 0.85rem;">Stages 1–3: offline indexing &nbsp;|&nbsp; Stage 4: online (per query)</p>
-
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Stage</th>
-              <th>What Happens</th>
-              <th>Phase</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>1. Chunk</strong></td>
-              <td>Split documents into overlapping segments of 200–1000 tokens each</td>
-              <td>Offline</td>
-            </tr>
-            <tr>
-              <td><strong>2. Embed</strong></td>
-              <td>Convert each chunk to a dense vector using an embedding model</td>
-              <td>Offline</td>
-            </tr>
-            <tr>
-              <td><strong>3. Store</strong></td>
-              <td>Persist vectors + metadata in a vector database (Chroma, Pinecone, etc.)</td>
-              <td>Offline</td>
-            </tr>
-            <tr>
-              <td><strong>4. Retrieve + Generate</strong></td>
-              <td>Embed the query → find top-k chunks → inject into LLM prompt → generate answer</td>
-              <td>Online</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section 3: Chunking Strategies -->
-      <div class="concept-section" id="chunking-strategies">
-        <h2>Chunking Strategies</h2>
-        <p>
-          How you split documents dramatically affects retrieval quality. Too small and you lose context ("Paris" without the surrounding sentence about why it's mentioned). Too large and you exceed context limits and dilute relevance — the retrieved chunk contains your answer buried inside unrelated content.
-        </p>
-
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Strategy</th>
-              <th>How It Works</th>
-              <th>Best For</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Fixed-size with overlap</strong></td>
-              <td>Split every N characters/tokens, overlap by M characters to preserve context at boundaries</td>
-              <td>General purpose; easy to implement</td>
-            </tr>
-            <tr>
-              <td><strong>Sentence-boundary aware</strong></td>
-              <td>Split on sentence endings, accumulate until a token limit is reached</td>
-              <td>Prose documents, articles</td>
-            </tr>
-            <tr>
-              <td><strong>Markdown/HTML header</strong></td>
-              <td>Split on heading tags — each section becomes a chunk, preserving logical units</td>
-              <td>Docs, wikis, structured content</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot python"></span>chunking.py</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-text = """
-Retrieval-Augmented Generation (RAG) is a technique that enhances LLM outputs
-by fetching relevant documents at inference time. It was introduced in 2020 by
-Lewis et al. at Facebook AI Research.
-
-The core idea is simple: before generating a response, retrieve context from
-an external knowledge base and inject it into the prompt. This grounds the
-model in verified facts rather than relying solely on trained weights.
-
-RAG pipelines consist of two phases: offline indexing and online retrieval.
-During indexing, documents are chunked, embedded, and stored in a vector DB.
-During retrieval, the query is embedded and the most similar chunks are fetched.
-"""
-
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=200,        # characters per chunk (tune for your token budget)
-    chunk_overlap=40,      # overlap to preserve boundary context
-    separators=["\n\n", "\n", ". ", " ", ""],  # try splitting on paragraphs first
-)
-
-chunks = splitter.split_text(text)
-for i, chunk in enumerate(chunks):
-    print(f"--- Chunk {i+1} ({len(chunk)} chars) ---")
-    print(chunk)
-    print()</code></pre>
-        </div>
-
-        <div class="callout callout-tip">
-          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
-          <div class="callout-body">
-            <strong>Choosing chunk size</strong>
-            <p>A good starting point is 512 tokens with 50-token overlap for most documents. Evaluate retrieval quality by checking whether the correct chunk is in your top-k results for a sample of test queries — then adjust chunk size accordingly.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 4: The Retrieval Step -->
-      <div class="concept-section" id="retrieval-step">
-        <h2>The Retrieval Step</h2>
-        <p>
-          At query time, the user's question is passed through the same embedding model used during indexing. The resulting query vector is compared against all stored chunk vectors, and the top-k most similar chunks are returned.
-        </p>
-        <p>
-          The basic flow:
-        </p>
-        <ol>
-          <li>Embed the query using the <em>same</em> model as the documents (critical — different models produce incompatible vector spaces).</li>
-          <li>Run approximate nearest neighbor (ANN) search in the vector database to get top-k chunks.</li>
-          <li>Optionally re-rank: pass the query + each candidate chunk through a cross-encoder model that scores relevance more accurately (but more slowly).</li>
+      <div class="concept-section">
+        <h2 id="rag-pipeline">The RAG Pipeline: 6 Steps</h2>
+        <ol class="step-list">
+          <li><strong style="color:#e2e8f0">Load documents</strong> — PDFs, markdown files, web pages, databases. Parse text from raw files.</li>
+          <li><strong style="color:#e2e8f0">Chunk</strong> — Split documents into smaller pieces (e.g., 500 tokens with 50-token overlap). Smaller chunks = more precise retrieval.</li>
+          <li><strong style="color:#e2e8f0">Embed chunks</strong> — Convert each chunk to a vector using an embedding model.</li>
+          <li><strong style="color:#e2e8f0">Store in vector DB</strong> — Save chunk text + embedding + metadata to ChromaDB, Pinecone, etc.</li>
+          <li><strong style="color:#e2e8f0">Retrieve</strong> — At query time: embed the query, find top-k most similar chunks.</li>
+          <li><strong style="color:#e2e8f0">Generate</strong> — Inject retrieved chunks into the LLM prompt. Model answers using only provided context.</li>
         </ol>
 
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Retrieval Method</th>
-              <th>Speed</th>
-              <th>Accuracy</th>
-              <th>Use When</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>ANN (bi-encoder)</strong></td>
-              <td>Very fast (ms)</td>
-              <td>Good</td>
-              <td>Default — scales to millions of docs</td>
-            </tr>
-            <tr>
-              <td><strong>Cross-encoder re-ranker</strong></td>
-              <td>Slow (100–500ms)</td>
-              <td>Excellent</td>
-              <td>Re-rank top-20 candidates for precision</td>
-            </tr>
-            <tr>
-              <td><strong>Hybrid (BM25 + vectors)</strong></td>
-              <td>Medium</td>
-              <td>Very good</td>
-              <td>When exact keyword matches matter (e.g., product codes)</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-tip">
-          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
-          <div class="callout-body">
-            <strong>Add a Re-Ranker</strong>
-            <p>Add a re-ranker (cross-encoder) after retrieval to improve relevance — it's slow but accurate. Retrieve top-20 with ANN, re-rank to top-5 with the cross-encoder, then pass those 5 to the LLM. This two-stage approach gives you both speed and accuracy.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 5: Building the Augmented Prompt -->
-      <div class="concept-section" id="augmented-prompt">
-        <h2>Building the Augmented Prompt</h2>
-        <p>
-          The retrieved chunks are injected into the LLM's system or user prompt as context. The key design decision is where and how to inject them. Here's a minimal but production-ready RAG implementation without LangChain — just OpenAI and Chroma.
-        </p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot python"></span>minimal_rag.py</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">import os
-import chromadb
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import chromadb
 from openai import OpenAI
-from sentence_transformers import SentenceTransformer
+import PyPDF2
 
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
-
-# ----- OFFLINE: index documents -----
-docs = [
-    "Our refund policy allows returns within 30 days of purchase.",
-    "Premium members get free shipping on all orders over $50.",
-    "Customer support is available Monday–Friday, 9am–6pm EST.",
-    "We ship internationally to over 80 countries.",
-]
+client = OpenAI()
 chroma = chromadb.Client()
-collection = chroma.create_collection("faq")
+
+# ========== INDEXING PHASE (run once) ==========
+
+def load_pdf(path: str) -> str:
+    with open(path, "rb") as f:
+        reader = PyPDF2.PdfReader(f)
+        return "\n".join(page.extract_text() for page in reader.pages)
+
+def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
+    words = text.split()
+    chunks = []
+    for i in range(0, len(words), chunk_size - overlap):
+        chunk = " ".join(words[i:i + chunk_size])
+        if chunk:
+            chunks.append(chunk)
+    return chunks
+
+def embed_texts(texts: list[str]) -> list[list[float]]:
+    response = client.embeddings.create(model="text-embedding-3-small", input=texts)
+    return [d.embedding for d in response.data]
+
+# Load and index
+document_text = load_pdf("company_handbook.pdf")
+chunks = chunk_text(document_text)
+embeddings = embed_texts(chunks)
+
+collection = chroma.create_collection("company_docs")
 collection.add(
-    documents=docs,
-    embeddings=embedder.encode(docs).tolist(),
-    ids=[f"d{i}" for i in range(len(docs))],
+    documents=chunks,
+    embeddings=embeddings,
+    ids=[f"chunk_{i}" for i in range(len(chunks))],
+    metadatas=[{"source": "company_handbook.pdf", "chunk": i} for i in range(len(chunks))]
 )
 
-# ----- ONLINE: handle a user query -----
-def rag_answer(user_question: str, top_k: int = 3) -> str:
-    # 1. Embed the query
-    q_embedding = embedder.encode([user_question]).tolist()
+print(f"Indexed {len(chunks)} chunks")
 
-    # 2. Retrieve top-k chunks
-    results = collection.query(query_embeddings=q_embedding, n_results=top_k)
+# ========== RETRIEVAL + GENERATION (at query time) ==========
+
+def rag_answer(question: str, top_k: int = 5) -> str:
+    # Step 1: Retrieve relevant chunks
+    results = collection.query(
+        query_texts=[question],
+        n_results=top_k
+    )
     context_chunks = results["documents"][0]
-    context = "\n".join(f"- {c}" for c in context_chunks)
+    context = "\n\n---\n\n".join(context_chunks)
 
-    # 3. Build the augmented prompt
-    system_prompt = f"""You are a helpful customer support assistant.
-Answer the user's question using ONLY the context below.
+    # Step 2: Generate answer using retrieved context
+    prompt = f"""Answer the question using ONLY the provided context.
 If the answer isn't in the context, say "I don't have that information."
 
-CONTEXT:
-{context}"""
+Context:
+{context}
 
-    # 4. Call the LLM
+Question: {question}
+
+Answer:"""
+
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user",   "content": user_question},
-        ]
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0  # Low temp for factual answers
     )
     return response.choices[0].message.content
 
-# Test it
-print(rag_answer("Can I return something I bought last week?"))
-print(rag_answer("Do you deliver to Japan?"))</code></pre>
-        </div>
-
-        <div class="callout callout-info">
-          <span class="callout-icon"><i class="ri-information-line"></i></span>
-          <div class="callout-body">
-            <strong>Prompt template tip</strong>
-            <p>Always instruct the model to answer <em>only</em> from the provided context and to explicitly say "I don't know" when the context doesn't contain the answer. Without this instruction, the model will fall back to its training knowledge and potentially hallucinate.</p>
-          </div>
-        </div>
+# Test
+answer = rag_answer("What is our parental leave policy?")
+print(answer)</code></pre></div>
       </div>
 
-      <!-- Lab Section -->
-      <div class="lab-section" id="lab">
-        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
-          <div class="lab-header-left">
-            <div class="lab-icon"><i class="ri-flask-line"></i></div>
-            <div>
-              <div class="lab-title">Lab: PDF Chatbot with RAG</div>
-              <div class="lab-subtitle">Load a PDF, chunk it, embed with sentence-transformers, store in Chroma, build a Q&amp;A bot</div>
-            </div>
-          </div>
-          <i class="ri-arrow-down-s-line lab-chevron"></i>
-        </div>
-        <div class="lab-body">
-          <p>
-            You'll build a chatbot that can answer questions about any PDF document you upload. The complete pipeline: extract text from PDF → chunk → embed → store in Chroma → answer questions with a RAG-grounded LLM.
-          </p>
-
-          <a href="https://colab.research.google.com" target="_blank" rel="noopener" class="colab-badge"><span>📓</span> Open in Colab</a>
-
-          <ol class="lab-steps">
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Extract text from a PDF</div>
-                <div class="lab-step-desc">Install <code>pypdf</code> and extract all text pages from a PDF of your choice (e.g., a product manual or research paper).</div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Chunk the text</div>
-                <div class="lab-step-desc">Use <code>RecursiveCharacterTextSplitter</code> with chunk_size=500 and chunk_overlap=50. Print the number of chunks created.</div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Embed and store in Chroma</div>
-                <div class="lab-step-desc">Encode all chunks with <code>all-MiniLM-L6-v2</code> and load them into a Chroma collection with page number metadata.</div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Build the Q&amp;A loop</div>
-                <div class="lab-step-desc">Use the <code>rag_answer()</code> function pattern from the session to wire up the retrieval + generation. Ask at least 5 questions about your PDF.</div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Test failure cases</div>
-                <div class="lab-step-desc">Ask a question whose answer is NOT in the PDF. Verify the model correctly says it doesn't have that information rather than hallucinating.</div>
-              </div>
-            </li>
-          </ol>
-        </div>
+      <div class="concept-section">
+        <h2 id="chunking-strategies">Chunking Strategies</h2>
+        <p>How you chunk documents dramatically affects RAG quality. Bad chunking is the #1 cause of poor RAG performance.</p>
+        <table class="def-table">
+          <thead><tr><th>Strategy</th><th>Method</th><th>Best For</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Fixed-size</strong></td><td>Split every N tokens, with overlap</td><td>Simple, works for most docs. Fast to implement.</td></tr>
+            <tr><td><strong>Recursive</strong></td><td>Try to split on paragraphs → sentences → words</td><td>Better structure preservation. LangChain default.</td></tr>
+            <tr><td><strong>Semantic</strong></td><td>Split at topic boundaries using embedding similarity</td><td>Best quality. Expensive. Groups related content.</td></tr>
+            <tr><td><strong>Document-aware</strong></td><td>Split at markdown headers, PDF sections, HTML tags</td><td>Structured docs (wikis, documentation, reports).</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>Overlap Is Critical</h4><p>Without overlap, a key sentence at the boundary between two chunks gets split. A 50–100 token overlap ensures context sentences aren't lost. The tradeoff: more storage and slightly more redundancy in results.</p></div></div>
       </div>
 
-      <div id="quiz-container"></div>
-      <div id="session-nav"></div>
-    </main>
-    <aside class="session-toc" id="session-toc"></aside>
-  </div>
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/lab.js"></script>
-  <script src="/assets/js/quiz.js"></script>
-  <script src="/assets/js/session.js"></script>
+      <div class="concept-section">
+        <h2 id="improving-rag">Improving RAG Quality</h2>
+        <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+          <div class="compare-card"><div class="card-icon">🔀</div><h4 style="color:#60a5fa">Hybrid Search</h4><p>Combine keyword (BM25) + semantic search. Keyword catches exact matches. Semantic catches paraphrases. Merge with RRF (Reciprocal Rank Fusion).</p></div>
+          <div class="compare-card"><div class="card-icon">🔄</div><h4 style="color:#4ade80">Re-ranking</h4><p>After retrieving top-20 chunks, use a cross-encoder model to re-rank and keep top-5. Cross-encoders are slower but much more accurate than bi-encoders.</p></div>
+          <div class="compare-card"><div class="card-icon">❓</div><h4 style="color:#c084fc">HyDE</h4><p>Hypothetical Document Embeddings — generate a hypothetical answer, embed it, search with that embedding. Outperforms query embeddings alone.</p></div>
+          <div class="compare-card"><div class="card-icon">📝</div><h4 style="color:#fb923c">Query Expansion</h4><p>Use an LLM to rewrite the query into 3 variations, search with all three, merge results. Handles vague or ambiguous queries.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build a Chatbot Over Your Own Documents</h3>
+          <p>Estimated time: 60 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-11-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Load Your Documents</h4></div><p>Upload 3–5 PDF or markdown files to Colab. Use PyPDF2 or the python-docx library to extract text. Try Wikipedia articles if you don't have your own docs.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Chunk and Embed</h4></div><p>Implement the chunking function with 500-token chunks and 50-token overlap. Embed all chunks with OpenAI's embedding model. This may take a minute for large documents.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Build the RAG Loop</h4></div><p>Implement the full retrieve → generate pipeline. Ask 5 questions that require information from your documents. Verify the answers are accurate.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Test Hallucination Defense</h4></div><p>Ask a question whose answer is NOT in your documents. Does the model correctly say "I don't have that information"? If not, strengthen the prompt instruction.</p></div>
+        <div class="callout callout-tip"><span class="callout-icon">🏆</span><div class="callout-body"><h4>Stretch: Add Source Citations</h4><p>Store the source filename and page number in ChromaDB metadata. Include it in the response: "According to [company_handbook.pdf, page 12]..."</p></div></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/Noob-to-AI-Expert/sessions/intermediate/10-embeddings-search.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 10</span><span class="nav-title">Embeddings & Search</span></div></a>
+      <a href="/Noob-to-AI-Expert/sessions/intermediate/12-ai-app-development.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 12</span><span class="nav-title">AI App Development</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script><script src="/Noob-to-AI-Expert/assets/js/quiz.js"></script><script src="/Noob-to-AI-Expert/assets/js/lab.js"></script><script src="/Noob-to-AI-Expert/assets/js/session.js"></script><script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 11, slug: '11-rag', section: 'intermediate',
+  nextPath: '/sessions/intermediate/12-ai-app-development.html',
+  quizData: [
+    {id:'s11q01',type:'mcq',points:1,question:'What is the primary problem that RAG solves compared to using an LLM alone?',options:[{id:'a',text:'RAG makes LLMs respond faster'},{id:'b',text:'RAG reduces the cost of API calls'},{id:'c',text:'RAG grounds the LLM in real documents, reducing hallucination and enabling up-to-date answers',correct:true},{id:'d',text:'RAG allows LLMs to process images'}],explanation:'RAG solves two key problems: (1) Hallucination — the LLM is instructed to answer from provided documents only, not from its parametric memory; (2) Knowledge cutoff — you provide fresh documents at inference time, so the model can answer about recent events. RAG doesn\'t improve speed or directly reduce per-token cost.',hint:'What fundamental LLM limitation does providing documents in the prompt help solve?'},
+    {id:'s11q02',type:'mcq',points:1,question:'Why do we chunk documents instead of putting entire 100-page PDFs directly in the prompt?',options:[{id:'a',text:'Chunks are easier to read'},{id:'b',text:'Context windows have limits, and putting the full document fills the window with irrelevant content that drowns out relevant sections',correct:true},{id:'c',text:'The embedding model only accepts short texts'},{id:'d',text:'Chunking is required by vector database schemas'}],explanation:'Two reasons: (1) Context window limits — a 100-page PDF may be 50,000+ tokens, exceeding limits and costing a lot; (2) Precision — sending the full document means the LLM must sift through mostly irrelevant content. Retrieving only the 3–5 most relevant chunks focuses the model on what matters.',hint:'What happens to the signal-to-noise ratio when you include 99 irrelevant pages alongside 1 relevant page?'},
+    {id:'s11q03',type:'mcq',points:1,question:'In a RAG pipeline, what is the correct order of steps when a user asks a question?',options:[{id:'a',text:'Embed question → Store in vector DB → Retrieve → Generate'},{id:'b',text:'Embed question → Search vector DB → Inject retrieved chunks into prompt → LLM generates answer',correct:true},{id:'c',text:'LLM generates answer → Search vector DB → Verify answer'},{id:'d',text:'Store question → Retrieve similar questions → Copy their answers'}],explanation:'The query-time RAG flow: (1) Embed the question using the same model used for documents; (2) Search the vector DB for similar chunks; (3) Take top-k chunks and inject them into the LLM prompt as context; (4) LLM reads the context and generates a grounded answer. The vector DB population happens during indexing (one-time setup), not at query time.',hint:'Think about which steps are "indexing" (one-time) vs "query-time" (every user question).'},
+    {id:'s11q04',type:'truefalse',points:1,question:'Using temperature=0 in the generation step of a RAG pipeline is generally a good practice for factual question-answering applications.',correctAnswer:true,explanation:'Correct! Temperature=0 makes the model deterministic and picks the highest-probability token at each step, producing the most factual and consistent output. For creative tasks, higher temperature adds variety. But in RAG Q&A, you want the model to faithfully reproduce facts from the retrieved context, not get creative. Consistency also makes debugging easier.'},
+    {id:'s11q05',type:'multi',points:2,question:'Which of the following are common techniques to improve RAG retrieval quality beyond basic embedding search? Select all that apply.',options:[{id:'a',text:'Hybrid search (combine keyword BM25 + semantic embedding search)',correct:true},{id:'b',text:'Re-ranking with a cross-encoder model after initial retrieval',correct:true},{id:'c',text:'HyDE (generate hypothetical answers and search with those embeddings)',correct:true},{id:'d',text:'Increasing chunk size to 10,000 tokens'},{id:'e',text:'Query expansion (rewrite query into multiple variations)',correct:true}],explanation:'a, b, c, e are all proven RAG improvement techniques. Large chunks (d) actually hurt precision — they bring in too much irrelevant content per chunk and reduce the signal-to-noise ratio. Smaller, focused chunks with overlap generally outperform large chunks. The sweet spot is typically 200–500 tokens with 10–20% overlap.'}
+  ]
+};
+</script>
 </body>
 </html>

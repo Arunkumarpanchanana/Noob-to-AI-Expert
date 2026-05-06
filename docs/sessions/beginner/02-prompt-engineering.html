@@ -1,717 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>Prompt Engineering — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/session.css">
-  <link rel="stylesheet" href="/assets/css/quiz.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
-  <script src="/assets/js/progress.js"></script>
-  <script>
-  window.SESSION_META = {
-    id: 2,
-    slug: "02-prompt-engineering",
-    section: "beginner",
-    title: "Prompt Engineering",
-    nextSlug: "/sessions/beginner/03-python-for-ai.html",
-    quizData: [
-      {
-        type: "mcq",
-        question: "Which prompt component gives the LLM examples of the desired output format?",
-        options: ["Role", "Context", "Few-shot examples", "Constraints"],
-        correct: 2,
-        explanation: "Few-shot examples show the model the exact format and style you want, teaching by demonstration rather than just instruction. Seeing 2-3 examples dramatically reduces ambiguity and guides the model's output structure."
-      },
-      {
-        type: "mcq",
-        question: "Chain-of-Thought prompting improves LLM performance mainly on:",
-        options: [
-          "Creative writing tasks",
-          "Multi-step reasoning problems",
-          "Image generation",
-          "Code formatting"
-        ],
-        correct: 1,
-        explanation: "CoT prompting (adding 'think step by step' or explicit reasoning chains) dramatically improves performance on math, logic, and multi-step reasoning tasks. It forces the model to decompose the problem before answering."
-      },
-      {
-        type: "truefalse",
-        question: "Adding 'You are an expert in X' to a prompt always improves output quality regardless of the task.",
-        options: ["True", "False"],
-        correct: 1,
-        explanation: "Role prompts can help for complex domain tasks, but for simple tasks they may add no value and occasionally introduce unwanted verbosity. The biggest gains come from clear instructions, relevant context, and few-shot examples."
-      },
-      {
-        type: "multi",
-        question: "Which elements should a well-structured prompt include? (Select all that apply)",
-        options: [
-          "Clear instruction of what to do",
-          "Output format specification",
-          "Your personal biography",
-          "Relevant context or background"
-        ],
-        correct: [0, 1, 3],
-        explanation: "A good prompt has instruction, context, and output format. Your personal biography is irrelevant to the model and wastes tokens. The key elements are: what to do, relevant background, and how to format the response."
-      },
-      {
-        type: "mcq",
-        question: "What is the main advantage of few-shot prompting over zero-shot?",
-        options: [
-          "It uses fewer tokens",
-          "It shows the model examples of desired behavior",
-          "It runs faster",
-          "It works without an API key"
-        ],
-        correct: 1,
-        explanation: "Few-shot prompting provides concrete examples that show the model exactly what format and style to follow, reducing ambiguity. The model infers the pattern from examples rather than interpreting abstract instructions alone."
-      }
-    ]
-  };
-  </script>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 02: Prompt Engineering Foundations — Noob to AI Expert</title>
+  <meta name="description" content="Master the art and science of prompt engineering. Learn prompt anatomy, role prompting, chain-of-thought, and build prompts that actually work." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/session.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/quiz.css" />
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="session-layout">
-
-    <aside class="session-sidebar" id="session-sidebar"></aside>
-
-    <main class="session-main" id="main">
-
-      <!-- Header -->
-      <div class="session-header">
-        <div class="session-breadcrumb">
-          <a href="/index.html">Home</a>
-          <span class="sep"><i class="ri-arrow-right-s-line"></i></span>
-          <a href="/sections/beginner.html">Beginner</a>
-          <span class="sep"><i class="ri-arrow-right-s-line"></i></span>
-          <span>Session 2</span>
-        </div>
-        <h1 class="session-title">Prompt Engineering</h1>
-        <div class="session-meta-bar">
-          <span class="badge badge-beginner"><i class="ri-seedling-line"></i> Beginner</span>
-          <span><i class="ri-time-line"></i> 50 min</span>
-          <span><i class="ri-question-answer-line"></i> 5 quiz questions</span>
-          <span><i class="ri-flask-line"></i> 1 lab</span>
-        </div>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Noob-to-AI-Expert/">Home</a><span class="sep">›</span><a href="/Noob-to-AI-Expert/sections/beginner.html">Beginner</a><span class="sep">›</span><span>Session 02</span></div>
+      <h1 class="session-title">Prompt Engineering Foundations</h1>
+      <p class="session-tagline">The difference between a bad prompt and a great one is the difference between garbage output and magic. Learn the craft.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 60 min</span>
+        <span><span class="badge badge-beginner"><i class="fas fa-seedling"></i> Beginner</span></span>
+        <span><i class="fas fa-flask"></i> 3 Labs</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
       </div>
+    </header>
 
-      <!-- ==========================================
-           CONCEPT 1: What is a Prompt?
-           ========================================== -->
-      <div class="concept-section" id="what-is-a-prompt">
-        <h2>
-          <i class="ri-chat-4-line" style="color:var(--accent)"></i>
-          What is a Prompt?
-          <a href="#what-is-a-prompt" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
 
-        <p>A prompt is the text you send to an LLM to get a response. But a great prompt isn't just a question — it's a carefully structured piece of communication that gives the model everything it needs to produce exactly what you want.</p>
+    <!-- LEARN -->
+    <div class="tab-panel learn-content" data-panel="learn">
 
-        <p>Think of it like giving instructions to a brilliant but very literal assistant who has read everything ever written but has zero context about you, your project, or your standards. The more precise and complete your instructions, the better the output.</p>
-
-        <h3>The Anatomy of a Great Prompt</h3>
-
-        <div style="background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-lg);overflow:hidden;margin:1.5rem 0">
-          <div style="padding:1rem 1.25rem;background:var(--card);border-bottom:1px solid var(--card-border);font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Prompt Anatomy</div>
-          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:0.75rem">
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(129,140,248,0.15);color:var(--accent);font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">ROLE</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">You are a senior Python developer...</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">Sets the model's persona, expertise level, and communication style. Calibrates tone and vocabulary.</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(56,189,248,0.15);color:var(--code-hl);font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">INSTRUCTION</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">Review the following code and identify any bugs...</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">The core task. Be specific about the verb: explain, summarize, rewrite, list, classify, translate, evaluate.</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(52,211,153,0.15);color:var(--beginner);font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">CONTEXT</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">This is a payment processing function used in a high-traffic e-commerce API...</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">Background the model needs to give relevant, targeted output. What's the use case? Who's the audience?</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(251,191,36,0.15);color:var(--intermediate);font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">EXAMPLES</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">For example, a bug would be: "line 14 has an off-by-one error..."</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">Few-shot examples that demonstrate the exact style, format, and level of detail you want. Often the single biggest quality lever.</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(248,113,113,0.15);color:#F87171;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">CONSTRAINTS</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">Focus only on security and correctness issues, not style. Do not suggest refactors...</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">What the model should NOT do. Scope guards that prevent irrelevant output and keep responses focused.</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start">
-              <div style="background:rgba(192,132,252,0.15);color:var(--expert);font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:0.1rem">OUTPUT FORMAT</div>
-              <div>
-                <div style="font-size:0.9rem;color:var(--text);font-weight:500">Respond with a numbered list. For each bug: line number, description, severity (Low/Med/High), fix.</div>
-                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">Exactly how you want the response structured. Markdown, JSON, bullet points, table, code block — be explicit.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div class="concept-section">
+        <h2 id="what-is-prompting">Why Prompting Is a Skill, Not a Trick</h2>
+        <p>A prompt is your interface to an LLM. The model doesn't know what you want — it only knows what you say. Prompting is the art of communicating intent clearly enough that the model's output matches your actual goal.</p>
+        <p>This isn't about magic words or hacks. It's about understanding how LLMs work and structuring your request to exploit their strengths while avoiding their weaknesses.</p>
         <div class="callout callout-info">
-          <div class="callout-icon"><i class="ri-information-line"></i></div>
-          <div class="callout-body">
-            <strong>Not All Elements Are Always Needed</strong>
-            <p>For simple tasks ("What's the capital of France?") you need none of these. For complex tasks, each element you add narrows the output space toward what you actually want. Start simple and add elements only when outputs are missing the mark.</p>
-          </div>
+          <span class="callout-icon">💡</span>
+          <div class="callout-body"><h4>The Core Insight</h4><p>LLMs are next-token predictors trained on human writing. The best prompt is the one that makes the correct output the most statistically likely continuation of your input.</p></div>
         </div>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 2: Bad vs Good Prompt Rewrites
-           ========================================== -->
-      <div class="concept-section" id="prompt-rewrites">
-        <h2>
-          <i class="ri-edit-line" style="color:var(--accent)"></i>
-          The Bad vs Good Prompt Rewrite
-          <a href="#prompt-rewrites" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
+      <div class="concept-section">
+        <h2 id="prompt-anatomy">The 5 Elements of a Great Prompt</h2>
+        <p>Every effective prompt has up to five components. You don't always need all five — but knowing them lets you diagnose why a prompt fails.</p>
 
-        <p>The fastest way to understand prompt engineering is to see concrete before/after examples. These three rewrites demonstrate the same principles in different contexts.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+          <div class="compare-card"><div class="card-icon">🎭</div><h4 style="color:#38bdf8">1. Role</h4><p>Tell the model who it is. Sets the persona, expertise level, and tone for the response.</p><p style="font-size:0.8rem;color:#0ea5e9;margin-top:0.5rem;">"You are a senior data scientist..."</p></div>
+          <div class="compare-card"><div class="card-icon">📋</div><h4 style="color:#4ade80">2. Instruction</h4><p>What you want the model to DO. Be specific about the task, action, and desired format.</p><p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">"Summarize the following in 3 bullet points..."</p></div>
+          <div class="compare-card"><div class="card-icon">📄</div><h4 style="color:#c084fc">3. Context</h4><p>Background information the model needs. Your audience, the document, the goal, the constraints.</p><p style="font-size:0.8rem;color:#a855f7;margin-top:0.5rem;">"The audience is non-technical executives..."</p></div>
+          <div class="compare-card"><div class="card-icon">✏️</div><h4 style="color:#fb923c">4. Examples</h4><p>Show the model what good output looks like. One example often beats 100 words of description.</p><p style="font-size:0.8rem;color:#f97316;margin-top:0.5rem;">"Example output: [your sample here]"</p></div>
+          <div class="compare-card"><div class="card-icon">🚧</div><h4 style="color:#f87171">5. Constraints</h4><p>What the model should NOT do. Length limits, forbidden topics, required formats.</p><p style="font-size:0.8rem;color:#ef4444;margin-top:0.5rem;">"Do not include jargon. Max 200 words."</p></div>
+        </div>
 
-        <h3>Example 1: Email Writing</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+        <h3 id="bad-vs-good">Bad Prompt vs Good Prompt: Side-by-Side</h3>
+        <p>Let's see these elements in action with a real example: asking an LLM to write a professional email.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0;">
           <div>
-            <div style="font-size:0.75rem;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-close-circle-line"></i> Vague Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:#F87171"></span>bad-email.txt</div>
-              </div>
-              <pre><code class="language-plaintext">Write an email to my client about
-the project delay.</code></pre>
+            <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px 8px 0 0;padding:0.6rem 1rem;font-size:0.8rem;font-weight:600;color:#f87171;">❌ Bad Prompt</div>
+            <div style="background:#1e293b;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#94a3b8;font-family:var(--font-mono);line-height:1.7;">
+              Write an email about the meeting.
             </div>
-            <p style="font-size:0.8rem;color:var(--text-faint)">Result: Generic, wrong tone, may be too apologetic or too casual, wrong length.</p>
           </div>
           <div>
-            <div style="font-size:0.75rem;font-weight:700;color:var(--beginner);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-check-line"></i> Precise Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>good-email.txt</div>
-              </div>
-              <pre><code class="language-plaintext">You are a professional account manager
-at a software consultancy.
-
-Write a client email about a 2-week
-delay on their mobile app launch.
-
-Context: The delay is due to
-unexpected API integration issues.
-The client (TechCorp CEO) values
-directness and technical detail.
-
-Constraints:
-- Under 150 words
-- Acknowledge impact, explain cause,
-  state new timeline, offer call
-- Professional but not overly formal
-
-Format: Plain email with subject line.</code></pre>
+            <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px 8px 0 0;padding:0.6rem 1rem;font-size:0.8rem;font-weight:600;color:#4ade80;">✅ Good Prompt</div>
+            <div style="background:#1e293b;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#94a3b8;font-family:var(--font-mono);line-height:1.7;">
+              <span style="color:#38bdf8">You are an executive assistant</span> at a SaaS company.<br><br>
+              <span style="color:#4ade80">Write a concise meeting follow-up email</span> to the product team.<br><br>
+              <span style="color:#c084fc">Context: We met today to discuss Q3 roadmap priorities. Three items were agreed: (1) launch mobile app by Sep 1, (2) deprecate legacy API, (3) hire 2 ML engineers.</span><br><br>
+              <span style="color:#f87171">Keep it under 150 words. Professional but warm tone. No jargon.</span>
             </div>
           </div>
         </div>
 
-        <h3>Example 2: Code Explanation</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
-          <div>
-            <div style="font-size:0.75rem;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-close-circle-line"></i> Vague Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:#F87171"></span>bad-code.txt</div>
-              </div>
-              <pre><code class="language-plaintext">Explain this Python code to me.
+        <div class="callout callout-warn"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>Why Vague Prompts Fail</h4><p>The model has no idea which meeting, who the recipients are, what tone is appropriate, or what format you want. It will produce something generic. The output quality is a direct reflection of the prompt quality.</p></div></div>
+      </div>
 
-[code here]</code></pre>
-            </div>
-            <p style="font-size:0.8rem;color:var(--text-faint)">Result: May be too technical or too simple, unclear what level of explanation is wanted.</p>
-          </div>
-          <div>
-            <div style="font-size:0.75rem;font-weight:700;color:var(--beginner);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-check-line"></i> Precise Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>good-code.txt</div>
-              </div>
-              <pre><code class="language-plaintext">You are a patient coding teacher
-explaining to a complete beginner
-(no CS background).
+      <div class="concept-section">
+        <h2 id="techniques">Advanced Prompting Techniques</h2>
 
-Explain what this Python function does:
+        <h3 id="chain-of-thought">Chain-of-Thought Prompting</h3>
+        <p>LLMs produce better answers to complex problems when they "think aloud" step-by-step. Adding "think step by step" or showing reasoning in your examples dramatically improves accuracy on math, logic, and multi-step tasks.</p>
+        <div style="position:relative;">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-text">❌ Without CoT:
+Q: A store has 50 apples. It sells 23. Then gets a shipment of 40 more.
+   How many apples does it have?
+A: 67
 
-[code here]
-
-Structure your explanation as:
-1. What problem does this solve? (1-2
-   sentences, plain English)
-2. Walk through line by line
-3. Analogy: relate it to something
-   from everyday life
-4. One thing to watch out for
-
-Avoid jargon. If you must use a
-technical term, define it immediately.</code></pre>
-            </div>
-          </div>
+✅ With Chain-of-Thought:
+Q: A store has 50 apples. It sells 23. Then gets a shipment of 40 more.
+   How many apples does it have? Think step by step.
+A:
+Step 1: Start with 50 apples.
+Step 2: Sell 23 → 50 - 23 = 27 apples.
+Step 3: Receive 40 more → 27 + 40 = 67 apples.
+Answer: 67 apples.</code></pre>
         </div>
 
-        <h3>Example 3: Summarization</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
-          <div>
-            <div style="font-size:0.75rem;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-close-circle-line"></i> Vague Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:#F87171"></span>bad-summary.txt</div>
-              </div>
-              <pre><code class="language-plaintext">Summarize this article.
+        <h3 id="few-shot">Few-Shot Prompting</h3>
+        <p>Show the model 2–5 examples of input → output pairs before your actual request. This "programs" the model's behavior without fine-tuning.</p>
+        <div style="position:relative;">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">prompt = """
+Classify the sentiment of product reviews as POSITIVE, NEGATIVE, or NEUTRAL.
 
-[article text]</code></pre>
-            </div>
-            <p style="font-size:0.8rem;color:var(--text-faint)">Result: Unknown length, unknown focus, unclear format, may miss what you care about.</p>
-          </div>
-          <div>
-            <div style="font-size:0.75rem;font-weight:700;color:var(--beginner);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem"><i class="ri-check-line"></i> Precise Prompt</div>
-            <div class="code-block">
-              <div class="code-block-header">
-                <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>good-summary.txt</div>
-              </div>
-              <pre><code class="language-plaintext">You are an analyst summarizing
-research for a busy VP of Engineering.
+Review: "Battery lasts forever, best phone I've owned!"
+Sentiment: POSITIVE
 
-Summarize the article below. Focus on:
-- Technical findings and data points
-- Business/cost implications
-- Any risks or caveats mentioned
+Review: "Arrived broken, terrible packaging."
+Sentiment: NEGATIVE
 
-Format:
-- TL;DR: 2 sentences max
-- Key Points: 3-5 bullets
-- Action Items: what should eng team do?
+Review: "It's okay. Does what it says."
+Sentiment: NEUTRAL
 
-[article text]</code></pre>
-            </div>
-          </div>
+Review: "Fast delivery but the color looks different from photos."
+Sentiment: ???
+"""
+# The model will output: NEGATIVE (because the complaint outweighs the positive)</code></pre>
         </div>
 
-        <div class="callout callout-concept">
-          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
-          <div class="callout-body">
-            <strong>The Core Pattern</strong>
-            <p>Every rewrite follows the same pattern: <strong>Who is the model?</strong> + <strong>What exactly should it do?</strong> + <strong>For whom / in what context?</strong> + <strong>What format should it use?</strong> + <strong>What should it avoid?</strong> The more precisely you answer these five questions, the tighter your output quality range.</p>
-          </div>
+        <h3 id="system-prompts">System Prompts</h3>
+        <p>Most LLM APIs have a "system" message separate from the user message. This sets persistent behavior, persona, and constraints for the entire conversation.</p>
+        <div style="position:relative;">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">import openai
+
+client = openai.OpenAI(api_key="your-key")
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": """You are TechBot, a customer support assistant for Acme Software.
+Rules:
+- Only answer questions about Acme products
+- If asked about competitors, politely decline
+- Always end responses with 'How else can I help?'
+- Keep answers under 100 words"""
+        },
+        {
+            "role": "user",
+            "content": "How do I reset my password?"
+        }
+    ]
+)
+print(response.choices[0].message.content)</code></pre>
         </div>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 3: Prompting Techniques
-           ========================================== -->
-      <div class="concept-section" id="prompting-techniques">
-        <h2>
-          <i class="ri-tools-line" style="color:var(--accent)"></i>
-          Prompting Techniques
-          <a href="#prompting-techniques" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
-
-        <p>Beyond the anatomy of a single prompt, there are proven <em>techniques</em> for structuring how you communicate with an LLM. Each has specific strengths and appropriate use cases.</p>
-
-        <h3>Zero-Shot Prompting</h3>
-        <p>Give the task with no examples. The model relies entirely on its training to understand what you want. Works well for straightforward, well-defined tasks.</p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>zero-shot.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">Classify the sentiment of this review as Positive, Negative, or Neutral.
-
-Review: "The delivery was two days late and the packaging was damaged,
-but the product itself works perfectly."
-
-Sentiment:</code></pre>
-        </div>
-
-        <h3>Few-Shot Prompting</h3>
-        <p>Provide 2-5 examples of the exact input/output pattern you want before giving the actual task. The model infers the pattern from examples rather than from abstract description alone. This is extremely powerful for custom formats, domain-specific output, or unusual tasks.</p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>few-shot.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">Convert these customer messages into structured support tickets.
-
-Message: "My login stopped working after the update yesterday"
-Ticket: { "category": "Auth", "priority": "High", "summary":
-  "Login broken post-update", "action": "Investigate auth service" }
-
-Message: "Can I change my billing address?"
-Ticket: { "category": "Billing", "priority": "Low", "summary":
-  "Billing address update request", "action": "Direct to account settings" }
-
-Message: "The app crashes every time I try to upload a file over 10MB"
-Ticket:</code></pre>
-        </div>
-
-        <h3>Chain-of-Thought (CoT) Prompting</h3>
-        <p>For complex reasoning, math, or logic tasks, explicitly ask the model to think step-by-step before giving its final answer. This dramatically improves accuracy on multi-step problems because it forces the model to decompose the problem rather than jumping to a conclusion.</p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>chain-of-thought.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">A store sells apples for $0.50 each and oranges for $0.75 each.
-Sarah buys 4 apples and 3 oranges, pays with a $10 bill.
-How much change does she receive?
-
-Think through this step by step before giving your final answer.</code></pre>
-        </div>
-
-        <p>The key phrase is "think step by step" (or "let's work through this," "show your reasoning"). This single addition can raise accuracy on math and logic problems from 40% to 90%+ in some benchmarks.</p>
-
-        <div class="callout callout-tip">
-          <div class="callout-icon"><i class="ri-lightbulb-flash-line"></i></div>
-          <div class="callout-body">
-            <strong>When to Use Each</strong>
-            <p><strong>Zero-shot</strong> for simple, well-understood tasks. <strong>Few-shot</strong> when you need specific formatting or domain-specific output. <strong>Chain-of-Thought</strong> for any problem involving math, logic, multi-step reasoning, or complex analysis. The techniques can be combined: few-shot CoT (examples that show step-by-step reasoning) is among the most powerful approaches.</p>
-          </div>
-        </div>
+      <div class="concept-section">
+        <h2 id="common-failures">Why Prompts Fail: Diagnosis Guide</h2>
+        <table class="def-table">
+          <thead><tr><th>Symptom</th><th>Root Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Output is too generic</td><td>No context or examples provided</td><td>Add context about audience, purpose, constraints</td></tr>
+            <tr><td>Wrong format (prose when you wanted bullet points)</td><td>Format not specified</td><td>Explicitly state: "Respond with a numbered list"</td></tr>
+            <tr><td>Too long / too short</td><td>No length constraint</td><td>Add: "in exactly 3 sentences" or "max 200 words"</td></tr>
+            <tr><td>Hallucinated facts</td><td>Model filling gaps with guesses</td><td>Add "Only use information from the provided text" + provide the text</td></tr>
+            <tr><td>Wrong expertise level</td><td>No role or audience defined</td><td>Set role: "Explain like I'm 12" or "Assume expert audience"</td></tr>
+            <tr><td>Off-topic response</td><td>Ambiguous instruction</td><td>Be more specific; add constraints on what NOT to do</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- ==========================================
-           CONCEPT 4: System Prompts & Roles
-           ========================================== -->
-      <div class="concept-section" id="system-prompts">
-        <h2>
-          <i class="ri-settings-4-line" style="color:var(--accent)"></i>
-          System Prompts &amp; Roles
-          <a href="#system-prompts" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
-
-        <p>When you use an LLM via API, you typically have access to a <strong>system prompt</strong> — a special message that sets the model's overall behavior before any user interaction begins. Think of it as programming the model's personality and constraints for an entire conversation.</p>
-
-        <h3>How the Chat API Works</h3>
-        <p>The OpenAI-style API uses three message roles:</p>
-        <ul>
-          <li><strong>system:</strong> Persistent instructions that apply to the entire conversation. Only the developer sets this.</li>
-          <li><strong>user:</strong> The end user's messages.</li>
-          <li><strong>assistant:</strong> The model's previous responses (included for conversation history).</li>
-        </ul>
-
-        <h3>Example: Customer Service Bot</h3>
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>system-customer-service.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">You are a helpful customer support agent for Acme Electronics.
-
-Your personality: Friendly, patient, solution-focused. Never
-dismissive or technical unless the customer is clearly technical.
-
-Your capabilities:
-- Answer product questions using the knowledge base provided
-- Help troubleshoot common issues (see troubleshooting guide)
-- Process return requests (ask for order number first)
-- Escalate to human agents for billing disputes or complex issues
-
-Your constraints:
-- Never discuss competitor products
-- Do not make promises about shipping timelines not in our policy
-- If you don't know the answer, say so and offer to escalate
-- Keep responses under 150 words unless detailed steps are needed</code></pre>
+      <div class="concept-section">
+        <h2 id="quick-check">Quick Check</h2>
+        <div class="reveal-block">
+          <div class="reveal-question"><span>❓ A prompt says: "Summarize this article." What's the most important missing element?</span><span class="reveal-icon">▼</span></div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The article itself (context)</strong> — and also: who is the summary for? How long? What format? Without these, the model will produce a generic paragraph-length summary with no particular audience in mind.</div>
         </div>
-
-        <h3>Example: Coding Assistant</h3>
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>system-coding-assistant.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">You are a senior software engineer and coding assistant specializing
-in Python and TypeScript.
-
-When helping with code:
-- Default to type annotations and modern syntax
-- Prioritize readability over cleverness
-- Always explain WHY, not just WHAT
-- Point out potential bugs or edge cases proactively
-- If the approach has better alternatives, mention them briefly
-
-When reviewing code:
-- Be direct about problems, not just "consider using X"
-- Classify issues: bug / style / performance / security
-
-Format code blocks with the appropriate language tag.
-For complex explanations, use numbered steps.</code></pre>
-        </div>
-
-        <h3>Example: Teacher Persona</h3>
-        <div class="code-block">
-          <div class="code-block-header">
-            <div class="code-filename"><span class="lang-dot" style="background:#94A3B8"></span>system-teacher.txt</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-plaintext">You are a patient, encouraging teacher for adult learners studying AI
-concepts for the first time. Your students have no technical background.
-
-Teaching style:
-- Use concrete analogies before abstract definitions
-- Introduce vocabulary slowly; always define terms immediately
-- Validate that questions are good questions (they are)
-- After explaining, check understanding: "Does this make sense?
-  What questions do you have?"
-- Never say "it's simple" or "obviously" — nothing is obvious to a beginner
-
-If a student seems frustrated, acknowledge it:
-"This concept trips up a lot of people at first. Let's try a
-different angle."</code></pre>
-        </div>
-
-        <div class="callout callout-concept">
-          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
-          <div class="callout-body">
-            <strong>System Prompts Are Your API's Configuration</strong>
-            <p>When you build an AI product, the system prompt is your primary tool for shaping user experience. It sets the model's tone, capabilities, constraints, and personality for every interaction. Well-crafted system prompts are the difference between a frustrating chatbot and one that feels genuinely helpful and in-brand.</p>
-          </div>
+        <div class="reveal-block">
+          <div class="reveal-question"><span>❓ You want an LLM to always respond in Spanish. Where should you put that instruction?</span><span class="reveal-icon">▼</span></div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The System Prompt</strong> — System prompts persist across all messages in a conversation. Putting it in the user message means you'd have to repeat it every turn.</div>
         </div>
       </div>
+    </div>
 
-      <!-- ==========================================
-           CONCEPT 5: Common Pitfalls
-           ========================================== -->
-      <div class="concept-section" id="pitfalls">
-        <h2>
-          <i class="ri-error-warning-line" style="color:var(--accent)"></i>
-          Common Pitfalls
-          <a href="#pitfalls" class="heading-anchor"><i class="ri-link"></i></a>
-        </h2>
-
-        <p>Even experienced developers fall into these traps. Recognizing them is the first step to avoiding them.</p>
-
-        <h3>Pitfall 1: Ambiguous Instructions</h3>
-        <div class="callout callout-warning">
-          <div class="callout-icon"><i class="ri-alert-line"></i></div>
-          <div class="callout-body">
-            <strong>The Problem</strong>
-            <p>Vague words like "good," "professional," "brief," and "detailed" mean different things to different people — and to the model. "Write a brief summary" could mean 2 sentences or 2 paragraphs. "Make it more professional" — professional for a law firm or a startup?</p>
-            <p><strong>Fix:</strong> Quantify and specify. "Under 50 words" not "brief." "Use formal language appropriate for a Fortune 500 board memo" not "professional."</p>
+    <!-- LAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build Prompts for 3 Real Tasks</h3>
+          <p>Estimated time: 30 minutes · You'll need an API key (OpenAI or Anthropic) OR use the free ChatGPT/Claude web interface</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-02-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Colab</a>
+            <a href="https://chat.openai.com" target="_blank" class="btn-secondary"><i class="fas fa-external-link-alt"></i> Use ChatGPT</a>
           </div>
         </div>
 
-        <h3>Pitfall 2: Conflicting Constraints</h3>
-        <div class="callout callout-warning">
-          <div class="callout-icon"><i class="ri-alert-line"></i></div>
-          <div class="callout-body">
-            <strong>The Problem</strong>
-            <p>Instructions that contradict each other leave the model to guess which takes priority. "Be comprehensive AND concise" — which wins? "Explain it for a beginner BUT use proper technical terminology" — these can't both be fully satisfied.</p>
-            <p><strong>Fix:</strong> When constraints conflict, make the priority explicit. "Be comprehensive — completeness over brevity here" or "explain it for a beginner and briefly define technical terms when they're necessary."</p>
+        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 1: Email Writing</h3>
+        <div class="lab-step">
+          <div class="lab-step-header"><span class="step-num">1</span><h4>Write a Bad Prompt First</h4></div>
+          <p>Start with: <code>Write a professional email about a project delay.</code> Copy the output. Notice how vague it is.</p>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step-header"><span class="step-num">2</span><h4>Upgrade to a Full 5-Element Prompt</h4></div>
+          <div style="position:relative;">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-text">You are a senior project manager at a software consultancy.
+
+Write a professional email to our client (Acme Corp) notifying them
+that the mobile app launch is delayed by 2 weeks due to unexpected
+security vulnerabilities discovered during QA testing.
+
+The email should:
+- Apologize sincerely but not excessively
+- Briefly explain the reason (security issues found in auth flow)
+- Provide the new launch date (September 15th instead of September 1st)
+- Offer a call this week to discuss concerns
+- End on a positive, forward-looking note
+
+Tone: Professional but warm. Max 200 words. No bullet points in the email itself.</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">Run this and compare the output to the bad prompt. Notice the difference in specificity, tone, and usefulness.</p>
+        </div>
+
+        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 2: Data Extraction</h3>
+        <div class="lab-step">
+          <div class="lab-step-header"><span class="step-num">3</span><h4>Extract Structured Data from Free Text</h4></div>
+          <div style="position:relative;">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-text">Extract the following fields from the customer support message below.
+Return ONLY a JSON object with these exact keys:
+{
+  "customer_name": string,
+  "product": string,
+  "issue": string,
+  "urgency": "low" | "medium" | "high",
+  "contact_requested": boolean
+}
+
+Customer message:
+"Hi, I'm Sarah Johnson and I've been having trouble with the ProMax
+headphones I bought last Tuesday. The left earbud keeps cutting out
+every few minutes. This is really frustrating because I have an
+important Zoom call tomorrow morning. Could someone please call me?"</code></pre>
           </div>
         </div>
 
-        <h3>Pitfall 3: Overloading One Prompt</h3>
-        <div class="callout callout-warning">
-          <div class="callout-icon"><i class="ri-alert-line"></i></div>
-          <div class="callout-body">
-            <strong>The Problem</strong>
-            <p>Asking the model to do 5 different things in one prompt almost always produces worse results than breaking it into sequential prompts. "Analyze this document, summarize it, extract action items, identify risks, translate it to Spanish, and format it as a report" — the model tries to do everything at mediocre quality.</p>
-            <p><strong>Fix:</strong> Chain prompts. Do the analysis first, get that output, then summarize it, then translate. Each step gets full model attention and you can verify quality before proceeding.</p>
-          </div>
+        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 3: Summarization with Constraints</h3>
+        <div class="lab-step">
+          <div class="lab-step-header"><span class="step-num">4</span><h4>Summarize for Different Audiences</h4></div>
+          <p>Take any long article you find online. Write two different prompts that produce: (a) a 3-sentence summary for a 10-year-old, and (b) a technical bullet-point summary for an expert. Compare the outputs.</p>
         </div>
 
-        <h3>Pitfall 4: Forgetting the Negative Space</h3>
-        <div class="callout callout-warning">
-          <div class="callout-icon"><i class="ri-alert-line"></i></div>
-          <div class="callout-body">
-            <strong>The Problem</strong>
-            <p>Telling the model what you want is necessary but often insufficient. Without explicit "do NOT" instructions, the model will include things you didn't want: preamble ("Great question!"), caveats, disclaimers, suggestions you didn't ask for, or alternative interpretations of your task.</p>
-            <p><strong>Fix:</strong> Add a constraints section. "Do not add preamble or caveats. Do not suggest alternatives unless asked. Return only the requested output."</p>
-          </div>
+        <div class="callout callout-tip" style="margin-top:1.5rem;">
+          <span class="callout-icon">🏆</span>
+          <div class="callout-body"><h4>Challenge: Prompt Red-Teaming</h4><p>Try to get the model to produce a bad output by writing a deliberately confusing or ambiguous prompt. Then fix it. Understanding failure modes makes you a better prompt engineer.</p></div>
         </div>
       </div>
+    </div>
 
-      <!-- ==========================================
-           LAB: Prompt Rewrite Workshop
-           ========================================== -->
-      <div class="lab-section" id="lab-section">
-        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
-          <div class="lab-header-left">
-            <div class="lab-icon"><i class="ri-flask-line"></i></div>
-            <div>
-              <div class="lab-title">Prompt Rewrite Workshop</div>
-              <div class="lab-subtitle">Transform vague prompts into precise, high-quality instructions</div>
-            </div>
-          </div>
-          <i class="ri-arrow-down-s-line lab-chevron"></i>
-        </div>
-        <div class="lab-body">
-          <ol class="lab-steps">
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Start with the classic vague prompt</div>
-                <div class="lab-step-desc">
-                  Here's the original, unfocused prompt:
-                  <div class="code-block" style="margin-top:0.75rem">
-                    <div class="code-block-header">
-                      <div class="code-filename"><span class="lang-dot" style="background:#F87171"></span>vague.txt</div>
-                    </div>
-                    <pre><code class="language-plaintext">Write something about Python.</code></pre>
-                  </div>
-                  This produces wildly inconsistent results. It could be a poem, a history essay, a tutorial — the model has no idea what you actually need.
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Apply the anatomy step by step</div>
-                <div class="lab-step-desc">
-                  Let's add each element:
-                  <ul style="margin:0.5rem 0">
-                    <li><strong>Role:</strong> You are a Python tutor</li>
-                    <li><strong>Instruction:</strong> Explain what Python is and why beginners should learn it</li>
-                    <li><strong>Context:</strong> For a complete beginner with no programming background</li>
-                    <li><strong>Constraints:</strong> Under 100 words, no jargon (define any technical term you use)</li>
-                    <li><strong>Output format:</strong> Three short bullet points</li>
-                  </ul>
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">The improved prompt</div>
-                <div class="lab-step-desc">
-                  <div class="code-block">
-                    <div class="code-block-header">
-                      <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>improved.txt</div>
-                      <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)"><i class="ri-file-copy-line"></i> Copy</button>
-                    </div>
-                    <pre><code class="language-plaintext">You are a patient Python tutor teaching adults with zero
-programming experience.
+    <!-- QUIZ -->
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
 
-Explain what Python is and why it's a great first programming
-language to learn.
-
-Audience: Complete beginner, no technical background.
-Constraints: Under 100 words total. No unexplained jargon —
-if you use a technical term, define it in parentheses immediately.
-Format: Exactly 3 bullet points.</code></pre>
-                  </div>
-                  Notice how specific and constrained this is. The model now has almost no room to produce something you didn't want.
-                </div>
-              </div>
-            </li>
-            <li class="lab-step">
-              <div class="lab-step-content">
-                <div class="lab-step-title">Challenge: Improve these 3 vague prompts</div>
-                <div class="lab-step-desc">
-                  Try to rewrite each before revealing the improved version:
-
-                  <div class="reveal-block" style="margin-top:0.75rem">
-                    <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                      <span>Vague: "Explain machine learning." — Show improved version</span>
-                      <i class="ri ri-arrow-down-s-line"></i>
-                    </div>
-                    <div class="reveal-content">
-                      <div class="code-block" style="margin-top:0">
-                        <div class="code-block-header">
-                          <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>ml-improved.txt</div>
-                        </div>
-                        <pre><code class="language-plaintext">You are a science communicator who explains technical concepts
-using everyday analogies (think: explain it like I'm 12).
-
-Explain what machine learning is in 3-4 sentences. Use one
-concrete real-world analogy that someone without a tech background
-would immediately understand. End with one sentence on why it
-matters today. No math, no jargon.</code></pre>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="reveal-block">
-                    <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                      <span>Vague: "Fix my code." — Show improved version</span>
-                      <i class="ri ri-arrow-down-s-line"></i>
-                    </div>
-                    <div class="reveal-content">
-                      <div class="code-block" style="margin-top:0">
-                        <div class="code-block-header">
-                          <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>code-fix-improved.txt</div>
-                        </div>
-                        <pre><code class="language-plaintext">You are a Python expert and code reviewer.
-
-The following Python function is supposed to [describe what it
-should do], but it raises a [specific error / produces wrong output].
-
-[paste code]
-
-Task: Identify the bug(s) and provide the corrected code.
-Format:
-1. Bug description: what's wrong and why
-2. Fixed code (full function)
-3. One-line explanation of the fix
-Do NOT refactor or rename variables — fix only the bug.</code></pre>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="reveal-block">
-                    <div class="reveal-trigger" onclick="this.closest('.reveal-block').classList.toggle('open')">
-                      <span>Vague: "Write a product description." — Show improved version</span>
-                      <i class="ri ri-arrow-down-s-line"></i>
-                    </div>
-                    <div class="reveal-content">
-                      <div class="code-block" style="margin-top:0">
-                        <div class="code-block-header">
-                          <div class="code-filename"><span class="lang-dot" style="background:var(--beginner)"></span>product-desc-improved.txt</div>
-                        </div>
-                        <pre><code class="language-plaintext">You are a copywriter specializing in B2C tech products.
-Brand voice: approachable, slightly playful, confidence-inspiring.
-
-Write a product description for: [product name + 3-4 key features]
-Target buyer: [describe persona, e.g., "busy parent aged 30-45,
-not technically savvy, values simplicity and reliability"]
-
-Format:
-- Headline: benefit-first, max 10 words
-- Body: 2 short paragraphs, ~50 words each
-- CTA: one sentence
-- Avoid: technical specs, passive voice, clichés like "cutting-edge"</code></pre>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Quiz -->
-      <div id="quiz-section"></div>
-      <div id="session-nav"></div>
-
-    </main>
-
-    <aside class="session-toc" id="session-toc"></aside>
-  </div>
-
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/lab.js"></script>
-  <script src="/assets/js/quiz.js"></script>
-  <script src="/assets/js/session.js"></script>
+    <div class="session-nav-bottom">
+      <a href="/Noob-to-AI-Expert/sessions/beginner/01-what-is-ai.html" class="session-nav-btn" id="prev-session">
+        <i class="fas fa-arrow-left"></i>
+        <div><span class="nav-label">Session 01</span><span class="nav-title">What AI Really Is</span></div>
+      </a>
+      <a href="/Noob-to-AI-Expert/sessions/beginner/03-python-for-ai.html" class="session-nav-btn next" id="next-session">
+        <div><span class="nav-label">Session 03</span><span class="nav-title">Python for AI</span></div>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script><script src="/Noob-to-AI-Expert/assets/js/quiz.js"></script><script src="/Noob-to-AI-Expert/assets/js/lab.js"></script><script src="/Noob-to-AI-Expert/assets/js/session.js"></script><script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 2, slug: '02-prompt-engineering', section: 'beginner',
+  nextPath: '/sessions/beginner/03-python-for-ai.html',
+  quizData: [
+    {
+      id:'s02q01', type:'mcq', points:1,
+      question:'You ask an LLM: "Write something about climate change." The output is a 500-word generic essay when you wanted a 3-point executive summary. Which prompt element was most critically missing?',
+      options:[
+        {id:'a',text:'Role (you didn\'t give the model a persona)'},
+        {id:'b',text:'Instruction specificity — you didn\'t specify format, length, or audience',correct:true},
+        {id:'c',text:'Examples (you should have shown a sample output)'},
+        {id:'d',text:'Context (the model doesn\'t know about climate change)'}
+      ],
+      explanation:'The instruction was too vague. "Write something" gives no format, length, audience, or purpose. A better instruction: "Write a 3-point executive summary on climate change for a CFO audience, max 100 words per point."',
+      hint:'Which element tells the model HOW to respond and in what format?'
+    },
+    {
+      id:'s02q02', type:'truefalse', points:1,
+      question:'Few-shot prompting means showing the model 2–5 examples of input→output pairs before your actual request, which helps the model understand the desired format and behavior.',
+      correctAnswer: true,
+      explanation:'Correct! Few-shot prompting is one of the most powerful techniques. By providing 2–5 examples, you "program" the model\'s behavior for your specific task without changing any weights. Zero-shot = no examples. One-shot = one example. Few-shot = 2–5 examples.'
+    },
+    {
+      id:'s02q03', type:'mcq', points:1,
+      question:'Which technique should you use when asking an LLM to solve a multi-step math problem or complex reasoning task?',
+      options:[
+        {id:'a',text:'Few-shot prompting with math examples'},
+        {id:'b',text:'Chain-of-thought prompting — asking the model to think step by step',correct:true},
+        {id:'c',text:'Making the prompt shorter and more direct'},
+        {id:'d',text:'Using all-caps for important words'}
+      ],
+      explanation:'Chain-of-thought (CoT) prompting dramatically improves LLM accuracy on reasoning tasks. Adding "think step by step" or "show your work" forces the model to generate intermediate steps, which reduces errors. Simply adding examples (few-shot) without CoT is less effective for multi-step reasoning.',
+      hint:'This technique makes the model externalize its reasoning process.'
+    },
+    {
+      id:'s02q04', type:'multi', points:2,
+      question:'Which of the following are valid strategies to prevent an LLM from hallucinating (making up facts)? Select all that apply.',
+      options:[
+        {id:'a',text:'Add "Only use information from the provided document" to your prompt',correct:true},
+        {id:'b',text:'Include the actual source text in the prompt context',correct:true},
+        {id:'c',text:'Ask the model to say "I don\'t know" when uncertain',correct:true},
+        {id:'d',text:'Use a longer model context window'},
+        {id:'e',text:'Tell the model to cite its sources',correct:true}
+      ],
+      explanation:'The best anti-hallucination strategies are: (1) provide the source text directly in the prompt, (2) instruct the model to only use that text, (3) ask it to express uncertainty, and (4) require citations. A longer context window doesn\'t reduce hallucinations — it just allows more text to be included.'
+    },
+    {
+      id:'s02q05', type:'mcq', points:1,
+      question:'You\'re building a customer service chatbot that must always respond in French and never discuss competitor products. Where should these persistent rules be placed?',
+      options:[
+        {id:'a',text:'At the end of each user message'},
+        {id:'b',text:'In the system prompt',correct:true},
+        {id:'c',text:'In a separate "rules" message after each response'},
+        {id:'d',text:'In the model\'s temperature setting'}
+      ],
+      explanation:'The system prompt is the correct place for persistent instructions. It\'s set once at the start and applies to every message in the conversation. Repeating instructions in every user message is verbose and fragile. Temperature is a sampling parameter, not a content constraint.',
+      hint:'Which message type persists across all turns of a conversation?'
+    }
+  ]
+};
+</script>
 </body>
 </html>

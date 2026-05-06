@@ -1,438 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>Your First AI App — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/session.css">
-  <link rel="stylesheet" href="/assets/css/quiz.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
-  <script>
-  window.SESSION_META = {
-    id: 5,
-    slug: "05-first-ai-app",
-    section: "beginner",
-    title: "Your First AI App",
-    nextSlug: "/sessions/intermediate/06-ml-fundamentals.html",
-    quizData: [
-      {
-        type: "mcq",
-        question: "In the OpenAI Chat API, which role's message sets the AI's overall behavior and persona?",
-        options: ["user", "assistant", "system", "context"],
-        correct: 2,
-        explanation: "The 'system' message is read first and sets the AI's persona, instructions, and constraints. It's like giving the AI its job description before the conversation starts."
-      },
-      {
-        type: "mcq",
-        question: "What does the 'temperature' parameter control in LLM APIs?",
-        options: ["Processing speed", "Randomness and creativity of output", "Context window size", "API rate limits"],
-        correct: 1,
-        explanation: "Temperature (0-2) controls randomness. Low temperature (0-0.3) gives focused, deterministic output. High temperature (0.8-2) gives more creative, varied output."
-      },
-      {
-        type: "truefalse",
-        question: "You should hardcode your API key directly in your Python script for ease of use.",
-        options: ["True", "False"],
-        correct: 1,
-        explanation: "Never hardcode API keys. Use environment variables (os.environ['OPENAI_API_KEY']) or .env files loaded with python-dotenv. Exposed keys can be scraped from GitHub and used to run up your bill."
-      },
-      {
-        type: "mcq",
-        question: "What does 'max_tokens' control in an API call?",
-        options: ["Input length", "Output length limit", "Model size", "Conversation history length"],
-        correct: 1,
-        explanation: "max_tokens limits the length of the model's response. One token is approximately 4 characters or three-quarters of a word in English."
-      },
-      {
-        type: "multi",
-        question: "Which are valid components of an AI app's architecture? (Select all that apply)",
-        options: ["User interface (web, CLI, etc.)", "LLM API call", "Prompt template", "Neural network training loop"],
-        correct: [0, 1, 2],
-        explanation: "Most AI apps use an existing model via API — you rarely train from scratch. The core components are: UI, prompt template, and API call. Training is a separate, expensive process done by AI labs."
-      }
-    ]
-  };
-  </script>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 05: Your First AI App — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/session.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/quiz.css" />
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="session-layout">
-    <aside class="session-sidebar" id="session-sidebar"></aside>
-    <main class="session-main" id="main">
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Noob-to-AI-Expert/">Home</a><span class="sep">›</span><a href="/Noob-to-AI-Expert/sections/beginner.html">Beginner</a><span class="sep">›</span><span>Session 05</span></div>
+      <h1 class="session-title">Your First AI App</h1>
+      <p class="session-tagline">Stop reading. Start building. We'll ship a working AI Study Assistant from scratch — API call, conversation loop, and all.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-beginner"><i class="fas fa-seedling"></i> Beginner</span></span>
+        <span><i class="fas fa-flask"></i> Build Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
 
-      <div class="session-header">
-        <div class="session-breadcrumb">
-          <a href="/">Home</a><span class="sep">›</span>
-          <a href="/sections/beginner.html">Beginner</a><span class="sep">›</span>
-          <span>Your First AI App</span>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="anatomy">Anatomy of an AI App</h2>
+        <p>Every AI application — no matter how complex — is built from the same 4 components. Once you understand these, you can read and build any AI app.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">⌨️</div><h4 style="color:#38bdf8">Input</h4><p>What the user provides. Text, files, images, voice, form data.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📋</div><h4 style="color:#4ade80">Prompt</h4><p>How you package the input + context + instructions for the model.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🤖</div><h4 style="color:#c084fc">Model</h4><p>The LLM that processes the prompt and generates a response.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📤</div><h4 style="color:#fb923c">Output</h4><p>The model's response — displayed, stored, or used to trigger another action.</p></div>
         </div>
-        <h1 class="session-title">Your First AI App</h1>
-        <div class="session-meta-bar">
-          <span class="badge badge-beginner">Beginner</span>
-          <span><i class="ri-time-line"></i> 55 min</span>
-          <span><i class="ri-number-1"></i> Session 5 of 20</span>
-        </div>
+        <div class="callout callout-info"><span class="callout-icon">🔄</span><div class="callout-body"><h4>Conversation = Repeated Loop</h4><p>A chatbot is just this 4-step loop running continuously. Each turn, the full conversation history is included in the prompt so the model has context. This is called the "context window".</p></div></div>
       </div>
 
-      <!-- Section 1: The AI App Architecture -->
-      <div class="concept-section" id="ai-app-architecture">
-        <h2>The AI App Architecture</h2>
-        <p>
-          The architecture of a modern AI app is simpler than most people expect. You don't need to train a model, provision GPUs, or understand the math. The core loop is just four steps:
-        </p>
+      <div class="concept-section">
+        <h2 id="minimal-chatbot">Minimal Working Chatbot</h2>
+        <p>Here is the complete minimal chatbot — ~30 lines of Python. Read every line carefully.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
 
-        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin:1.5rem 0; font-size:0.95rem;">
-          <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:8px; padding:0.6rem 1.1rem; font-weight:600;">
-            <i class="ri-user-line"></i> User Input
-          </div>
-          <span style="font-size:1.3rem; color:var(--color-muted,#999)">→</span>
-          <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:8px; padding:0.6rem 1.1rem; font-weight:600;">
-            <i class="ri-braces-line"></i> Prompt Template
-          </div>
-          <span style="font-size:1.3rem; color:var(--color-muted,#999)">→</span>
-          <div style="background:var(--color-primary-soft,#ede9fe); border:1.5px solid var(--color-primary,#7c3aed); border-radius:8px; padding:0.6rem 1.1rem; font-weight:600; color:var(--color-primary,#7c3aed)">
-            <i class="ri-openai-line"></i> LLM API
-          </div>
-          <span style="font-size:1.3rem; color:var(--color-muted,#999)">→</span>
-          <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:8px; padding:0.6rem 1.1rem; font-weight:600;">
-            <i class="ri-chat-3-line"></i> Response
-          </div>
-        </div>
+client = anthropic.Anthropic(api_key="your-key")
 
-        <p>
-          The <strong>prompt template</strong> is where your application logic lives. It combines a system prompt (the AI's instructions) with the user's message and any relevant context. The API handles the hard work — you just send text and receive text back.
-        </p>
+SYSTEM_PROMPT = """You are a helpful AI study assistant for students learning AI concepts.
+Your goals:
+- Explain AI concepts clearly with analogies and examples
+- Ask follow-up questions to check understanding
+- When a student seems confused, try a different explanation
+- Keep responses concise (under 150 words unless asked for more)"""
 
-        <div class="callout callout-info">
-          <div class="callout-icon"><i class="ri-information-line"></i></div>
-          <div class="callout-body">
-            <strong>Key Insight:</strong> You don't need to train a model. You can call existing, state-of-the-art models like GPT-4o or Claude via API. This is how 95% of production AI apps are built today.
-          </div>
-        </div>
-      </div>
+conversation_history = []
 
-      <!-- Section 2: The OpenAI API -->
-      <div class="concept-section" id="openai-api">
-        <h2>The OpenAI API</h2>
-        <p>
-          The OpenAI Chat Completions API takes a list of <strong>messages</strong> and returns the model's next message. Each message has a <code>role</code> and <code>content</code>. There are three roles:
-        </p>
-        <ul>
-          <li><strong>system</strong> — Sets the AI's persona, tone, and behavioral rules. Read once at the start. This is your main control lever.</li>
-          <li><strong>user</strong> — What the human says or asks.</li>
-          <li><strong>assistant</strong> — What the AI has said in previous turns (for multi-turn conversations).</li>
-        </ul>
+print("🤖 AI Study Assistant ready! (type 'quit' to exit)\n")
 
-        <p>Two other parameters you'll always configure:</p>
-        <ul>
-          <li><strong>temperature</strong> (0–2): Controls randomness. 0 = deterministic and focused. 1 = balanced. 2 = highly creative and unpredictable. For factual tasks, use 0–0.3. For creative tasks, use 0.7–1.2.</li>
-          <li><strong>max_tokens</strong>: Hard cap on response length. 1 token ≈ 4 characters. A typical paragraph is ~100–150 tokens.</li>
-        </ul>
+while True:
+    user_input = input("You: ").strip()
 
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">api_chat.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">import os
-from openai import OpenAI
+    if user_input.lower() in ["quit", "exit", "q"]:
+        print("Goodbye! Keep learning! 🚀")
+        break
 
-# The client reads OPENAI_API_KEY from environment automatically
-client = OpenAI()
+    if not user_input:
+        continue
 
-response = client.chat.completions.create(
-    model="gpt-4o-mini",          # cheaper model, great for learning
-    temperature=0.7,               # balanced creativity
-    max_tokens=500,                # limit response length
-    messages=[
-        {
-            "role": "system",
-            "content": "You are a helpful AI tutor specializing in explaining "
-                       "complex topics in simple, clear language. Always use "
-                       "concrete examples and analogies."
-        },
-        {
-            "role": "user",
-            "content": "What is gradient descent? Explain it like I'm 15."
-        }
-    ]
-)
+    # Add user message to history
+    conversation_history.append({
+        "role": "user",
+        "content": user_input
+    })
 
-# Extract the text from the response
-answer = response.choices[0].message.content
-print(answer)
-
-# You can also inspect token usage (for cost tracking)
-print(f"\nTokens used: {response.usage.total_tokens}")</code></pre>
-        </div>
-      </div>
-
-      <!-- Section 3: Building a Study Assistant -->
-      <div class="concept-section" id="study-assistant">
-        <h2>Building a Study Assistant</h2>
-        <p>
-          A study assistant chatbot has one job: help the user understand topics on demand. The system prompt is where we define this behavior, set the tone, and add any constraints. The application loop reads user input, builds the message list, calls the API, and prints the reply.
-        </p>
-
-        <p>
-          Notice how we maintain a <code>conversation_history</code> list. This is how you give the model "memory" — you include prior messages in every API call. The model is stateless; it only knows what you send it.
-        </p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">study_assistant.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">import os
-from openai import OpenAI
-
-client = OpenAI()   # reads OPENAI_API_KEY from environment
-
-SYSTEM_PROMPT = """You are an expert AI study assistant helping a student
-learn machine learning and AI concepts from scratch.
-
-Your rules:
-- Explain concepts clearly and concisely using everyday analogies
-- When asked for examples, give 2-3 concrete ones
-- If the student seems confused, try a different explanation angle
-- End each response with one follow-up question to check understanding
-- Keep responses under 200 words unless asked for more detail
-"""
-
-def chat(user_message: str, history: list) -> str:
-    """Send a message and get a reply, maintaining conversation history."""
-    history.append({"role": "user", "content": user_message})
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        temperature=0.6,
-        max_tokens=600,
-        messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history
+    # Call the model with full history
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=1024,
+        system=SYSTEM_PROMPT,
+        messages=conversation_history
     )
 
-    assistant_reply = response.choices[0].message.content
-    history.append({"role": "assistant", "content": assistant_reply})
-    return assistant_reply
+    assistant_message = response.content[0].text
 
+    # Add assistant response to history (important!)
+    conversation_history.append({
+        "role": "assistant",
+        "content": assistant_message
+    })
 
-def main():
-    print("Study Assistant ready. Type 'quit' to exit.\n")
-    history = []
+    print(f"\n🤖 Assistant: {assistant_message}\n")</code></pre></div>
 
-    while True:
-        user_input = input("You: ").strip()
-        if not user_input or user_input.lower() in ("quit", "exit"):
-            print("Goodbye!")
-            break
-
-        reply = chat(user_input, history)
-        print(f"\nAssistant: {reply}\n")
-
-
-if __name__ == "__main__":
-    main()</code></pre>
-        </div>
-      </div>
-
-      <!-- Section 4: Error Handling & Best Practices -->
-      <div class="concept-section" id="error-handling">
-        <h2>Error Handling &amp; Best Practices</h2>
-        <p>
-          Production AI apps need to handle failures gracefully. The most common issues are rate limits (too many requests per minute), network timeouts, and authentication errors. Wrap your API calls in try/except blocks and implement exponential backoff for rate limit errors.
-        </p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">robust_api_call.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">import os
-import time
-from openai import OpenAI, RateLimitError, APITimeoutError, APIConnectionError
-
-client = OpenAI()
-
-def call_with_retry(messages: list, max_retries: int = 3) -> str:
-    """Call the API with exponential backoff on rate limit errors."""
-    for attempt in range(max_retries):
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                timeout=30.0       # don't wait more than 30 seconds
-            )
-            return response.choices[0].message.content
-
-        except RateLimitError:
-            wait = 2 ** attempt    # 1s, 2s, 4s
-            print(f"Rate limited. Waiting {wait}s before retry {attempt + 1}/{max_retries}")
-            time.sleep(wait)
-
-        except APITimeoutError:
-            print(f"Request timed out (attempt {attempt + 1})")
-
-        except APIConnectionError as e:
-            print(f"Connection error: {e}")
-            break
-
-    return "Sorry, the AI service is temporarily unavailable. Please try again."</code></pre>
-        </div>
-
-        <div class="callout callout-danger">
-          <div class="callout-icon"><i class="ri-error-warning-line"></i></div>
-          <div class="callout-body">
-            <strong>Never commit API keys to git.</strong> Use environment variables or <code>.env</code> files. Add <code>.env</code> to your <code>.gitignore</code>. Exposed keys are scraped by bots within minutes of being pushed to GitHub, and you'll face unexpected charges.
-            <br><br>
-            <code>export OPENAI_API_KEY="sk-..."</code> &nbsp; (set in terminal or <code>.env</code> file)
-          </div>
-        </div>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">.env (never commit this file)</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python"># .env file — add this to .gitignore!
-OPENAI_API_KEY=sk-your-key-here
-
-# In Python, load it with:
-# from dotenv import load_dotenv
-# load_dotenv()
-# The OpenAI client reads OPENAI_API_KEY automatically after that</code></pre>
-        </div>
-      </div>
-
-      <!-- Section 5: Going Further -->
-      <div class="concept-section" id="going-further">
-        <h2>Going Further</h2>
-        <p>
-          The chatbot you just built is a foundation. Here's what you can layer on top:
-        </p>
-
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>What It Does</th>
-              <th>Covered In</th>
-            </tr>
-          </thead>
+        <h3 id="what-each-part-does">What Each Part Does</h3>
+        <table class="def-table">
+          <thead><tr><th>Code Element</th><th>Purpose</th><th>What happens if you remove it</th></tr></thead>
           <tbody>
-            <tr>
-              <td><strong>Memory</strong></td>
-              <td>Persist conversation history between sessions using a database</td>
-              <td>Session 12</td>
-            </tr>
-            <tr>
-              <td><strong>Tools / Function Calling</strong></td>
-              <td>Let the AI call external APIs, run code, or search the web</td>
-              <td>Session 13</td>
-            </tr>
-            <tr>
-              <td><strong>RAG</strong></td>
-              <td>Give the AI access to your own documents via embeddings + retrieval</td>
-              <td>Sessions 10–11</td>
-            </tr>
-            <tr>
-              <td><strong>Streaming</strong></td>
-              <td>Display tokens as they're generated, like ChatGPT's typing effect</td>
-              <td>Session 14</td>
-            </tr>
+            <tr><td><code>SYSTEM_PROMPT</code></td><td>Gives the assistant its persona and rules</td><td>Model defaults to generic helpful assistant</td></tr>
+            <tr><td><code>conversation_history</code></td><td>Stores all messages so model has context</td><td>Model forgets previous messages — goldfish memory</td></tr>
+            <tr><td><code>messages=conversation_history</code></td><td>Sends the full history on every API call</td><td>Same as above — each call would be independent</td></tr>
+            <tr><td>Appending assistant reply to history</td><td>Model can reference its own previous responses</td><td>Model can't say "as I mentioned" — loses coherence</td></tr>
           </tbody>
         </table>
-
-        <p>
-          In the next session, we step back and look under the hood: how does machine learning actually work? Understanding the fundamentals will make you a much more effective AI engineer — you'll know why things fail and how to fix them.
-        </p>
       </div>
 
-      <!-- Lab Section -->
-      <div class="lab-section" id="lab">
-        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
-          <div class="lab-header-left">
-            <div class="lab-icon"><i class="ri-flask-line"></i></div>
-            <div>
-              <div class="lab-title">Lab: Build Your AI Study Assistant</div>
-              <div class="lab-subtitle">A complete chatbot in under 30 lines of Python</div>
-            </div>
+      <div class="concept-section">
+        <h2 id="enhancing">Making It Better: 4 Easy Upgrades</h2>
+        <h3 id="upgrade-1">1. Add Streaming (Responses Appear Word by Word)</h3>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">with client.messages.stream(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=1024,
+    system=SYSTEM_PROMPT,
+    messages=conversation_history
+) as stream:
+    full_response = ""
+    print("\n🤖 Assistant: ", end="", flush=True)
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+        full_response += text
+    print("\n")</code></pre></div>
+
+        <h3 id="upgrade-2">2. Add Context Window Management</h3>
+        <p>LLMs have a maximum context length. If the conversation gets too long, trim old messages.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">MAX_HISTORY = 20  # Keep last 20 messages
+
+# After appending the assistant response:
+if len(conversation_history) > MAX_HISTORY:
+    # Keep first message (often important) + last MAX_HISTORY-1
+    conversation_history = conversation_history[-MAX_HISTORY:]</code></pre></div>
+
+        <h3 id="upgrade-3">3. Save & Load Conversations</h3>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import json, os
+
+HISTORY_FILE = "chat_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE) as f:
+            return json.load(f)
+    return []
+
+def save_history(history):
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
+
+conversation_history = load_history()
+# ... at the end of each turn:
+save_history(conversation_history)</code></pre></div>
+
+        <h3 id="upgrade-4">4. Topic-Specific Study Mode</h3>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">topics = {
+    "1": ("Machine Learning Basics", "Focus on ML fundamentals: training, inference, features, labels. Quiz the student frequently."),
+    "2": ("Neural Networks", "Explain neural networks with layer-by-layer analogies. Use the neuron → brain analogy."),
+    "3": ("LLMs & Transformers", "Deep dive into transformers: attention, tokens, embeddings. Use the 'lookup table' analogy for embeddings."),
+}
+
+print("Choose a study topic:")
+for key, (name, _) in topics.items():
+    print(f"  {key}. {name}")
+
+choice = input("Enter number: ").strip()
+topic_name, topic_system = topics.get(choice, ("General AI", "Discuss general AI topics."))
+SYSTEM_PROMPT = f"You are an AI tutor specializing in {topic_name}. {topic_system}"</code></pre></div>
+      </div>
+    </div>
+
+    <!-- LAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build "AI Study Assistant" from Scratch</h3>
+          <p>Estimated time: 60 minutes · Google Colab + your editor</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-05-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
           </div>
-          <i class="ri-arrow-down-s-line lab-chevron"></i>
         </div>
-        <div class="lab-body">
-          <p>In this lab you'll go from zero to a working AI chatbot. By the end you'll have a console-based study assistant you can customize for any topic.</p>
-
-          <a href="https://colab.research.google.com/github/yourusername/noob-to-ai/blob/main/labs/05-first-ai-app.ipynb" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:1.5rem; display:inline-flex; align-items:center; gap:.5rem;">
-            <i class="ri-google-line"></i> Open in Google Colab
-          </a>
-
-          <ol class="lab-steps">
-            <li class="lab-step">
-              <strong>Set up your API key</strong>
-              <p>In Colab, use the Secrets panel (key icon in the left sidebar) to store your API key as <code>OPENAI_API_KEY</code>. Never paste it directly into a cell.</p>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">setup_key.py</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python"># In Google Colab, access secrets like this:
-from google.colab import userdata
-import os
-os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")</code></pre>
-              </div>
-            </li>
-            <li class="lab-step">
-              <strong>Install the openai package</strong>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">terminal</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python">!pip install openai --quiet</code></pre>
-              </div>
-            </li>
-            <li class="lab-step">
-              <strong>Write the chatbot</strong>
-              <p>Copy the <code>study_assistant.py</code> code from Section 3 above into a Colab cell and run it.</p>
-            </li>
-            <li class="lab-step">
-              <strong>Test with study questions</strong>
-              <p>Ask the assistant to explain: backpropagation, gradient descent, what a tensor is, and the difference between training and inference. Notice how the conversation history gives it context across turns.</p>
-            </li>
-            <li class="lab-step">
-              <strong>Customize the system prompt</strong>
-              <p>Change the system prompt to make the assistant a Python debugging helper, a cooking advisor, or a code reviewer. Notice how radically different the behavior becomes with just a few sentences in the system prompt.</p>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">custom_system_prompt.py</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python">SYSTEM_PROMPT = """You are a strict but encouraging Python code reviewer.
-When shown code, you:
-1. First say what the code does correctly
-2. Identify up to 3 specific improvements (clarity, performance, or bugs)
-3. Provide the improved version
-4. End with one question to make sure the student understood the feedback
-"""</code></pre>
-              </div>
-            </li>
-          </ol>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Get Your API Key</h4></div>
+          <p>Sign up at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> (new accounts get free credits). Or use OpenAI: <a href="https://platform.openai.com" target="_blank">platform.openai.com</a>.</p>
+          <div style="position:relative;"><button class="copy-btn">Copy</button>
+          <pre><code class="language-bash">pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-your-key-here"</code></pre></div>
         </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Run the Minimal Chatbot</h4></div>
+          <p>Copy the minimal chatbot code from the Learn tab. Run it. Have a 5-message conversation about "What is a neural network?" See how the history works.</p>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Add All 4 Upgrades</h4></div>
+          <p>One by one, add streaming, context management, save/load, and topic selection. Test each one before adding the next.</p>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Customize the System Prompt</h4></div>
+          <p>Make the assistant your own: change the name, add domain-specific instructions, change the style. Example: make it a "harsh but fair" coding tutor, or a "patient" math teacher.</p>
+        </div>
+        <div class="callout callout-tip"><span class="callout-icon">🏆</span><div class="callout-body"><h4>Stretch Goal</h4><p>Add a Streamlit UI! Install streamlit, create app.py, and use st.text_input + st.chat_message. Your chatbot becomes a web app with 30 extra lines.</p></div></div>
       </div>
+    </div>
 
-      <div id="quiz-container"></div>
-      <div id="session-nav"></div>
-    </main>
-    <aside class="session-toc" id="session-toc"></aside>
-  </div>
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/lab.js"></script>
-  <script src="/assets/js/quiz.js"></script>
-  <script src="/assets/js/session.js"></script>
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/Noob-to-AI-Expert/sessions/beginner/04-data-basics.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 04</span><span class="nav-title">Data Basics for AI</span></div></a>
+      <a href="/Noob-to-AI-Expert/sessions/intermediate/06-ml-fundamentals.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 06</span><span class="nav-title">Machine Learning Fundamentals</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script><script src="/Noob-to-AI-Expert/assets/js/quiz.js"></script><script src="/Noob-to-AI-Expert/assets/js/lab.js"></script><script src="/Noob-to-AI-Expert/assets/js/session.js"></script><script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 5, slug: '05-first-ai-app', section: 'beginner',
+  nextPath: '/sessions/intermediate/06-ml-fundamentals.html',
+  quizData: [
+    {id:'s05q01',type:'mcq',points:1,question:'In a chatbot, why must you append the assistant\'s response to conversation_history before the next turn?',options:[{id:'a',text:'To save memory on your computer'},{id:'b',text:'So the model can reference its own previous answers in future turns — without it, it loses context',correct:true},{id:'c',text:'The API requires it to avoid rate limiting'},{id:'d',text:'To reduce the number of tokens sent to the API'}],explanation:'LLMs are stateless — they have no memory between API calls. The only "memory" they have is what you include in the messages array. If you don\'t append the assistant\'s response, the next call won\'t include it, so the model can\'t say "as I mentioned" or build on previous answers.',hint:'The LLM has no memory between calls — how does it "remember" what it said before?'},
+    {id:'s05q02',type:'truefalse',points:1,question:'The system prompt in a chatbot affects every user message in the conversation — you don\'t need to repeat it with each API call.',correctAnswer:true,explanation:'Correct! You pass the system prompt once in the "system" parameter (or as the first message with role "system"). It applies to all subsequent messages without needing to be repeated. This is how you give the model its persistent persona, rules, and constraints for the entire conversation.'},
+    {id:'s05q03',type:'mcq',points:1,question:'Your chatbot is running and the user sends message #50. The API returns an error: "context_length_exceeded". What is the most likely cause?',options:[{id:'a',text:'The API key expired'},{id:'b',text:'The conversation history + message exceeds the model\'s maximum token limit',correct:true},{id:'c',text:'The user typed too fast'},{id:'d',text:'The system prompt is too long'}],explanation:'LLMs have a maximum context window (e.g., 200k tokens for Claude). If you include all 50 messages plus the system prompt, you may exceed this limit. The fix is to trim old messages from conversation_history (keep last N messages) or summarize old history.',hint:'What accumulates with every message turn in the conversation?'},
+    {id:'s05q04',type:'mcq',points:1,question:'What is the correct order of the 4 components in an AI app for each user turn?',options:[{id:'a',text:'Model → Prompt → Input → Output'},{id:'b',text:'Input → Prompt → Model → Output',correct:true},{id:'c',text:'Prompt → Input → Output → Model'},{id:'d',text:'Input → Model → Prompt → Output'}],explanation:'The flow is always: (1) User provides Input → (2) You construct the Prompt (wrapping input with context/instructions) → (3) Prompt goes to the Model → (4) Model generates Output. The prompt is the bridge between raw user input and the model.',hint:'Think about what happens step-by-step when a user types a message.'},
+    {id:'s05q05',type:'multi',points:2,question:'Which of the following are true about adding streaming to an LLM chatbot? Select all that apply.',options:[{id:'a',text:'Streaming makes the total response time shorter'},{id:'b',text:'Streaming improves perceived responsiveness — users see words appear immediately',correct:true},{id:'c',text:'Streaming requires collecting the full streamed text to add to history',correct:true},{id:'d',text:'Streaming uses a different API endpoint or method',correct:true},{id:'e',text:'Streaming only works with GPT-4, not other models'}],explanation:'Streaming: (b) users perceive it as faster even if total time is similar — this dramatically improves UX; (c) you must concatenate all streamed tokens into a single string to add to history; (d) streaming uses a different method (stream=True or client.messages.stream()). It does NOT reduce total token generation time, and works with most modern LLMs, not just GPT-4.'}
+  ]
+};
+</script>
 </body>
 </html>

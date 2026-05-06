@@ -1,443 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>Data Basics — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/session.css">
-  <link rel="stylesheet" href="/assets/css/quiz.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
-  <script>
-  window.SESSION_META = {
-    id: 4,
-    slug: "04-data-basics",
-    section: "beginner",
-    title: "Data Basics",
-    nextSlug: "/sessions/beginner/05-first-ai-app.html",
-    quizData: [
-      {
-        type: "mcq",
-        question: "In supervised learning, what is the 'label'?",
-        options: ["An input feature", "The correct answer we're trying to predict", "A data cleaning step", "The model architecture"],
-        correct: 1,
-        explanation: "Labels are the 'answers' or target values. In a spam classifier, the label is 'spam' or 'not spam' for each email."
-      },
-      {
-        type: "mcq",
-        question: "What is 'data leakage' in machine learning?",
-        options: ["Data being deleted", "Test data information influencing training", "A database security breach", "Missing values in features"],
-        correct: 1,
-        explanation: "Data leakage occurs when information from the test set influences the training process, leading to overly optimistic performance metrics that don't reflect real-world performance."
-      },
-      {
-        type: "truefalse",
-        question: "Images and audio are examples of unstructured data.",
-        options: ["True", "False"],
-        correct: 0,
-        explanation: "Unlike structured data (spreadsheets), images and audio don't have a predefined schema or format — they're unstructured, requiring special preprocessing for ML."
-      },
-      {
-        type: "multi",
-        question: "Which pandas functions help assess data quality? (Select all that apply)",
-        options: ["df.isnull().sum()", "df.duplicated().sum()", "df.describe()", "df.train_test_split()"],
-        correct: [0, 1, 2],
-        explanation: "isnull(), duplicated(), and describe() are standard data quality checks. train_test_split() is from scikit-learn, not pandas."
-      },
-      {
-        type: "mcq",
-        question: "What is the typical purpose of a validation set (separate from test set)?",
-        options: ["Final model evaluation", "Hyperparameter tuning during training", "Data cleaning", "Feature engineering"],
-        correct: 1,
-        explanation: "The validation set is used during training to tune hyperparameters and compare model variants. The test set is held out for final, unbiased evaluation."
-      }
-    ]
-  };
-  </script>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 04: Data Basics for AI — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/session.css" /><link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/quiz.css" />
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="session-layout">
-    <aside class="session-sidebar" id="session-sidebar"></aside>
-    <main class="session-main" id="main">
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/Noob-to-AI-Expert/">Home</a><span class="sep">›</span><a href="/Noob-to-AI-Expert/sections/beginner.html">Beginner</a><span class="sep">›</span><span>Session 04</span></div>
+      <h1 class="session-title">Data Basics for AI</h1>
+      <p class="session-tagline">Data is the fuel of AI. Garbage in, garbage out. Learn what makes data good, how to clean it, and what features and labels really mean.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 60 min</span>
+        <span><span class="badge badge-beginner"><i class="fas fa-seedling"></i> Beginner</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
 
-      <div class="session-header">
-        <div class="session-breadcrumb">
-          <a href="/">Home</a><span class="sep">›</span>
-          <a href="/sections/beginner.html">Beginner</a><span class="sep">›</span>
-          <span>Data Basics</span>
-        </div>
-        <h1 class="session-title">Data Basics</h1>
-        <div class="session-meta-bar">
-          <span class="badge badge-beginner">Beginner</span>
-          <span><i class="ri-time-line"></i> 45 min</span>
-          <span><i class="ri-number-1"></i> Session 4 of 20</span>
-        </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="data-fuel">Data Is the Fuel of AI</h2>
+        <p>Models learn by finding patterns in data. A brilliant model trained on bad data will make bad predictions. Data quality is often more important than model choice.</p>
+        <div class="callout callout-warn"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>The Real World</h4><p>Studies show that data scientists spend 60–80% of their time on data cleaning and preparation, not on modeling. This is not glamorous, but it's what separates working AI from broken AI.</p></div></div>
       </div>
 
-      <!-- Section 1: Structured vs Unstructured Data -->
-      <div class="concept-section" id="structured-vs-unstructured">
-        <h2>Structured vs Unstructured Data</h2>
-        <p>
-          Every AI system starts with data, but not all data looks the same. Understanding the three main categories helps you decide how to store, process, and feed data into a model.
-        </p>
+      <div class="concept-section">
+        <h2 id="structured-unstructured">Structured vs Unstructured Data</h2>
+        <div class="compare-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="compare-card"><div class="card-icon">📊</div><h4 style="color:#4ade80">Structured Data</h4><p>Organized in rows and columns. Every row is an observation, every column is a variable. Think spreadsheets, databases, CSV files.</p><p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">Examples: Customer age/income table, stock prices, sensor readings</p></div>
+          <div class="compare-card"><div class="card-icon">📝</div><h4 style="color:#60a5fa">Unstructured Data</h4><p>No predefined format. Text, images, audio, video. Harder to work with directly — often needs preprocessing to extract features.</p><p style="font-size:0.8rem;color:#3b82f6;margin-top:0.5rem;">Examples: Customer reviews, medical images, podcast audio, social media posts</p></div>
+        </div>
+        <div class="callout callout-info"><span class="callout-icon">💡</span><div class="callout-body"><h4>Semi-Structured Data</h4><p>JSON and XML sit in between — they have structure (keys/schema) but can be nested and variable. Most API responses are semi-structured. LLM training data starts unstructured (web text) and gets semi-structured through processing.</p></div></div>
+      </div>
 
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Definition</th>
-              <th>Format</th>
-              <th>AI Example</th>
-            </tr>
-          </thead>
+      <div class="concept-section">
+        <h2 id="features-labels">Features and Labels</h2>
+        <p>These are the two most important vocabulary words in supervised machine learning.</p>
+        <table class="def-table">
+          <thead><tr><th>Term</th><th>Definition</th><th>Example: House Price Prediction</th></tr></thead>
           <tbody>
-            <tr>
-              <td><strong>Structured</strong></td>
-              <td>Organized in rows and columns with a fixed schema</td>
-              <td>CSV, SQL tables, spreadsheets</td>
-              <td>Customer churn prediction from a CRM database</td>
-            </tr>
-            <tr>
-              <td><strong>Unstructured</strong></td>
-              <td>No predefined schema or format</td>
-              <td>Text, images, audio, video</td>
-              <td>Sentiment analysis of tweets, image classification</td>
-            </tr>
-            <tr>
-              <td><strong>Semi-structured</strong></td>
-              <td>Has some organizational properties but not rigid tables</td>
-              <td>JSON, XML, HTML, log files</td>
-              <td>Parsing API responses, extracting entities from logs</td>
-            </tr>
+            <tr><td>Feature (X)</td><td>An input variable used to make the prediction. The things you know about each data point.</td><td>Bedrooms, square footage, zip code, age of house</td></tr>
+            <tr><td>Label (y)</td><td>The output you're trying to predict. The "correct answer" in training data.</td><td>Sale price ($350,000)</td></tr>
+            <tr><td>Sample / Row</td><td>One data point — one set of features + its label.</td><td>One house listing with all its attributes</td></tr>
+            <tr><td>Dataset</td><td>The full collection of (feature, label) pairs used for training.</td><td>10,000 house sales records from the last 5 years</td></tr>
           </tbody>
         </table>
 
-        <p>
-          Structured data is the easiest to work with — you can load it directly into pandas and start modeling. Unstructured data requires preprocessing: converting images to pixel arrays, text to token IDs, or audio to spectrograms before a model can ingest it.
-        </p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import pandas as pd
 
-        <div class="callout callout-concept">
-          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
-          <div class="callout-body">
-            <strong>Key Insight:</strong> Most real-world AI training data starts as messy, unstructured data. A huge portion of AI engineering work is converting that raw data into something a model can actually learn from.
+# A simple dataset
+data = {
+    "bedrooms":      [2, 3, 4, 2, 5],
+    "sqft":          [850, 1200, 1800, 750, 2500],
+    "age_years":     [10, 5, 25, 30, 2],
+    "price":         [320000, 450000, 380000, 280000, 750000]  # LABEL
+}
+
+df = pd.DataFrame(data)
+
+# Separate features (X) from label (y)
+X = df[["bedrooms", "sqft", "age_years"]]  # Features
+y = df["price"]                             # Label
+
+print("Features shape:", X.shape)  # (5, 3) — 5 rows, 3 features
+print("Label shape:", y.shape)     # (5,)   — 5 target values</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="data-cleaning">Data Cleaning: The Most Important Skill</h2>
+        <p>Real-world data is messy. Before any model can learn from it, you must clean it. The main problems:</p>
+
+        <div class="compare-grid">
+          <div class="compare-card"><div class="card-icon">🕳️</div><h4 style="color:#f87171">Missing Values</h4><p>Fields that are empty or null. Can crash models or bias predictions. Options: drop rows, fill with mean/median/mode, or use "missing" as its own category.</p></div>
+          <div class="compare-card"><div class="card-icon">🎭</div><h4 style="color:#fbbf24">Duplicates</h4><p>The same record appears twice. Causes the model to overweight certain samples and inflates metrics.</p></div>
+          <div class="compare-card"><div class="card-icon">📐</div><h4 style="color:#a78bfa">Wrong Types</h4><p>Age stored as "twenty-five" instead of 25. Price stored as "$350,000" (string with $). Models need numbers to be numbers.</p></div>
+          <div class="compare-card"><div class="card-icon">🌪️</div><h4 style="color:#34d399">Outliers</h4><p>Extreme values that don't represent reality — a house priced at $1 or $100 billion. Can destroy model training.</p></div>
+        </div>
+
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import pandas as pd
+import numpy as np
+
+df = pd.read_csv("messy_students.csv")
+
+# --- INSPECT ---
+print(df.shape)         # How many rows, columns?
+print(df.dtypes)        # What type is each column?
+print(df.isnull().sum())# How many missing values per column?
+print(df.describe())    # Min, max, mean, std for numeric columns
+
+# --- FIX MISSING VALUES ---
+df["age"].fillna(df["age"].median(), inplace=True)   # Fill with median
+df["grade"].fillna("Unknown", inplace=True)           # Fill categorically
+df.dropna(subset=["student_id"], inplace=True)        # Drop rows where ID is missing
+
+# --- REMOVE DUPLICATES ---
+df.drop_duplicates(subset=["student_id"], keep="first", inplace=True)
+
+# --- FIX TYPES ---
+df["score"] = pd.to_numeric(df["score"], errors="coerce")  # "N/A" → NaN
+df["enrolled_date"] = pd.to_datetime(df["enrolled_date"])
+
+# --- HANDLE OUTLIERS ---
+# Remove scores outside 3 standard deviations
+z_scores = (df["score"] - df["score"].mean()) / df["score"].std()
+df = df[abs(z_scores) < 3]
+
+print(f"Clean dataset: {len(df)} rows")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="train-test-split">Train / Validation / Test Split</h2>
+        <p>You can't evaluate a model on data it trained on — it would just memorize the answers. Always hold out data it's never seen.</p>
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.25rem;margin:1rem 0;">
+          <div style="display:flex;gap:0;height:40px;border-radius:8px;overflow:hidden;margin-bottom:0.75rem;">
+            <div style="flex:7;background:rgba(14,165,233,0.3);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600;color:#38bdf8;">70% Training</div>
+            <div style="flex:1.5;background:rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600;color:#c084fc;">15% Val</div>
+            <div style="flex:1.5;background:rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600;color:#4ade80;">15% Test</div>
+          </div>
+          <p style="font-size:0.85rem;color:#94a3b8;margin:0;"><strong style="color:#38bdf8">Train:</strong> Model learns from this. <strong style="color:#c084fc">Validation:</strong> Tune hyperparameters, catch overfitting. <strong style="color:#4ade80">Test:</strong> Final, one-time evaluation. Never touch until you're done.</p>
+        </div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">from sklearn.model_selection import train_test_split
+
+# 70% train, 15% val, 15% test
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+
+print(f"Train: {len(X_train)}, Val: {len(X_val)}, Test: {len(X_test)}")</code></pre></div>
+      </div>
+    </div>
+
+    <!-- LAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Clean a Messy Student Dataset</h3>
+          <p>Estimated time: 30 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-04-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
           </div>
         </div>
-      </div>
-
-      <!-- Section 2: Features and Labels -->
-      <div class="concept-section" id="features-labels">
-        <h2>Features and Labels</h2>
-        <p>
-          In supervised machine learning, every training example consists of two parts: <strong>features</strong> (the inputs) and a <strong>label</strong> (the correct output you want the model to predict). The model learns the mapping from features to labels.
-        </p>
-
-        <p>
-          Take email spam detection as a concrete example. You have thousands of emails, each labeled "spam" or "not spam" by a human. The model's job is to figure out which features predict spam so it can classify future, unlabeled emails.
-        </p>
-
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Raw Email</th>
-              <th>Extracted Features</th>
-              <th>Label</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>"WIN $1000! Click here now!!!"</td>
-              <td>word_win=1, exclamation_count=2, sender_domain="promo.xyz", has_link=1, subject_caps=1</td>
-              <td>spam</td>
-            </tr>
-            <tr>
-              <td>"Team standup moved to 3pm tomorrow"</td>
-              <td>word_win=0, exclamation_count=0, sender_domain="company.com", has_link=0, subject_caps=0</td>
-              <td>not spam</td>
-            </tr>
-            <tr>
-              <td>"Your invoice #4521 is attached"</td>
-              <td>word_win=0, exclamation_count=0, sender_domain="vendor.com", has_link=1, subject_caps=0</td>
-              <td>not spam</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>
-          Feature engineering — deciding which features to extract and how to represent them — is often more important than choosing which algorithm to use. Good features make simple models powerful; bad features make complex models useless.
-        </p>
-      </div>
-
-      <!-- Section 3: Data Quality Issues -->
-      <div class="concept-section" id="data-quality">
-        <h2>Data Quality Issues</h2>
-        <p>
-          Real-world datasets are rarely clean. Before training any model, you need to audit your data for common quality problems. Garbage in, garbage out — a model trained on bad data will produce bad predictions no matter how sophisticated the algorithm.
-        </p>
-
-        <p>The four most common issues are:</p>
-        <ul>
-          <li><strong>Missing values:</strong> Fields that are blank, NaN, or null. Could be random (sensor dropout) or systematic (users skipping optional fields).</li>
-          <li><strong>Duplicates:</strong> The same record appearing multiple times. Can artificially inflate certain patterns in your data.</li>
-          <li><strong>Outliers:</strong> Extreme values that may be genuine (a billionaire's income) or data entry errors (age = 999).</li>
-          <li><strong>Inconsistent formats:</strong> "USA", "U.S.A.", "United States" all meaning the same thing but treated as different values.</li>
-        </ul>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">data_quality_check.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
+        <p style="color:#94a3b8;margin-bottom:1.5rem;">You'll receive a deliberately messy CSV with missing values, duplicates, wrong types, and outliers. Your job: clean it and produce a summary of what you fixed.</p>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Load and Audit the Messy Data</h4></div>
+          <p>Run the audit code to identify all problems before fixing anything.</p>
+          <div style="position:relative;"><button class="copy-btn">Copy</button>
           <pre><code class="language-python">import pandas as pd
-
-df = pd.read_csv("emails.csv")
-
-# --- 1. Check for missing values ---
-print("Missing values per column:")
-print(df.isnull().sum())
-print(f"\nTotal missing: {df.isnull().sum().sum()}")
-print(f"Missing %: {df.isnull().mean().mul(100).round(1)}")
-
-# --- 2. Check for duplicates ---
-print(f"\nDuplicate rows: {df.duplicated().sum()}")
-print(f"Exact duplicate emails: {df.duplicated(subset=['email_id']).sum()}")
-
-# --- 3. Inspect distribution and outliers ---
-print("\nNumerical column stats:")
-print(df.describe())
-
-# --- 4. Spot inconsistent categories ---
-print("\nUnique values in 'country' column:")
-print(df['country'].value_counts().head(20))
-# Common problem: 'USA', 'US', 'United States', 'united states'</code></pre>
-        </div>
-      </div>
-
-      <!-- Section 4: Data Cleaning Basics -->
-      <div class="concept-section" id="data-cleaning">
-        <h2>Data Cleaning Basics</h2>
-        <p>
-          Once you've identified quality issues, you need to fix them. The strategy depends on the problem: missing numerical values might be filled with the column mean; missing categorical values might get a special "Unknown" category. Duplicates should almost always be dropped.
-        </p>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">cleaning_pipeline.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">import pandas as pd
-
-df = pd.read_csv("emails.csv")
-print(f"Raw dataset: {df.shape[0]} rows")
-
-# --- Step 1: Drop exact duplicates ---
-df = df.drop_duplicates()
-print(f"After dropping duplicates: {df.shape[0]} rows")
-
-# --- Step 2: Handle missing values ---
-# Fill numerical columns with median (more robust than mean for skewed data)
-num_cols = df.select_dtypes(include='number').columns
-df[num_cols] = df[num_cols].fillna(df[num_cols].median())
-
-# Fill categorical columns with mode (most frequent value)
-cat_cols = df.select_dtypes(include='object').columns
-for col in cat_cols:
-    df[col] = df[col].fillna(df[col].mode()[0])
-
-# --- Step 3: Normalize text columns ---
-df['country'] = (
-    df['country']
-    .str.lower()           # lowercase everything
-    .str.strip()           # remove leading/trailing whitespace
-    .replace({             # unify known variants
-        'usa': 'united states',
-        'u.s.a.': 'united states',
-        'us': 'united states',
-    })
-)
-
-# --- Step 4: Remove obvious outliers (e.g., age > 120) ---
-df = df[df['age'].between(0, 120)]
-
-print(f"Final clean dataset: {df.shape[0]} rows")
-print(f"Remaining nulls: {df.isnull().sum().sum()}")
-
-df.to_csv("emails_clean.csv", index=False)
-print("Saved to emails_clean.csv")</code></pre>
-        </div>
-
-        <div class="callout callout-tip">
-          <div class="callout-icon"><i class="ri-information-line"></i></div>
-          <div class="callout-body">
-            <strong>Tip:</strong> Always keep a copy of the raw data and apply cleaning as a reproducible script, not manual edits. If you discover a new issue later, you should be able to rerun the pipeline from scratch.
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 5: Train / Validation / Test Split -->
-      <div class="concept-section" id="data-splits">
-        <h2>Train / Validation / Test Split</h2>
-        <p>
-          Before you model anything, split your dataset into three non-overlapping parts. This ensures you can measure how well your model will perform on truly new data it has never seen.
-        </p>
-
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Split</th>
-              <th>Typical Size</th>
-              <th>Purpose</th>
-              <th>Used When</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Training</strong></td>
-              <td>70–80%</td>
-              <td>The model learns from this data</td>
-              <td>Every training epoch</td>
-            </tr>
-            <tr>
-              <td><strong>Validation</strong></td>
-              <td>10–15%</td>
-              <td>Tune hyperparameters, compare model variants</td>
-              <td>After each epoch during development</td>
-            </tr>
-            <tr>
-              <td><strong>Test</strong></td>
-              <td>10–15%</td>
-              <td>Final, unbiased performance measurement</td>
-              <td>Once, at the very end</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="code-filename">train_test_split.py</span>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-          </div>
-          <pre><code class="language-python">from sklearn.model_selection import train_test_split
-import pandas as pd
-
-df = pd.read_csv("emails_clean.csv")
-
-X = df.drop(columns=['label'])   # features
-y = df['label']                  # target
-
-# First split: 80% train, 20% temp
-X_train, X_temp, y_train, y_temp = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
-
-# Second split: split temp into 50/50 → 10% val, 10% test
-X_val, X_test, y_val, y_test = train_test_split(
-    X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
-)
-
-print(f"Train: {len(X_train)} samples ({len(X_train)/len(df):.0%})")
-print(f"Val:   {len(X_val)} samples ({len(X_val)/len(df):.0%})")
-print(f"Test:  {len(X_test)} samples ({len(X_test)/len(df):.0%})")
-
-# stratify=y ensures each split has the same class distribution
-# random_state=42 makes splits reproducible</code></pre>
-        </div>
-
-        <div class="callout callout-danger">
-          <div class="callout-icon"><i class="ri-error-warning-line"></i></div>
-          <div class="callout-body">
-            <strong>Data Leakage Warning:</strong> Data leakage — using test data information during training — is one of the most common and damaging mistakes in ML. This includes fitting a scaler on the full dataset before splitting, or using future information to predict the past. Always split first, then fit preprocessing on training data only.
-          </div>
-        </div>
-      </div>
-
-      <!-- Lab Section -->
-      <div class="lab-section" id="lab">
-        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
-          <div class="lab-header-left">
-            <div class="lab-icon"><i class="ri-flask-line"></i></div>
-            <div>
-              <div class="lab-title">Lab: Messy Dataset Cleanup</div>
-              <div class="lab-subtitle">Load, audit, clean, and verify a real-world messy CSV</div>
-            </div>
-          </div>
-          <i class="ri-arrow-down-s-line lab-chevron"></i>
-        </div>
-        <div class="lab-body">
-          <p>In this lab you'll take a deliberately messy housing dataset and produce a clean, split-ready version using pandas. No model training yet — just the unglamorous but critical data prep step.</p>
-
-          <a href="https://colab.research.google.com/github/yourusername/noob-to-ai/blob/main/labs/04-data-basics.ipynb" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:1.5rem; display:inline-flex; align-items:center; gap:.5rem;">
-            <i class="ri-google-line"></i> Open in Google Colab
-          </a>
-
-          <ol class="lab-steps">
-            <li class="lab-step">
-              <strong>Load the messy dataset</strong>
-              <p>Download a CSV that contains missing values, duplicates, and inconsistent formatting.</p>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">step1_load.py</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python">import pandas as pd
-
-# Download sample messy dataset
-url = "https://raw.githubusercontent.com/yourusername/noob-to-ai/main/data/messy_housing.csv"
-df = pd.read_csv(url)
-print(df.shape)
-print(df.head())</code></pre>
-              </div>
-            </li>
-            <li class="lab-step">
-              <strong>Audit data quality</strong>
-              <p>Run the quality checks to understand what needs fixing.</p>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">step2_audit.py</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python">print("Shape:", df.shape)
-print("\nMissing values:")
-print(df.isnull().sum())
+df = pd.read_csv("messy_students.csv")
+print("Shape:", df.shape)
+print("\nMissing values:\n", df.isnull().sum())
+print("\nData types:\n", df.dtypes)
 print("\nDuplicates:", df.duplicated().sum())
-print("\nStats:")
-print(df.describe())</code></pre>
-              </div>
-            </li>
-            <li class="lab-step">
-              <strong>Clean the dataset</strong>
-              <p>Apply all fixes: drop duplicates, fill nulls, normalize inconsistent values.</p>
-            </li>
-            <li class="lab-step">
-              <strong>Verify clean dataset</strong>
-              <p>Re-run the audit checks to confirm zero missing values and zero duplicates.</p>
-              <div class="code-block">
-                <div class="code-block-header">
-                  <span class="code-filename">step4_verify.py</span>
-                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
-                </div>
-                <pre><code class="language-python">assert df.isnull().sum().sum() == 0, "Still has missing values!"
-assert df.duplicated().sum() == 0, "Still has duplicates!"
-print("Dataset is clean. Ready to split and model.")</code></pre>
-              </div>
-            </li>
-          </ol>
+print("\nSample:\n", df.head())</code></pre></div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Fix Each Issue Systematically</h4></div>
+          <p>Apply cleaning operations one at a time. After each step, run df.shape and df.isnull().sum() to verify the fix.</p>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Generate an AI Cleaning Report</h4></div>
+          <p>Use an LLM to generate a plain-English data quality report based on before/after stats. This is a real data engineer workflow.</p>
         </div>
       </div>
+    </div>
 
-      <div id="quiz-container"></div>
-      <div id="session-nav"></div>
-    </main>
-    <aside class="session-toc" id="session-toc"></aside>
-  </div>
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/lab.js"></script>
-  <script src="/assets/js/quiz.js"></script>
-  <script src="/assets/js/session.js"></script>
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/Noob-to-AI-Expert/sessions/beginner/03-python-for-ai.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 03</span><span class="nav-title">Python for AI</span></div></a>
+      <a href="/Noob-to-AI-Expert/sessions/beginner/05-first-ai-app.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 05</span><span class="nav-title">Your First AI App</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script><script src="/Noob-to-AI-Expert/assets/js/quiz.js"></script><script src="/Noob-to-AI-Expert/assets/js/lab.js"></script><script src="/Noob-to-AI-Expert/assets/js/session.js"></script><script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 4, slug: '04-data-basics', section: 'beginner',
+  nextPath: '/sessions/beginner/05-first-ai-app.html',
+  quizData: [
+    {id:'s04q01',type:'mcq',points:1,question:'A dataset of customer emails for spam classification is an example of which data type?',options:[{id:'a',text:'Structured data — it has rows and columns'},{id:'b',text:'Unstructured data — it\'s raw text with no predefined format',correct:true},{id:'c',text:'Labeled data — because we know which are spam'},{id:'d',text:'Time-series data — because emails have timestamps'}],explanation:'Raw email text is unstructured — it doesn\'t fit neatly into rows and columns. The text content varies in length, format, and structure. Note: it COULD also be labeled (spam/not spam), but the primary data type is unstructured. Labels are separate from the data format distinction.',hint:'Think about whether the raw content fits neatly in a spreadsheet.'},
+    {id:'s04q02',type:'mcq',points:1,question:'In supervised learning, what is a "label"?',options:[{id:'a',text:'A tag you put on a feature column to describe it'},{id:'b',text:'The correct output value for a training example that the model is trying to predict',correct:true},{id:'c',text:'A type of feature transformation'},{id:'d',text:'The name of the model architecture'}],explanation:'A label (also called target or ground truth) is the correct answer for a training example. In house price prediction, the label is the actual sale price. The model learns to map features → labels during training.',hint:'In "supervised" learning, what is the "supervision" — what tells the model if it\'s right or wrong?'},
+    {id:'s04q03',type:'truefalse',points:1,question:'You should evaluate your final model\'s performance on the same data it was trained on to get the most accurate performance estimate.',correctAnswer:false,explanation:'FALSE — this would give a highly optimistic (and dishonest) estimate. The model has memorized the training data. Always use a held-out test set that the model has NEVER seen during training or hyperparameter tuning. The test set simulates real-world unseen data.'},
+    {id:'s04q04',type:'multi',points:2,question:'Which of the following are valid strategies for handling missing values in a numeric column? Select all that apply.',options:[{id:'a',text:'Fill with the column\'s mean or median',correct:true},{id:'b',text:'Delete rows that have any missing value',correct:true},{id:'c',text:'Fill with 0 (assuming 0 means "unknown")',correct:true},{id:'d',text:'Leave them as NaN and pass directly to most sklearn models'},{id:'e',text:'Use a model to predict the missing values (imputation)',correct:true}],explanation:'Options a, b, c, and e are all valid strategies with different tradeoffs. Deleting rows loses data but keeps the remaining data clean. Filling with mean/median is fast but adds noise. Filling with 0 works when 0 is meaningful for "unknown". Predictive imputation is most sophisticated. Option d is wrong — most scikit-learn models crash on NaN values.'},
+    {id:'s04q05',type:'mcq',points:1,question:'Why do we split data into train/validation/test sets instead of just train/test?',options:[{id:'a',text:'To make training faster by using less data'},{id:'b',text:'The validation set lets us tune hyperparameters without "peeking" at the test set, keeping it truly unseen',correct:true},{id:'c',text:'Validation data is used to add more training examples'},{id:'d',text:'Three sets are required by law for production ML systems'}],explanation:'The validation set is a "practice test" — you use it to tune the model and choose hyperparameters. Every time you look at validation performance and adjust, you\'re subtly overfitting to it. The test set is the "final exam" that you only look at once at the very end. Without a separate validation set, your test set gets contaminated by hyperparameter tuning.'}
+  ]
+};
+</script>
 </body>
 </html>

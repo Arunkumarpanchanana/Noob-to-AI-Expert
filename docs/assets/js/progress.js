@@ -1,68 +1,102 @@
-/* ===========================
-   progress.js — localStorage API
-   =========================== */
+/* ===== PROGRESS TRACKING ===== */
 const Progress = (() => {
   const KEY = 'noob2ai_progress';
-  const TOTAL = 20;
+  const VERSION = 1;
 
-  function _load() {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (!raw) return { version: 1, sessions: {} };
-      return JSON.parse(raw);
-    } catch { return { version: 1, sessions: {} }; }
+  function _default() {
+    return { version: VERSION, lastVisited: null, sessions: {} };
   }
 
-  function _save(data) {
+  function get() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return _default();
+      const data = JSON.parse(raw);
+      if (data.version !== VERSION) return _default();
+      return data;
+    } catch {
+      return _default();
+    }
+  }
+
+  function save(data) {
     try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
   }
 
-  function _get(id) {
-    const data = _load();
+  function getSession(id) {
+    const data = get();
     return data.sessions[String(id)] || {};
   }
 
-  function _set(id, patch) {
-    const data = _load();
-    const key = String(id);
-    data.sessions[key] = Object.assign(data.sessions[key] || {}, patch);
-    _save(data);
+  function markViewed(id) {
+    const data = get();
+    const sid = String(id);
+    data.sessions[sid] = { ...data.sessions[sid] || {}, viewed: true };
+    data.lastVisited = sid;
+    save(data);
   }
 
-  return {
-    markViewed(id) { _set(id, { viewed: true }); },
-    markLabStarted(id) { _set(id, { labStarted: true }); },
-    markQuizPassed(id, score) { _set(id, { quizPassed: true, quizScore: score }); },
-    markQuizAttempt(id, score) {
-      const s = _get(id);
-      _set(id, { quizScore: score, quizAttempts: (s.quizAttempts || 0) + 1 });
-    },
-    getSession(id) { return _get(id); },
-    getAll() { return _load().sessions; },
-    isViewed(id) { return !!_get(id).viewed; },
-    isQuizPassed(id) { return !!_get(id).quizPassed; },
-    getCompletionPercent() {
-      const sessions = _load().sessions;
-      let done = 0;
-      for (let i = 1; i <= TOTAL; i++) {
-        if (sessions[String(i)]?.quizPassed) done++;
-      }
-      return Math.round((done / TOTAL) * 100);
-    },
-    getViewedCount() {
-      const sessions = _load().sessions;
-      let n = 0;
-      for (const s of Object.values(sessions)) { if (s.viewed) n++; }
-      return n;
-    },
-    getPassedCount() {
-      const sessions = _load().sessions;
-      let n = 0;
-      for (const s of Object.values(sessions)) { if (s.quizPassed) n++; }
-      return n;
-    },
-    reset() { localStorage.removeItem(KEY); },
-  };
+  function markLabStarted(id) {
+    const data = get();
+    const sid = String(id);
+    data.sessions[sid] = { ...data.sessions[sid] || {}, labStarted: true };
+    save(data);
+  }
+
+  function markQuizPassed(id, score) {
+    const data = get();
+    const sid = String(id);
+    const existing = data.sessions[sid] || {};
+    const attempts = (existing.attempts || 0) + 1;
+    data.sessions[sid] = {
+      ...existing,
+      quizPassed: true,
+      quizScore: score,
+      attempts,
+      completedAt: new Date().toISOString().split('T')[0]
+    };
+    save(data);
+    document.dispatchEvent(new CustomEvent('quizPassed', { detail: { id, score } }));
+  }
+
+  function markQuizAttempted(id, score) {
+    const data = get();
+    const sid = String(id);
+    const existing = data.sessions[sid] || {};
+    const attempts = (existing.attempts || 0) + 1;
+    data.sessions[sid] = {
+      ...existing,
+      quizScore: Math.max(existing.quizScore || 0, score),
+      attempts,
+      quizPassed: existing.quizPassed || false
+    };
+    save(data);
+  }
+
+  function getCompletionPercent() {
+    const data = get();
+    const passed = Object.values(data.sessions).filter(s => s.quizPassed).length;
+    return Math.round((passed / 20) * 100);
+  }
+
+  function getCompletedCount() {
+    const data = get();
+    return Object.values(data.sessions).filter(s => s.quizPassed).length;
+  }
+
+  function getLastVisitedId() {
+    return get().lastVisited;
+  }
+
+  function reset() {
+    if (confirm('Reset all course progress? This cannot be undone.')) {
+      localStorage.removeItem(KEY);
+      document.dispatchEvent(new Event('progressReset'));
+      location.reload();
+    }
+  }
+
+  return { get, getSession, markViewed, markLabStarted, markQuizPassed, markQuizAttempted, getCompletionPercent, getCompletedCount, getLastVisitedId, reset };
 })();
 
 window.Progress = Progress;

@@ -1,201 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="base-path" content="/Noob-to-AI-Expert">
-  <title>Beginner Track — Noob to AI Expert</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-  <script src="/assets/js/progress.js"></script>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beginner Track — AI User to AI Builder | Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" />
+  <style>
+    .section-hero { padding: 8rem 1.5rem 3rem; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(34,197,94,0.08) 0%, transparent 60%); text-align: center; }
+    .section-hero h1 { font-size: 3rem; font-weight: 800; color: var(--text); margin: 0 0 0.75rem; letter-spacing: -0.04em; }
+    .section-hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 580px; margin: 0 auto 2rem; }
+    .session-list { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .session-item { display: flex; gap: 1.5rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; align-items: flex-start; box-shadow: var(--shadow-sm); }
+    .session-item:hover { border-color: #16a34a; transform: translateX(4px); background: #f0fdf4; text-decoration: none; box-shadow: var(--shadow-md); }
+    .session-item.completed { border-color: #86efac; background: #f0fdf4; }
+    .session-num { width: 48px; height: 48px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; border: 1px solid #bbf7d0; }
+    .session-info { flex: 1; }
+    .session-info h3 { margin: 0 0 0.3rem; font-size: 1.05rem; color: var(--text); }
+    .session-info p { margin: 0 0 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+    .session-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .tag { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; }
+    .check-icon { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-light); flex-shrink: 0; margin-top: 0.2rem; }
+    .check-icon.done { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
+  </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
-  <div id="nav-placeholder"></div>
+<div id="nav-placeholder"></div>
+<div class="section-hero">
+  <div><span class="badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;"><i class="fas fa-seedling"></i> Beginner Track</span></div>
+  <h1>AI User → AI Builder</h1>
+  <p>5 sessions designed to take you from "I've heard of ChatGPT" to shipping your own AI applications. No prior experience needed.</p>
+  <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;color:var(--text-muted);font-size:0.9rem;">
+    <span><i class="fas fa-layer-group" style="margin-right:0.4rem;color:#16a34a;"></i>5 Sessions</span>
+    <span><i class="fas fa-clock" style="margin-right:0.4rem;color:#16a34a;"></i>~5 hours total</span>
+    <span><i class="fas fa-flask" style="margin-right:0.4rem;color:#16a34a;"></i>5 Labs</span>
+    <span><i class="fas fa-check-circle" style="margin-right:0.4rem;color:#16a34a;"></i>25 Quiz Questions</span>
+  </div>
+  <div style="margin-top:2rem;" id="section-progress">
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:999px;height:8px;max-width:400px;margin:0 auto 0.5rem;overflow:hidden;">
+      <div id="prog-bar" style="height:100%;background:#22c55e;border-radius:999px;width:0%;transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text-muted);" id="prog-text">0 / 5 sessions completed</div>
+  </div>
+</div>
 
-  <main id="main" class="container" style="padding-top:2rem;padding-bottom:4rem">
+<div class="session-list">
+  <h2 style="color:var(--text);font-size:1.3rem;margin-bottom:1.5rem;font-weight:700;">Sessions in This Track</h2>
+  <div id="session-list-container">
+    <!-- Populated by JS -->
+  </div>
+  <div style="margin-top:2rem;text-align:center;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);">
+    <div style="font-size:1.5rem;margin-bottom:0.5rem;">🚀</div>
+    <h3 style="color:var(--text);margin:0 0 0.5rem;">Ready for more?</h3>
+    <p style="color:var(--text-muted);margin:0 0 1rem;font-size:0.9rem;">After completing this track, continue to Intermediate to learn how ML actually works.</p>
+    <a href="/Noob-to-AI-Expert/sections/intermediate.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:0.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:0.9rem;text-decoration:none;">Go to Intermediate <i class="fas fa-arrow-right"></i></a>
+  </div>
+</div>
 
-    <!-- Hero -->
-    <section class="hero" style="border-radius:var(--radius-lg);margin-bottom:3rem;border:1px solid rgba(52,211,153,0.2)">
-      <div class="hero-content">
-        <div class="hero-eyebrow">
-          <i class="ri-seedling-line"></i>
-          Track 1 of 3
-        </div>
-        <span class="badge badge-beginner" style="margin-bottom:1rem;font-size:0.85rem;padding:0.35rem 0.9rem">
-          <i class="ri-seedling-line"></i> Beginner
-        </span>
-        <h1>Beginner Track</h1>
-        <p class="hero-tagline">
-          Start your AI journey from absolute zero. In 5 carefully crafted sessions, you'll go from "What even is AI?" to building your first real AI-powered application — no experience required.
-        </p>
-        <div class="hero-ctas">
-          <a href="/sessions/beginner/01-what-is-ai.html" class="btn btn-primary btn-lg">
-            <i class="ri-play-circle-line"></i> Start Session 1
-          </a>
-          <a href="#sessions" class="btn btn-ghost btn-lg">
-            <i class="ri-layout-grid-line"></i> Browse Sessions
-          </a>
-        </div>
-        <div class="hero-meta">
-          <div class="hero-stat">
-            <div class="hero-stat-val" style="color:var(--beginner)">5</div>
-            <div class="hero-stat-label">Sessions</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val" style="color:var(--beginner)">4.5h</div>
-            <div class="hero-stat-label">Total Content</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val" style="color:var(--beginner)">5</div>
-            <div class="hero-stat-label">Hands-on Labs</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-val" style="color:var(--beginner)">25</div>
-            <div class="hero-stat-label">Quiz Questions</div>
-          </div>
-        </div>
-      </div>
-    </section>
+<div id="footer-placeholder"></div>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+const SESSIONS = [
+  {id:1,title:'What AI Really Is',desc:'Understand the landscape: AI vs ML vs Deep Learning vs Generative AI with real-world examples.',path:'/Noob-to-AI-Expert/sessions/beginner/01-what-is-ai.html',duration:'45 min',topics:['AI vs ML vs DL','GenAI','Real-world classification']},
+  {id:2,title:'Prompt Engineering Foundations',desc:'Master prompt anatomy, role prompting, few-shot examples, and chain-of-thought.',path:'/Noob-to-AI-Expert/sessions/beginner/02-prompt-engineering.html',duration:'60 min',topics:['Prompt anatomy','Few-shot prompting','Chain-of-thought']},
+  {id:3,title:'Python for AI',desc:'Variables, lists, dicts, functions, files, and API calls — the 20% that does 80% of AI work.',path:'/Noob-to-AI-Expert/sessions/beginner/03-python-for-ai.html',duration:'90 min',topics:['Python basics','Data structures','API calls']},
+  {id:4,title:'Data Basics for AI',desc:'Structured vs unstructured data, features, labels, cleaning, and train/test splits.',path:'/Noob-to-AI-Expert/sessions/beginner/04-data-basics.html',duration:'60 min',topics:['Features & labels','Data cleaning','Train/test split']},
+  {id:5,title:'Your First AI App',desc:'Build a working AI Study Assistant with conversation history, streaming, and topic selection.',path:'/Noob-to-AI-Expert/sessions/beginner/05-first-ai-app.html',duration:'90 min',topics:['App anatomy','Chatbot loop','Streaming']},
+];
 
-    <!-- What You'll Learn -->
-    <section style="margin-bottom:3rem">
-      <div class="section-heading">
-        <h2 style="font-size:1.35rem;margin:0">What You'll Learn</h2>
-        <div class="section-divider"></div>
-      </div>
-      <div class="features-grid">
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-brain-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>What AI Really Is</h4>
-            <p>Demystify the buzzwords. Understand the AI → ML → Deep Learning → Generative AI hierarchy with concrete examples.</p>
+function renderSessions() {
+  const container = document.getElementById('session-list-container');
+  let completed = 0;
+  container.innerHTML = SESSIONS.map((s,i) => {
+    const state = Progress.getSession(s.id);
+    const done = state.quizPassed;
+    if (done) completed++;
+    return `
+      <a href="${s.path}" class="session-item ${done?'completed':''}">
+        <div class="session-num">${String(s.id).padStart(2,'0')}</div>
+        <div class="session-info">
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+          <div class="session-tags">
+            <span class="tag"><i class="fas fa-clock" style="margin-right:0.3rem;"></i>${s.duration}</span>
+            ${s.topics.map(t=>`<span class="tag">${t}</span>`).join('')}
           </div>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-message-3-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>Prompt Engineering</h4>
-            <p>Master the art of talking to AI. Learn zero-shot, few-shot, and chain-of-thought prompting techniques that actually work.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-code-s-slash-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>Python Basics for AI</h4>
-            <p>Get up to speed with the programming language powering all AI. Lists, dicts, functions, APIs — the essentials only.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-database-2-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>Data Fundamentals</h4>
-            <p>Why data is the fuel of AI. Learn how to work with datasets, understand distributions, and spot data quality issues.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-rocket-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>Your First AI App</h4>
-            <p>Ship something real. Build a working AI-powered application using the OpenAI API, from zero to deployed.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(52,211,153,0.12);color:var(--beginner)">
-            <i class="ri-flask-line"></i>
-          </div>
-          <div class="feature-text">
-            <h4>Hands-on Labs</h4>
-            <p>Every session includes a practical lab with Google Colab notebooks so you can run real code without installing anything.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        <div class="check-icon ${done?'done':''}">${done?'✓':''}</div>
+      </a>`;
+  }).join('');
+  const pct = Math.round(completed/SESSIONS.length*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = `${completed} / ${SESSIONS.length} sessions completed`;
+}
 
-    <!-- Prerequisites -->
-    <section style="margin-bottom:3rem">
-      <div class="callout callout-tip">
-        <div class="callout-icon"><i class="ri-check-line"></i></div>
-        <div class="callout-body">
-          <strong>Prerequisites</strong>
-          <p>Absolutely none. This track starts from scratch. If you can use a web browser and have basic computer literacy, you're ready. We'll teach you everything else — including the Python you need — along the way.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sessions Grid -->
-    <section id="sessions" style="margin-bottom:3rem">
-      <div class="section-heading">
-        <h2 style="font-size:1.35rem;margin:0">Sessions in This Track</h2>
-        <div class="section-divider"></div>
-      </div>
-      <div class="session-grid" id="sessions-grid">
-        <!-- Populated by JS -->
-        <div style="color:var(--text-faint);font-size:0.875rem;padding:1rem">Loading sessions...</div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section>
-      <div class="card card-lg" style="text-align:center;border-color:rgba(52,211,153,0.25);background:linear-gradient(135deg,rgba(52,211,153,0.05) 0%,rgba(56,189,248,0.05) 100%)">
-        <div style="font-size:2.5rem;margin-bottom:1rem">🌱</div>
-        <h2 style="margin-bottom:0.75rem">Ready to Begin?</h2>
-        <p style="max-width:480px;margin:0 auto 1.5rem">Every expert was once a beginner. Session 1 takes just 45 minutes and will completely reshape how you think about AI.</p>
-        <a href="/sessions/beginner/01-what-is-ai.html" class="btn btn-primary btn-lg">
-          <i class="ri-play-circle-line"></i> Start with "What is AI?"
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-  <div id="footer-placeholder"></div>
-  <script src="/assets/js/main.js"></script>
-  <script>
-    (async () => {
-      const grid = document.getElementById('sessions-grid');
-      try {
-        const res = await fetch('/data/sessions.json');
-        const all = await res.json();
-        const sessions = all.filter(s => s.section === 'beginner');
-        if (!sessions.length) { grid.innerHTML = '<p style="color:var(--text-faint)">No sessions found.</p>'; return; }
-
-        const sectionColors = { beginner: 'var(--beginner)', intermediate: 'var(--intermediate)', expert: 'var(--expert)' };
-        const color = sectionColors['beginner'];
-
-        grid.innerHTML = sessions.map(s => {
-          const done = typeof Progress !== 'undefined' && Progress.isQuizPassed(s.id);
-          return `
-            <a href="/sessions/beginner/${s.slug}.html" class="session-card${done ? ' completed' : ''}">
-              <div class="session-card-header">
-                <div>
-                  <div class="session-num" style="color:${color};margin-bottom:0.25rem">Session ${s.id}</div>
-                  <div class="session-card-title">${s.title}</div>
-                </div>
-                <div class="checkmark${done ? ' done' : ''}" title="${done ? 'Completed' : 'Not started'}">
-                  ${done ? '<i class="ri-check-line"></i>' : ''}
-                </div>
-              </div>
-              <div class="session-card-meta">
-                <span><i class="ri-time-line"></i> ${s.duration}</span>
-                <span class="badge badge-beginner">${s.section}</span>
-              </div>
-            </a>`;
-        }).join('');
-      } catch(e) {
-        grid.innerHTML = '<p style="color:var(--text-faint)">Could not load sessions.</p>';
-      }
-    })();
-  </script>
+document.addEventListener('DOMContentLoaded', renderSessions);
+</script>
 </body>
 </html>
