@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>ML Fundamentals — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 6,
+    slug: "06-ml-fundamentals",
+    section: "intermediate",
+    title: "ML Fundamentals",
+    nextSlug: "/sessions/intermediate/07-model-evaluation.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "A model that memorizes training data but fails on new data is said to be:",
+        options: ["Underfitting", "Overfitting", "Regularized", "Converged"],
+        correct: 1,
+        explanation: "Overfitting occurs when a model learns the training data too well, including noise and outliers, making it fail to generalize to new data."
+      },
+      {
+        type: "mcq",
+        question: "Which type of ML uses labeled data with correct answers to train?",
+        options: ["Unsupervised", "Reinforcement", "Supervised", "Self-supervised"],
+        correct: 2,
+        explanation: "Supervised learning uses labeled examples (input → known output). The model learns to map inputs to outputs by minimizing prediction error."
+      },
+      {
+        type: "truefalse",
+        question: "Gradient descent always finds the global minimum of the loss function.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "Gradient descent finds a local minimum, which may or may not be the global minimum. For deep networks with non-convex loss landscapes, it typically finds a 'good enough' local minimum."
+      },
+      {
+        type: "mcq",
+        question: "What is the purpose of a loss function in ML training?",
+        options: ["Speed up training", "Measure how wrong the model's predictions are", "Select which algorithm to use", "Visualize the data"],
+        correct: 1,
+        explanation: "The loss function quantifies the difference between predicted and actual values. Training minimizes this loss by adjusting model parameters."
+      },
+      {
+        type: "multi",
+        question: "Which of these are supervised learning tasks? (Select all that apply)",
+        options: ["Email spam classification", "Customer segmentation", "House price prediction", "Image clustering"],
+        correct: [0, 2],
+        explanation: "Spam classification (label: spam/not spam) and house price prediction (label: price) are supervised. Customer segmentation and image clustering are unsupervised — no predefined labels."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>ML Fundamentals</span>
+        </div>
+        <h1 class="session-title">ML Fundamentals</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 60 min</span>
+          <span><i class="ri-number-1"></i> Session 6 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: The ML Paradigm -->
+      <div class="concept-section" id="ml-paradigm">
+        <h2>The Machine Learning Paradigm</h2>
+        <p>
+          Traditional software is explicit: a programmer writes rules that map inputs to outputs. Machine learning flips this. Instead of writing rules, you show the system thousands of (input, output) examples and let it infer the rules itself.
+        </p>
+        <p>
+          This shift matters enormously for problems like image recognition or language understanding — the rules are too complex and numerous to write by hand. ML learns them automatically.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Data Required</th>
+              <th>What It Learns</th>
+              <th>Real-World Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Supervised</strong></td>
+              <td>Labeled pairs (X, y)</td>
+              <td>A mapping from inputs to known outputs</td>
+              <td>Email spam detection, house price prediction, medical diagnosis</td>
+            </tr>
+            <tr>
+              <td><strong>Unsupervised</strong></td>
+              <td>Unlabeled data (X only)</td>
+              <td>Hidden structure, clusters, or patterns</td>
+              <td>Customer segmentation, anomaly detection, topic modeling</td>
+            </tr>
+            <tr>
+              <td><strong>Reinforcement</strong></td>
+              <td>Environment + reward signal</td>
+              <td>A policy to maximize cumulative reward</td>
+              <td>Game-playing AI (AlphaGo), robot locomotion, ad bidding</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Most production ML you'll encounter is supervised learning. LLMs like GPT and Claude are trained with a combination of self-supervised learning (predict the next token) and reinforcement learning from human feedback (RLHF).
+        </p>
+      </div>
+
+      <!-- Section 2: Regression vs Classification -->
+      <div class="concept-section" id="regression-classification">
+        <h2>Regression vs Classification</h2>
+        <p>
+          Within supervised learning, there are two fundamental task types. The difference is in what you're predicting:
+        </p>
+        <ul>
+          <li><strong>Regression</strong> — Predict a continuous number. How much? How many? How long? Examples: house price, tomorrow's temperature, customer lifetime value.</li>
+          <li><strong>Classification</strong> — Predict a discrete category. Which bucket does this belong to? Examples: spam/not spam, dog/cat/bird, disease A/B/C.</li>
+        </ul>
+
+        <p>
+          Each task type uses different loss functions to measure how wrong the model is:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Common Loss Function</th>
+              <th>Intuition</th>
+              <th>Output Layer Activation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Regression</strong></td>
+              <td>Mean Squared Error (MSE)</td>
+              <td>Average squared distance between prediction and truth. Penalizes large errors heavily.</td>
+              <td>None (linear output)</td>
+            </tr>
+            <tr>
+              <td><strong>Binary Classification</strong></td>
+              <td>Binary Cross-Entropy</td>
+              <td>Measures how wrong a probability estimate is. Gets very high when you're confidently wrong.</td>
+              <td>Sigmoid (0–1 probability)</td>
+            </tr>
+            <tr>
+              <td><strong>Multi-class Classification</strong></td>
+              <td>Categorical Cross-Entropy</td>
+              <td>Extension of binary cross-entropy for more than two classes.</td>
+              <td>Softmax (probability distribution)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 3: The Training Loop -->
+      <div class="concept-section" id="training-loop">
+        <h2>The Training Loop</h2>
+        <p>
+          Training a model is an iterative process. Think of it like a student preparing for an exam:
+        </p>
+        <ol>
+          <li><strong>Take the test (forward pass):</strong> Feed data through the model, get predictions.</li>
+          <li><strong>See the score (compute loss):</strong> Compare predictions to the correct answers using the loss function.</li>
+          <li><strong>Identify what went wrong (backpropagation):</strong> Calculate how each parameter contributed to the error.</li>
+          <li><strong>Study and improve (gradient descent):</strong> Nudge each parameter slightly in the direction that reduces the loss.</li>
+        </ol>
+        <p>Repeat this thousands of times across all your training data, and the model gets progressively better.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">training_loop_pseudocode.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python"># Conceptual training loop (framework-agnostic pseudocode)
+model = initialize_model_with_random_weights()
+optimizer = GradientDescent(learning_rate=0.01)
+
+for epoch in range(num_epochs):
+    for batch_X, batch_y in dataloader:
+
+        # 1. Forward pass: make predictions
+        predictions = model(batch_X)
+
+        # 2. Compute loss: how wrong are we?
+        loss = loss_function(predictions, batch_y)
+
+        # 3. Backpropagation: compute gradients
+        gradients = compute_gradients(loss, model.parameters)
+
+        # 4. Update weights: move in the direction that reduces loss
+        optimizer.step(gradients)
+
+    # After each epoch, check validation loss
+    val_loss = evaluate(model, validation_data)
+    print(f"Epoch {epoch}: train_loss={loss:.4f}, val_loss={val_loss:.4f}")
+
+    # Stop early if validation loss stops improving (early stopping)
+    if val_loss is not improving:
+        break</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: Underfitting vs Overfitting -->
+      <div class="concept-section" id="overfitting">
+        <h2>Underfitting vs Overfitting</h2>
+        <p>
+          The central challenge of machine learning is building a model that generalizes — performs well on data it hasn't seen. Two failure modes stand in the way:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Underfitting (High Bias)</th>
+              <th>Just Right</th>
+              <th>Overfitting (High Variance)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Description</strong></td>
+              <td>Model is too simple to capture patterns</td>
+              <td>Model captures the signal, ignores noise</td>
+              <td>Model memorizes training data including noise</td>
+            </tr>
+            <tr>
+              <td><strong>Training Loss</strong></td>
+              <td>High</td>
+              <td>Low</td>
+              <td>Very low (near zero)</td>
+            </tr>
+            <tr>
+              <td><strong>Validation Loss</strong></td>
+              <td>High</td>
+              <td>Low (close to training)</td>
+              <td>Much higher than training loss</td>
+            </tr>
+            <tr>
+              <td><strong>Fix</strong></td>
+              <td>More complex model, more features, train longer</td>
+              <td>—</td>
+              <td>Regularization (dropout, L2), more data, simpler model</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-tip">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>Diagnostic Tip:</strong> If your model achieves near-perfect accuracy on training data but performs poorly on validation data, it's overfitting. The gap between training and validation performance is your overfitting signal.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Key Algorithms -->
+      <div class="concept-section" id="algorithms">
+        <h2>Key Algorithms Overview</h2>
+        <p>
+          Before deep learning dominates a problem, it's worth trying classical ML algorithms. They're faster to train, easier to interpret, and often competitive on tabular data.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Type</th>
+              <th>Best For</th>
+              <th>Weakness</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Linear Regression</strong></td>
+              <td>Regression</td>
+              <td>Simple relationships, interpretability, baseline</td>
+              <td>Can't model non-linear patterns</td>
+            </tr>
+            <tr>
+              <td><strong>Logistic Regression</strong></td>
+              <td>Classification</td>
+              <td>Binary classification with a probability output</td>
+              <td>Assumes linear decision boundary</td>
+            </tr>
+            <tr>
+              <td><strong>Decision Trees</strong></td>
+              <td>Both</td>
+              <td>Non-linear patterns, interpretable rules</td>
+              <td>Prone to overfitting unless depth-limited</td>
+            </tr>
+            <tr>
+              <td><strong>Random Forests</strong></td>
+              <td>Both</td>
+              <td>Robust, general-purpose, handles missing values</td>
+              <td>Slower than single trees, less interpretable</td>
+            </tr>
+            <tr>
+              <td><strong>Gradient Boosting (XGBoost, LightGBM)</strong></td>
+              <td>Both</td>
+              <td>Winning Kaggle competitions on tabular data</td>
+              <td>Many hyperparameters to tune</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">sklearn_quickstart.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import pandas as pd
+
+df = pd.read_csv("data.csv")
+X = df.drop(columns=["target"])
+y = df["target"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Compare multiple algorithms quickly
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100),
+}
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    acc = accuracy_score(y_test, model.predict(X_test))
+    print(f"{name:25s}: {acc:.3f}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Predict House Prices &amp; Classify Students</div>
+              <div class="lab-subtitle">Build your first regression and classification models with scikit-learn</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>You'll train regression and classification models on real datasets, compare algorithms, and see the train/test gap in action.</p>
+
+          <a href="https://colab.research.google.com/github/yourusername/noob-to-ai/blob/main/labs/06-ml-fundamentals.ipynb" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:1.5rem; display:inline-flex; align-items:center; gap:.5rem;">
+            <i class="ri-google-line"></i> Open in Google Colab
+          </a>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <strong>Load a housing dataset</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">step1_load.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">from sklearn.datasets import fetch_california_housing
+import pandas as pd
+
+data = fetch_california_housing(as_frame=True)
+df = data.frame
+print(df.head())
+print(df.describe())</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Train linear regression</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">step2_regression.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+X = df.drop(columns=["MedHouseVal"])
+y = df["MedHouseVal"]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(f"RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.3f}")
+print(f"R²:   {r2_score(y_test, y_pred):.3f}")</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Create a classification task</strong>
+              <p>Bin house values into "affordable" (below median) and "expensive" (above median), then train a classifier.</p>
+            </li>
+            <li class="lab-step">
+              <strong>Compare algorithms</strong>
+              <p>Run Logistic Regression, Random Forest, and Gradient Boosting. Note which performs best and why.</p>
+            </li>
+            <li class="lab-step">
+              <strong>Observe overfitting</strong>
+              <p>Train a decision tree with unlimited depth. Compare training vs test accuracy. Then add <code>max_depth=5</code> and see what changes.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

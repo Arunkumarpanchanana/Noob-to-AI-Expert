@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 14: AI Agents — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/expert.html">Expert</a><span class="sep">›</span><span>Session 14</span></div>
+      <h1 class="session-title">AI Agents</h1>
+      <p class="session-tagline">Give the LLM hands. Tool calling, planning loops, memory, and single vs. multi-agent architectures that take real-world actions.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-expert"><i class="fas fa-brain"></i> Expert</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="what-are-agents">What Makes an Agent?</h2>
+        <p>An agent is an LLM with tools, a goal, and a loop. Unlike a one-shot prompt, an agent can take actions, observe results, and adapt its plan until the task is done.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="compare-card"><div class="card-icon">💬</div><h4 style="color:#f87171">Chatbot (not an agent)</h4><p>Responds to one message at a time. No tools. No persistent state. Can't take actions in the real world. Task ends when it outputs text.</p></div>
+          <div class="compare-card"><div class="card-icon">🤖</div><h4 style="color:#4ade80">Agent</h4><p>Has tools (search, code execution, API calls). Runs in a loop until goal is achieved. Can plan sub-tasks, use memory, and coordinate with other agents.</p></div>
+        </div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="tool-calling">Tool Calling</h2>
+        <p>The Anthropic API supports native tool calling: you define tools with JSON schemas, the model decides when to call them, you execute the call and return results, the model continues.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
+import json
+
+client = anthropic.Anthropic()
+
+# Define tools the agent can use
+tools = [
+    {
+        "name": "search_web",
+        "description": "Search the web for current information on a topic.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "The search query"}
+            },
+            "required": ["query"]
+        }
+    },
+    {
+        "name": "calculate",
+        "description": "Perform a mathematical calculation.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "expression": {"type": "string", "description": "Math expression to evaluate, e.g. '2 * (3 + 4)'"}
+            },
+            "required": ["expression"]
+        }
+    }
+]
+
+# Mock tool execution (replace with real implementations)
+def execute_tool(name: str, inputs: dict) -> str:
+    if name == "search_web":
+        return f"[Search results for '{inputs['query']}']: Python 3.12 released October 2023, added type aliases, improved error messages..."
+    if name == "calculate":
+        try:
+            return str(eval(inputs["expression"], {"__builtins__": {}}))
+        except Exception as e:
+            return f"Error: {e}"
+    return "Tool not found"
+
+def run_agent(user_message: str) -> str:
+    messages = [{"role": "user", "content": user_message}]
+
+    while True:
+        response = client.messages.create(
+            model="claude-opus-4-7",
+            max_tokens=1024,
+            tools=tools,
+            messages=messages
+        )
+
+        # Agent is done — return the final text response
+        if response.stop_reason == "end_turn":
+            return response.content[0].text
+
+        # Agent wants to call a tool
+        if response.stop_reason == "tool_use":
+            # Add the assistant's response (including tool_use blocks) to messages
+            messages.append({"role": "assistant", "content": response.content})
+
+            # Execute all tool calls and collect results
+            tool_results = []
+            for block in response.content:
+                if block.type == "tool_use":
+                    result = execute_tool(block.name, block.input)
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": result
+                    })
+
+            # Add tool results as a user message
+            messages.append({"role": "user", "content": tool_results})
+        else:
+            break  # Unexpected stop reason
+
+    return "Agent loop ended unexpectedly"
+
+answer = run_agent("What's 15% of the GDP of Germany? Search for Germany's GDP first.")
+print(answer)</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="memory">Agent Memory</h2>
+        <p>Agents need memory across turns. Four types, each with different trade-offs:</p>
+        <table class="def-table">
+          <thead><tr><th>Memory Type</th><th>Storage</th><th>Scope</th><th>Use Case</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#60a5fa">In-context</strong></td><td>Messages array</td><td>Current session</td><td>Conversation history, recent tool results</td></tr>
+            <tr><td><strong style="color:#4ade80">External (vector)</strong></td><td>Vector DB</td><td>Persistent</td><td>Long-term knowledge, user preferences</td></tr>
+            <tr><td><strong style="color:#c084fc">External (key-value)</strong></td><td>Redis / DB</td><td>Persistent</td><td>Facts, user profile, session state</td></tr>
+            <tr><td><strong style="color:#fbbf24">Cached summary</strong></td><td>Compressed context</td><td>Session</td><td>Long conversations — summarize old turns</td></tr>
+          </tbody>
+        </table>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># Simple key-value memory for an agent
+class AgentMemory:
+    def __init__(self):
+        self._store = {}
+
+    def remember(self, key: str, value: str):
+        self._store[key] = value
+
+    def recall(self, key: str) -> str | None:
+        return self._store.get(key)
+
+    def as_context(self) -> str:
+        if not self._store:
+            return ""
+        items = "\n".join(f"- {k}: {v}" for k, v in self._store.items())
+        return f"Known facts:\n{items}\n\n"
+
+memory = AgentMemory()
+memory.remember("user_name", "Alex")
+memory.remember("preferred_language", "Python")
+memory.remember("last_project", "sentiment analysis pipeline")
+
+system = memory.as_context() + "You are a helpful coding assistant."
+print(system)</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="multi-agent">Multi-Agent Systems</h2>
+        <p>Complex tasks benefit from specialist agents orchestrated by a coordinator. Each agent has a focused role, its own tools, and its own system prompt.</p>
+        <div class="callout callout-warn"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>When to Use Multi-Agent</h4><p>Multi-agent adds complexity — only use it when tasks are genuinely parallelizable OR require different skill sets (e.g., a research agent + a writing agent + a fact-checker agent). For simple sequential tasks, a single agent with a chain is simpler and cheaper.</p></div></div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">def research_agent(topic: str) -> str:
+    """Specialist: finds facts about a topic."""
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=512,
+        system="You are a research specialist. Find key facts, statistics, and examples. Be factual, no fluff.",
+        messages=[{"role": "user", "content": f"Research: {topic}"}]
+    )
+    return response.content[0].text
+
+def writer_agent(research: str, format: str) -> str:
+    """Specialist: turns research into polished prose."""
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=512,
+        system=f"You are an expert technical writer. Transform research into {format}. Engaging but accurate.",
+        messages=[{"role": "user", "content": f"Research:\n{research}\n\nWrite a {format}."}]
+    )
+    return response.content[0].text
+
+def orchestrator(topic: str, output_format: str) -> str:
+    """Coordinator: runs the multi-agent pipeline."""
+    print(f"[Orchestrator] Researching: {topic}")
+    facts = research_agent(topic)
+
+    print(f"[Orchestrator] Writing {output_format}")
+    article = writer_agent(facts, output_format)
+
+    return article
+
+result = orchestrator("transformer attention mechanisms", "blog post introduction paragraph")
+print(result)</code></pre></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build a Research Assistant Agent</h3>
+          <p>Estimated time: 60 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-14-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Implement Tool Calling Loop</h4></div><p>Build a complete agent loop with the search + calculate tools. Add a third tool: <code>get_current_date()</code>. Test with a query that requires multiple tool calls in sequence.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Add Persistent Memory</h4></div><p>Build the AgentMemory class. After each conversation, save the user's name, preferences, and last 3 questions to memory. Load memory at the start of new conversations.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Build the Multi-Agent Pipeline</h4></div><p>Create a 3-agent system: Researcher (finds facts), Critic (identifies gaps or inaccuracies), Writer (produces the final output incorporating criticism). Compare single-agent vs. 3-agent output quality on the same topic.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Add Guardrails and Logging</h4></div><p>Add a max_turns limit to prevent infinite loops. Log every tool call with timestamp and result. Add a "safety check" step where a second LLM call verifies the final output before it's returned.</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/expert/13-advanced-prompting.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 13</span><span class="nav-title">Advanced Prompting</span></div></a>
+      <a href="/sessions/expert/15-llm-evaluation.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 15</span><span class="nav-title">LLM Evaluation</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 14, slug: '14-ai-agents', section: 'expert',
+  nextPath: '/sessions/expert/15-llm-evaluation.html',
+  quizData: [
+    {id:'s14q01',type:'mcq',points:1,question:'What is the key difference between a chatbot and an AI agent?',options:[{id:'a',text:'Chatbots use GPT-4, agents use Claude'},{id:'b',text:'Agents have tools, can take actions in a loop, and continue until a goal is achieved',correct:true},{id:'c',text:'Agents are always multi-model while chatbots are single-model'},{id:'d',text:'Chatbots are free, agents require paid APIs'}],explanation:'An agent = LLM + tools + loop + goal. The loop is critical: an agent can call tools, observe results, update its plan, and repeat until done. A chatbot simply responds to each message and stops. The loop + tools = agency.',hint:'What can an agent do that a basic chatbot cannot?'},
+    {id:'s14q02',type:'mcq',points:1,question:'In the Anthropic tool-calling API, what does a stop_reason of "tool_use" indicate?',options:[{id:'a',text:'The model hit its token limit'},{id:'b',text:'The model wants to call one or more tools before continuing',correct:true},{id:'c',text:'An error occurred during processing'},{id:'d',text:'The model has finished its response'}],explanation:'"tool_use" stop_reason means the model decided it needs external information or action — it\'s pausing to call a tool. Your code must execute the tool(s), return the results as a "tool_result" message, then call the API again. "end_turn" means the model has finished and is done with its current turn.',hint:'What happens when the model "pauses" to call a tool?'},
+    {id:'s14q03',type:'truefalse',points:1,question:'You should always use a multi-agent architecture over a single agent because more agents means better results.',correctAnswer:false,explanation:'FALSE. Multi-agent adds significant complexity — more API calls, more points of failure, harder debugging. Use multi-agent only when: (1) tasks are genuinely parallelizable, or (2) different tasks require genuinely different expertise. For most sequential tasks, a single agent with chaining is simpler, cheaper, and easier to debug.'},
+    {id:'s14q04',type:'mcq',points:1,question:'An agent is processing a user\'s request and has now made 47 LLM calls in a loop with no end in sight. What engineering pattern prevents this?',options:[{id:'a',text:'Increasing max_tokens to give the model more room'},{id:'b',text:'A max_turns or max_iterations limit that stops the loop and returns an error',correct:true},{id:'c',text:'Using temperature=0 for deterministic loops'},{id:'d',text:'Adding more tools so the agent can escape the loop'}],explanation:'Infinite loops are a real production risk with agents. Always add a max_turns counter. When exceeded: log the state, return a meaningful error to the user, and potentially alert your team. Also consider per-session token budget limits. Never build an agent loop without a hard stopping condition.',hint:'What safeguard prevents a program from looping forever?'},
+    {id:'s14q05',type:'multi',points:2,question:'Which are valid types of agent memory? Select all that apply.',options:[{id:'a',text:'In-context memory (conversation history in the messages array)',correct:true},{id:'b',text:'External vector DB for long-term semantic memory',correct:true},{id:'c',text:'Key-value store for persistent facts and user preferences',correct:true},{id:'d',text:'The model\'s internal weights (fine-tuned knowledge)'},{id:'e',text:'Compressed/summarized context for long conversations',correct:true}],explanation:'Valid agent memory types: in-context (messages array — fast but limited by context window), external vector DB (semantic search over long-term memories), key-value stores (facts, preferences, session state), and compressed summaries (summarize old turns to save context). Model weights are not "memory" in the operational sense — they\'re static after training and aren\'t updated per-session.'}
+  ]
+};
+</script>
+</body>
+</html>

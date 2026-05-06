@@ -1,0 +1,22 @@
+[
+  { "id": 1,  "slug": "01-what-is-ai",          "title": "What is AI?",                 "section": "beginner",     "duration": "45 min" },
+  { "id": 2,  "slug": "02-prompt-engineering",   "title": "Prompt Engineering",          "section": "beginner",     "duration": "50 min" },
+  { "id": 3,  "slug": "03-python-for-ai",        "title": "Python for AI",               "section": "beginner",     "duration": "60 min" },
+  { "id": 4,  "slug": "04-data-basics",          "title": "Data Basics",                 "section": "beginner",     "duration": "45 min" },
+  { "id": 5,  "slug": "05-first-ai-app",         "title": "Your First AI App",           "section": "beginner",     "duration": "55 min" },
+  { "id": 6,  "slug": "06-ml-fundamentals",      "title": "ML Fundamentals",             "section": "intermediate", "duration": "60 min" },
+  { "id": 7,  "slug": "07-model-evaluation",     "title": "Model Evaluation",            "section": "intermediate", "duration": "55 min" },
+  { "id": 8,  "slug": "08-neural-networks",      "title": "Neural Networks",             "section": "intermediate", "duration": "65 min" },
+  { "id": 9,  "slug": "09-llms-transformers",    "title": "LLMs & Transformers",         "section": "intermediate", "duration": "60 min" },
+  { "id": 10, "slug": "10-embeddings-search",    "title": "Embeddings & Semantic Search","section": "intermediate", "duration": "55 min" },
+  { "id": 11, "slug": "11-rag",                  "title": "RAG Pipelines",               "section": "intermediate", "duration": "65 min" },
+  { "id": 12, "slug": "12-ai-app-development",   "title": "AI App Development",          "section": "intermediate", "duration": "70 min" },
+  { "id": 13, "slug": "13-advanced-prompting",   "title": "Advanced Prompting",          "section": "expert",       "duration": "60 min" },
+  { "id": 14, "slug": "14-ai-agents",            "title": "AI Agents",                   "section": "expert",       "duration": "70 min" },
+  { "id": 15, "slug": "15-llm-evaluation",       "title": "LLM Evaluation",              "section": "expert",       "duration": "60 min" },
+  { "id": 16, "slug": "16-fine-tuning",          "title": "Fine-Tuning LLMs",            "section": "expert",       "duration": "75 min" },
+  { "id": 17, "slug": "17-responsible-ai",       "title": "Responsible AI",              "section": "expert",       "duration": "55 min" },
+  { "id": 18, "slug": "18-multimodal-ai",        "title": "Multimodal AI",               "section": "expert",       "duration": "65 min" },
+  { "id": 19, "slug": "19-production-deployment","title": "Production Deployment",       "section": "expert",       "duration": "70 min" },
+  { "id": 20, "slug": "20-capstone",             "title": "Capstone Project",            "section": "expert",       "duration": "90 min" }
+]

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 09: LLMs and Transformers — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 09</span></div>
+      <h1 class="session-title">LLMs and Transformers</h1>
+      <p class="session-tagline">How does ChatGPT actually work? Tokens, embeddings, attention, context windows, and why LLMs hallucinate — explained without the math fear.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 75 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Interactive Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="tokens">Tokens: The Currency of LLMs</h2>
+        <p>LLMs don't process words — they process <strong style="color:#e2e8f0">tokens</strong>. A token is roughly a word or word-piece (subword). The model converts text into token IDs, processes them, then converts token IDs back to text.</p>
+        <div class="callout callout-info"><span class="callout-icon">💡</span><div class="callout-body"><h4>Token Rules of Thumb</h4><p>~1 token per 4 characters of English text. "Hello world" ≈ 2 tokens. A 5-page essay ≈ ~2,000 tokens. GPT-4's 128k context window = ~96,000 words. Why tokens matter: you pay per token and your prompt + response must fit in the context window.</p></div></div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import tiktoken  # pip install tiktoken
+
+# OpenAI's tokenizer (same as GPT-4)
+enc = tiktoken.encoding_for_model("gpt-4")
+
+text = "Hello! I'm learning about transformers and LLMs."
+tokens = enc.encode(text)
+print(f"Text: '{text}'")
+print(f"Token IDs: {tokens}")
+print(f"Token count: {len(tokens)}")
+
+# Decode individual tokens to see the subwords
+for token_id in tokens:
+    decoded = enc.decode([token_id])
+    print(f"  {token_id} → '{decoded}'")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="embeddings">Embeddings: Meaning as Numbers</h2>
+        <p>Each token is converted to a high-dimensional vector (the embedding). The magic: similar words have similar embeddings. "King" and "Queen" are close in embedding space. "Cat" and "automobile" are far apart.</p>
+        <p>GPT-4 uses 12,288-dimensional embeddings — each token is a point in 12,288-dimensional space. Relationships between concepts are encoded as geometric distances and directions in this space.</p>
+        <div class="callout callout-tip"><span class="callout-icon">✨</span><div class="callout-body"><h4>The Famous Example</h4><p>embedding("King") - embedding("Man") + embedding("Woman") ≈ embedding("Queen"). The geometric relationship between gender is encoded as a consistent direction in embedding space. This is how LLMs "understand" analogies.</p></div></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="attention">Attention: The Core of Transformers</h2>
+        <p>The key innovation in the 2017 "Attention Is All You Need" paper. Attention lets each token look at every other token in the sequence to decide what to focus on.</p>
+        <p><strong style="color:#e2e8f0">Analogy:</strong> Reading the sentence "The animal didn't cross the street because it was too tired." What does "it" refer to? "Animal" or "street"? Your brain uses attention — looking back at context to resolve the ambiguity. Transformers do the same thing mathematically.</p>
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.25rem;margin:1.5rem 0;font-size:0.85rem;color:#94a3b8;line-height:1.8;">
+          <strong style="color:#e2e8f0;display:block;margin-bottom:0.5rem;">Self-Attention Intuition</strong>
+          For each token, attention computes:<br>
+          <span style="color:#60a5fa">Query (Q)</span>: "What am I looking for?"<br>
+          <span style="color:#4ade80">Key (K)</span>: "What do I advertise about myself?"<br>
+          <span style="color:#c084fc">Value (V)</span>: "What information do I carry?"<br><br>
+          Each token's query is matched against all other tokens' keys. High match → high attention weight → more of that token's value is incorporated into the current token's representation.
+        </div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="why-hallucinate">Why LLMs Hallucinate</h2>
+        <p>LLMs generate the statistically most likely next token given the context. They are <strong style="color:#f87171">not knowledge databases</strong>. They have no way to say "I don't know this" — they will always generate something plausible-sounding.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+          <div class="compare-card"><div class="card-icon">🎲</div><h4 style="color:#f87171">Statistical Generation</h4><p>The model picks the next token based on probability distributions — not factual lookup. Plausible ≠ true.</p></div>
+          <div class="compare-card"><div class="card-icon">📚</div><h4 style="color:#fbbf24">Training Data Gaps</h4><p>If a fact wasn't well-represented in training data, the model learned a wrong or uncertain distribution for it.</p></div>
+          <div class="compare-card"><div class="card-icon">📏</div><h4 style="color:#60a5fa">Context Window Limit</h4><p>The model forgets information beyond its context window — it can't reference documents it hasn't been given.</p></div>
+          <div class="compare-card"><div class="card-icon">🔇</div><h4 style="color:#4ade80">Fix: RAG</h4><p>Retrieval-Augmented Generation (Session 11) grounds the model in actual documents, dramatically reducing hallucination.</p></div>
+        </div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># Experiment: See tokens and context limits in action
+import anthropic
+
+client = anthropic.Anthropic()
+
+# Token counting
+response = client.messages.count_tokens(
+    model="claude-3-5-sonnet-20241022",
+    messages=[{"role": "user", "content": "Explain transformers in detail..."}]
+)
+print(f"Input tokens: {response.input_tokens}")
+
+# Context window experiment: give the model a document and ask about it
+document = "The revenue for Q3 was $4.2M. The CEO is Sarah Chen."
+question = "What was the Q3 revenue?"
+
+# With document (correct answer expected)
+response_with_context = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=100,
+    messages=[{
+        "role": "user",
+        "content": f"Document: {document}\n\nQuestion: {question}"
+    }]
+)
+print("With context:", response_with_context.content[0].text)
+
+# Without document (hallucination risk!)
+response_without = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=100,
+    messages=[{"role": "user", "content": question}]
+)
+print("Without context:", response_without.content[0].text)</code></pre></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Token Counting and Context Limit Experiments</h3>
+          <p>Estimated time: 30 minutes · Colab + API key</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-09-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Count Tokens in Real Text</h4></div><p>Use tiktoken to count tokens in: a tweet, a paragraph, a whole article. Notice how code, special characters, and rare words tokenize differently.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Test Context Window Limits</h4></div><p>Create a very long document (50,000 words). Ask a question whose answer appears at position 1%, 50%, and 99% of the document. Observe if the model finds all answers equally well (hint: it doesn't always).</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Trigger and Fix Hallucination</h4></div><p>Ask the model a very specific question about a fictional company you invent. Watch it hallucinate an answer. Then repeat with the facts provided in context. Compare.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Measure Cost</h4></div><p>Calculate: if you run 1,000 queries per day with an average of 2,000 input tokens and 500 output tokens using claude-3-5-sonnet, what's your monthly bill?</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/intermediate/08-neural-networks.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 08</span><span class="nav-title">Neural Networks</span></div></a>
+      <a href="/sessions/intermediate/10-embeddings-search.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 10</span><span class="nav-title">Embeddings & Semantic Search</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 9, slug: '09-llms-transformers', section: 'intermediate',
+  nextPath: '/sessions/intermediate/10-embeddings-search.html',
+  quizData: [
+    {id:'s09q01',type:'mcq',points:1,question:'A paragraph of 400 words is approximately how many tokens for an English LLM?',options:[{id:'a',text:'400 tokens (1 word = 1 token)'},{id:'b',text:'100 tokens (1 token = 4 words)'},{id:'c',text:'~530 tokens (1 token ≈ 0.75 words)',correct:true},{id:'d',text:'1,600 tokens (1 word = 4 tokens)'}],explanation:'The rule of thumb: 1 token ≈ 4 characters of English, or ~0.75 words. So 400 words ≈ 533 tokens. This varies: code and rare words cost more tokens per character. Common short words may each be 1 token. Knowing this lets you estimate costs and context window usage.',hint:'About 4 characters = 1 token in English.'},
+    {id:'s09q02',type:'mcq',points:1,question:'In the attention mechanism, what do Queries, Keys, and Values conceptually represent?',options:[{id:'a',text:'Q=input, K=weights, V=output of each neuron'},{id:'b',text:'Q="what I\'m looking for", K="what I advertise about myself", V="information I carry"',correct:true},{id:'c',text:'Q=question token, K=keyword token, V=vocabulary'},{id:'d',text:'Q=quality score, K=kernel size, V=value after normalization'}],explanation:'Self-attention: each token generates Q (what it\'s searching for), K (what it makes available to be found), and V (the content it contributes). High Q·K similarity for a token pair → that token\'s V gets a large weight in the current token\'s representation. This is how context flows in transformers.',hint:'Think of a search: the query searches against all keys, and matching keys retrieve their values.'},
+    {id:'s09q03',type:'truefalse',points:1,question:'LLMs hallucinate because they have deliberately been programmed to sometimes make things up to appear more helpful.',correctAnswer:false,explanation:'FALSE. Hallucination is an emergent failure mode, not a design choice. LLMs generate the statistically most likely next token — they have no "I don\'t know" mechanism. When asked about something not well-represented in training data, they generate plausible-sounding text that may be false. It\'s a probabilistic prediction system, not a knowledge lookup system.'},
+    {id:'s09q04',type:'mcq',points:1,question:'You\'re building an app that processes 10 documents of 5,000 tokens each, plus a 500-token question. The model has a 128,000-token context window. Will all documents fit?',options:[{id:'a',text:'No — 10 × 5,000 = 50,000 tokens which exceeds the limit'},{id:'b',text:'Yes — 50,000 + 500 = 50,500 tokens, well within 128,000 tokens',correct:true},{id:'c',text:'It depends on the model\'s temperature setting'},{id:'d',text:'No — you can only include one document at a time'}],explanation:'50,000 (documents) + 500 (question) = 50,500 tokens total. 50,500 < 128,000, so all 10 documents fit comfortably. You still have ~77,500 tokens of headroom. Modern LLMs with large context windows (128k–200k tokens) can process many documents in a single call — this is the foundation of RAG.',hint:'Add up all the tokens and compare to the limit.'},
+    {id:'s09q05',type:'multi',points:2,question:'Which of the following approaches help reduce LLM hallucination? Select all that apply.',options:[{id:'a',text:'Provide the relevant source documents in the prompt',correct:true},{id:'b',text:'Instruct the model to say "I don\'t know" when uncertain',correct:true},{id:'c',text:'Use Retrieval-Augmented Generation (RAG)',correct:true},{id:'d',text:'Increase the temperature to 2.0'},{id:'e',text:'Ask the model to cite specific sentences from provided documents',correct:true}],explanation:'Providing context (a), instructing uncertainty expression (b), RAG (c), and requiring citations (e) all reduce hallucination by grounding the model in actual text. Higher temperature INCREASES randomness and hallucination — it makes the model more creative and less reliable. Lower temperature (0.0–0.3) makes responses more deterministic and factual.'}
+  ]
+};
+</script>
+</body>
+</html>

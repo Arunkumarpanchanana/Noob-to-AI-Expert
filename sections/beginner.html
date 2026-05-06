@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beginner Track — AI User to AI Builder | Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <style>
+    .section-hero { padding: 8rem 1.5rem 3rem; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(34,197,94,0.08) 0%, transparent 60%); text-align: center; }
+    .section-hero h1 { font-size: 3rem; font-weight: 800; color: var(--text); margin: 0 0 0.75rem; letter-spacing: -0.04em; }
+    .section-hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 580px; margin: 0 auto 2rem; }
+    .session-list { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .session-item { display: flex; gap: 1.5rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; align-items: flex-start; box-shadow: var(--shadow-sm); }
+    .session-item:hover { border-color: #16a34a; transform: translateX(4px); background: #f0fdf4; text-decoration: none; box-shadow: var(--shadow-md); }
+    .session-item.completed { border-color: #86efac; background: #f0fdf4; }
+    .session-num { width: 48px; height: 48px; border-radius: 12px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; border: 1px solid #bbf7d0; }
+    .session-info { flex: 1; }
+    .session-info h3 { margin: 0 0 0.3rem; font-size: 1.05rem; color: var(--text); }
+    .session-info p { margin: 0 0 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+    .session-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .tag { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; }
+    .check-icon { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-light); flex-shrink: 0; margin-top: 0.2rem; }
+    .check-icon.done { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="section-hero">
+  <div><span class="badge badge-beginner" style="margin-bottom:1rem;display:inline-flex;"><i class="fas fa-seedling"></i> Beginner Track</span></div>
+  <h1>AI User → AI Builder</h1>
+  <p>5 sessions designed to take you from "I've heard of ChatGPT" to shipping your own AI applications. No prior experience needed.</p>
+  <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;color:var(--text-muted);font-size:0.9rem;">
+    <span><i class="fas fa-layer-group" style="margin-right:0.4rem;color:#16a34a;"></i>5 Sessions</span>
+    <span><i class="fas fa-clock" style="margin-right:0.4rem;color:#16a34a;"></i>~5 hours total</span>
+    <span><i class="fas fa-flask" style="margin-right:0.4rem;color:#16a34a;"></i>5 Labs</span>
+    <span><i class="fas fa-check-circle" style="margin-right:0.4rem;color:#16a34a;"></i>25 Quiz Questions</span>
+  </div>
+  <div style="margin-top:2rem;" id="section-progress">
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:999px;height:8px;max-width:400px;margin:0 auto 0.5rem;overflow:hidden;">
+      <div id="prog-bar" style="height:100%;background:#22c55e;border-radius:999px;width:0%;transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text-muted);" id="prog-text">0 / 5 sessions completed</div>
+  </div>
+</div>
+
+<div class="session-list">
+  <h2 style="color:var(--text);font-size:1.3rem;margin-bottom:1.5rem;font-weight:700;">Sessions in This Track</h2>
+  <div id="session-list-container">
+    <!-- Populated by JS -->
+  </div>
+  <div style="margin-top:2rem;text-align:center;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);">
+    <div style="font-size:1.5rem;margin-bottom:0.5rem;">🚀</div>
+    <h3 style="color:var(--text);margin:0 0 0.5rem;">Ready for more?</h3>
+    <p style="color:var(--text-muted);margin:0 0 1rem;font-size:0.9rem;">After completing this track, continue to Intermediate to learn how ML actually works.</p>
+    <a href="/sections/intermediate.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:0.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:0.9rem;text-decoration:none;">Go to Intermediate <i class="fas fa-arrow-right"></i></a>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="/assets/js/progress.js"></script>
+<script src="/assets/js/main.js"></script>
+<script>
+const SESSIONS = [
+  {id:1,title:'What AI Really Is',desc:'Understand the landscape: AI vs ML vs Deep Learning vs Generative AI with real-world examples.',path:'/sessions/beginner/01-what-is-ai.html',duration:'45 min',topics:['AI vs ML vs DL','GenAI','Real-world classification']},
+  {id:2,title:'Prompt Engineering Foundations',desc:'Master prompt anatomy, role prompting, few-shot examples, and chain-of-thought.',path:'/sessions/beginner/02-prompt-engineering.html',duration:'60 min',topics:['Prompt anatomy','Few-shot prompting','Chain-of-thought']},
+  {id:3,title:'Python for AI',desc:'Variables, lists, dicts, functions, files, and API calls — the 20% that does 80% of AI work.',path:'/sessions/beginner/03-python-for-ai.html',duration:'90 min',topics:['Python basics','Data structures','API calls']},
+  {id:4,title:'Data Basics for AI',desc:'Structured vs unstructured data, features, labels, cleaning, and train/test splits.',path:'/sessions/beginner/04-data-basics.html',duration:'60 min',topics:['Features & labels','Data cleaning','Train/test split']},
+  {id:5,title:'Your First AI App',desc:'Build a working AI Study Assistant with conversation history, streaming, and topic selection.',path:'/sessions/beginner/05-first-ai-app.html',duration:'90 min',topics:['App anatomy','Chatbot loop','Streaming']},
+];
+
+function renderSessions() {
+  const container = document.getElementById('session-list-container');
+  let completed = 0;
+  container.innerHTML = SESSIONS.map((s,i) => {
+    const state = Progress.getSession(s.id);
+    const done = state.quizPassed;
+    if (done) completed++;
+    return `
+      <a href="${s.path}" class="session-item ${done?'completed':''}">
+        <div class="session-num">${String(s.id).padStart(2,'0')}</div>
+        <div class="session-info">
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+          <div class="session-tags">
+            <span class="tag"><i class="fas fa-clock" style="margin-right:0.3rem;"></i>${s.duration}</span>
+            ${s.topics.map(t=>`<span class="tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="check-icon ${done?'done':''}">${done?'✓':''}</div>
+      </a>`;
+  }).join('');
+  const pct = Math.round(completed/SESSIONS.length*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = `${completed} / ${SESSIONS.length} sessions completed`;
+}
+
+document.addEventListener('DOMContentLoaded', renderSessions);
+</script>
+</body>
+</html>

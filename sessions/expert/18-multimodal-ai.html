@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 18: Multimodal AI — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/expert.html">Expert</a><span class="sep">›</span><span>Session 18</span></div>
+      <h1 class="session-title">Multimodal AI</h1>
+      <p class="session-tagline">Beyond text. Work with images, audio, and documents using vision models, speech APIs, and multimodal pipelines that process the real world.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 75 min</span>
+        <span><span class="badge badge-expert"><i class="fas fa-brain"></i> Expert</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="modalities">The Modality Landscape</h2>
+        <p>Modern AI handles multiple modalities. Understanding which API to use for each task is key to building multimodal applications.</p>
+        <table class="def-table">
+          <thead><tr><th>Modality</th><th>Input → Output</th><th>Key APIs</th><th>Use Cases</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#60a5fa">Vision</strong></td><td>Image → Text</td><td>Claude claude-opus-4-7, GPT-4V</td><td>Image analysis, OCR, chart reading, accessibility</td></tr>
+            <tr><td><strong style="color:#4ade80">Speech-to-Text</strong></td><td>Audio → Text</td><td>OpenAI Whisper, Deepgram</td><td>Meeting transcription, voice commands</td></tr>
+            <tr><td><strong style="color:#c084fc">Text-to-Speech</strong></td><td>Text → Audio</td><td>OpenAI TTS, ElevenLabs</td><td>Voiceovers, accessibility, voice assistants</td></tr>
+            <tr><td><strong style="color:#f59e0b">Image Generation</strong></td><td>Text → Image</td><td>DALL-E 3, Stable Diffusion</td><td>Content creation, prototyping, design</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="vision">Vision with Claude</h2>
+        <p>Claude claude-opus-4-7 natively understands images. Pass images as base64 or URL in the messages array — no separate API.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
+import base64
+from pathlib import Path
+
+client = anthropic.Anthropic()
+
+def analyze_image_file(image_path: str, question: str) -> str:
+    """Analyze a local image file with a text question."""
+    image_data = base64.standard_b64encode(Path(image_path).read_bytes()).decode("utf-8")
+
+    # Determine media type
+    suffix = Path(image_path).suffix.lower()
+    media_types = {".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                   ".png": "image/png", ".gif": "image/gif", ".webp": "image/webp"}
+    media_type = media_types.get(suffix, "image/jpeg")
+
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=1024,
+        messages=[{
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": media_type,
+                        "data": image_data,
+                    }
+                },
+                {"type": "text", "text": question}
+            ]
+        }]
+    )
+    return response.content[0].text
+
+def analyze_image_url(url: str, question: str) -> str:
+    """Analyze an image from a URL."""
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=1024,
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {"type": "url", "url": url}},
+                {"type": "text", "text": question}
+            ]
+        }]
+    )
+    return response.content[0].text
+
+# Example: extract data from a chart
+result = analyze_image_url(
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Fibonacci_spiral_34.svg/400px-Fibonacci_spiral_34.svg.png",
+    "Describe what you see in this image and any mathematical patterns you notice."
+)
+print(result)</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="audio">Audio Processing</h2>
+        <p>Combine speech-to-text and text-to-speech APIs with LLMs to build voice applications.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">from openai import OpenAI
+import tempfile
+
+openai_client = OpenAI()
+
+def transcribe_audio(audio_file_path: str) -> str:
+    """Transcribe audio to text using Whisper."""
+    with open(audio_file_path, "rb") as audio_file:
+        transcript = openai_client.audio.transcriptions.create(
+            model="whisper-1",
+            file=audio_file,
+            response_format="text"
+        )
+    return transcript
+
+def text_to_speech(text: str, output_path: str, voice: str = "nova") -> str:
+    """Convert text to speech and save to file."""
+    # Available voices: alloy, echo, fable, onyx, nova, shimmer
+    response = openai_client.audio.speech.create(
+        model="tts-1",
+        voice=voice,
+        input=text
+    )
+    response.stream_to_file(output_path)
+    return output_path
+
+def voice_assistant_pipeline(audio_path: str) -> dict:
+    """Full pipeline: audio → transcript → LLM response → speech."""
+    # Step 1: Transcribe
+    transcript = transcribe_audio(audio_path)
+    print(f"User said: {transcript}")
+
+    # Step 2: LLM response
+    llm_response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=200,
+        messages=[{"role": "user", "content": transcript}]
+    ).content[0].text
+
+    # Step 3: Synthesize response to speech
+    output_path = "response.mp3"
+    text_to_speech(llm_response, output_path)
+
+    return {"transcript": transcript, "response": llm_response, "audio": output_path}</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="multimodal-rag">Multimodal RAG</h2>
+        <p>RAG for documents with images, charts, and tables. Two strategies: extract text from images first, or use a vision model to understand visual content directly.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
+from pathlib import Path
+import base64
+
+def extract_text_from_image(image_path: str) -> str:
+    """Use vision model to extract all text and data from an image."""
+    image_data = base64.standard_b64encode(Path(image_path).read_bytes()).decode("utf-8")
+
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=2048,
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": image_data}},
+                {"type": "text", "text": """Extract ALL information from this image:
+1. All text, including captions and labels
+2. All numbers and data from charts/tables
+3. Key visual elements and their relationships
+Format as structured text for downstream search."""}
+            ]
+        }]
+    )
+    return response.content[0].text
+
+# Process a folder of document images
+def build_multimodal_index(image_folder: str) -> list[dict]:
+    """Build a searchable index from document images."""
+    documents = []
+    for img_path in Path(image_folder).glob("*.png"):
+        print(f"Processing {img_path.name}...")
+        extracted = extract_text_from_image(str(img_path))
+        documents.append({
+            "source": img_path.name,
+            "content": extracted,
+            "type": "image"
+        })
+    return documents</code></pre></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build an Image-to-Report Pipeline</h3>
+          <p>Estimated time: 60 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-18-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Analyze 5 Different Image Types</h4></div><p>Test Claude's vision on: a bar chart, a screenshot of a website, a handwritten note, a product photo, and a technical diagram. For each, ask the model to extract all data and describe what it sees.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Build a Receipt Parser</h4></div><p>Take 3 photos of receipts (or download sample receipt images). Build a pipeline that: extracts all items + prices, calculates totals, and outputs structured JSON. Validate the JSON is parseable.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Audio Summarizer</h4></div><p>Record a 1-minute voice note about your day. Transcribe with Whisper. Send transcript to Claude for a structured summary: main topics, action items, sentiment. Display all three alongside the original transcript.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Multimodal RAG</h4></div><p>Take 5 screenshots of a Wikipedia article (or any document). Use vision to extract text from each image. Build a simple search over the extracted content. Ask 3 questions and verify the answers are grounded in the document.</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/expert/17-responsible-ai.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 17</span><span class="nav-title">Responsible AI</span></div></a>
+      <a href="/sessions/expert/19-production-deployment.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 19</span><span class="nav-title">Production Deployment</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 18, slug: '18-multimodal-ai', section: 'expert',
+  nextPath: '/sessions/expert/19-production-deployment.html',
+  quizData: [
+    {id:'s18q01',type:'mcq',points:1,question:'You want to build an app that reads handwritten forms and extracts data. Which technology stack is most appropriate?',options:[{id:'a',text:'A traditional OCR library like Tesseract'},{id:'b',text:'A vision-language model like Claude claude-opus-4-7 or GPT-4V that understands both the image and the task',correct:true},{id:'c',text:'A text embedding model like text-embedding-3-small'},{id:'d',text:'Speech-to-text API since both handle unstructured input'}],explanation:'Vision-language models (Claude claude-opus-4-7, GPT-4V) understand images AND can follow complex instructions about what to extract. Traditional OCR just extracts text without understanding context. For handwritten forms, VLMs handle messy handwriting, understand form structure, and extract data into structured formats — far superior to Tesseract for complex documents.',hint:'Which model understands both visual content AND can reason about what to extract?'},
+    {id:'s18q02',type:'mcq',points:1,question:'What is the correct way to pass an image to Claude\'s API?',options:[{id:'a',text:'Include the image URL as plain text in the user message'},{id:'b',text:'Pass a base64-encoded image or URL as an image content block in the messages array',correct:true},{id:'c',text:'Upload the image to a separate endpoint and reference its ID'},{id:'d',text:'Claude cannot process images — use GPT-4V instead'}],explanation:'Claude\'s API accepts images as content blocks in the messages array with type "image". The source can be: (1) base64-encoded binary data with media_type, or (2) a URL. Text questions are separate "text" content blocks in the same message. Never just paste an image URL as plain text — it won\'t be processed as an image.',hint:'Images must be structured as content blocks, not plain text URLs.'},
+    {id:'s18q03',type:'truefalse',points:1,question:'Whisper (OpenAI\'s speech-to-text model) can only transcribe English audio.',correctAnswer:false,explanation:'FALSE. Whisper supports 99+ languages and can auto-detect the language or accept a language hint. It also supports translation directly to English from other languages. This makes it useful for multilingual applications. Quality varies by language — it\'s strongest on languages well-represented in training data (English, Spanish, French, German, etc.).'},
+    {id:'s18q04',type:'mcq',points:1,question:'In a multimodal RAG system processing PDFs with charts and tables, what is the advantage of using a vision model to extract content from page images instead of a text PDF parser?',options:[{id:'a',text:'Vision models are always faster than text parsers'},{id:'b',text:'Vision models capture information in charts, tables, diagrams, and layouts that text parsers miss',correct:true},{id:'c',text:'Text parsers require more API credits than vision models'},{id:'d',text:'Vision models can handle larger PDFs than text parsers'}],explanation:'Traditional PDF text parsers extract only the text layer — they miss charts, graphs, diagrams, table structure, and visual layouts. A vision model analyzing the page image understands all visual elements: it can read chart values, interpret table structure, extract equation variables, and describe diagrams. For information-dense technical documents, this dramatically improves retrieval quality.',hint:'What information exists in a PDF page that text-only parsing cannot capture?'},
+    {id:'s18q05',type:'multi',points:2,question:'Which are valid use cases for combining speech-to-text + LLM + text-to-speech? Select all that apply.',options:[{id:'a',text:'Voice-controlled customer service agent that answers questions',correct:true},{id:'b',text:'Meeting transcription and AI-generated summary read back aloud',correct:true},{id:'c',text:'Real-time translation: speak in Spanish, hear response in English',correct:true},{id:'d',text:'Generating photorealistic images from voice descriptions'},{id:'e',text:'Accessibility tool for visually impaired users to interact with text content',correct:true}],explanation:'STT + LLM + TTS enables: voice customer service (a), meeting summarization spoken back (b), voice translation (c), and accessibility tools (e). Generating photorealistic images from voice requires an image generation model (DALL-E, Stable Diffusion) — the voice would just become a text prompt for the image generator. All the others are clean STT → LLM → TTS pipelines.'}
+  ]
+};
+</script>
+</body>
+</html>

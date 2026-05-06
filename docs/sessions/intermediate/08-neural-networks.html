@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>Neural Networks — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 8,
+    slug: "08-neural-networks",
+    section: "intermediate",
+    title: "Neural Networks",
+    nextSlug: "/sessions/intermediate/09-llms-transformers.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "What is the role of an activation function in a neural network?",
+        options: ["Speed up computation", "Introduce non-linearity to learn complex patterns", "Normalize the input data", "Reduce overfitting"],
+        correct: 1,
+        explanation: "Without activation functions, stacking linear layers is equivalent to one linear layer — you can only model linear relationships. Activations like ReLU introduce non-linearity, allowing networks to learn complex patterns."
+      },
+      {
+        type: "mcq",
+        question: "In deep learning, 'backpropagation' refers to:",
+        options: ["Feeding data backwards through the network", "Computing gradients to update weights using the chain rule", "Removing neurons that aren't contributing", "Reversing overfitting"],
+        correct: 1,
+        explanation: "Backpropagation applies the chain rule of calculus to efficiently compute gradients of the loss with respect to every weight in the network, which are then used to update weights via gradient descent."
+      },
+      {
+        type: "truefalse",
+        question: "A neural network with more layers always performs better than one with fewer layers.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "More layers can model more complex patterns but risk overfitting, vanishing gradients, and require more data. The right depth depends on problem complexity and available data."
+      },
+      {
+        type: "mcq",
+        question: "What does 'batch size' control during neural network training?",
+        options: ["Number of training epochs", "Number of samples processed before a weight update", "Learning rate schedule", "Number of hidden layers"],
+        correct: 1,
+        explanation: "Batch size controls how many samples are processed before weights are updated. Smaller batches give noisier but faster updates. Larger batches give smoother gradients but require more memory."
+      },
+      {
+        type: "multi",
+        question: "Which neural network architectures are correctly matched to their primary use? (Select all that are correct)",
+        options: ["CNN → Image recognition", "RNN/LSTM → Time series and sequences", "Transformer → Language and attention-based tasks", "MLP → All tasks equally well"],
+        correct: [0, 1, 2],
+        explanation: "CNNs excel at spatial data (images), RNNs at sequential data, and Transformers at language/attention tasks. MLPs (fully connected networks) work but are often outperformed by specialized architectures."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>Neural Networks</span>
+        </div>
+        <h1 class="session-title">Neural Networks</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 65 min</span>
+          <span><i class="ri-number-1"></i> Session 8 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: The Artificial Neuron -->
+      <div class="concept-section" id="artificial-neuron">
+        <h2>The Artificial Neuron</h2>
+        <p>
+          A biological neuron fires when the sum of its incoming signals exceeds a threshold. An artificial neuron mimics this: it takes a weighted sum of its inputs, adds a bias term, and passes the result through an <strong>activation function</strong> to produce an output.
+        </p>
+
+        <!-- Visual neuron diagram using CSS -->
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin:1.5rem 0; font-size:0.85rem;">
+          <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:6px; padding:0.4rem 0.8rem; text-align:center;">x₁<br><small>Input 1</small></div>
+            <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:6px; padding:0.4rem 0.8rem; text-align:center;">x₂<br><small>Input 2</small></div>
+            <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:6px; padding:0.4rem 0.8rem; text-align:center;">x₃<br><small>Input 3</small></div>
+          </div>
+          <div style="font-size:1.1rem; color:var(--color-muted,#999)">——w₁, w₂, w₃——&gt;</div>
+          <div style="background:var(--color-primary-soft,#ede9fe); border:2px solid var(--color-primary,#7c3aed); border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:700; color:var(--color-primary,#7c3aed); font-size:0.75rem;">
+            Σ(wx)+b
+          </div>
+          <div style="font-size:1.1rem; color:var(--color-muted,#999)">——f(·)——&gt;</div>
+          <div style="background:var(--color-surface-2,#f0f4ff); border:1.5px solid var(--color-border,#dde); border-radius:6px; padding:0.4rem 0.8rem; text-align:center; font-weight:600;">output</div>
+        </div>
+
+        <p>The math: <code>output = activation(w₁x₁ + w₂x₂ + w₃x₃ + b)</code></p>
+        <p>
+          The weights <strong>w</strong> control how much each input matters. The bias <strong>b</strong> shifts the activation threshold. Training adjusts both to minimize loss.
+        </p>
+
+        <p>Common activation functions and when to use them:</p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Activation</th>
+              <th>Output Range</th>
+              <th>Use Case</th>
+              <th>Watch Out For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ReLU</strong></td>
+              <td>[0, ∞)</td>
+              <td>Default choice for hidden layers in most networks</td>
+              <td>Dying ReLU: neurons that always output 0</td>
+            </tr>
+            <tr>
+              <td><strong>Sigmoid</strong></td>
+              <td>(0, 1)</td>
+              <td>Binary classification output layer</td>
+              <td>Vanishing gradients in deep networks</td>
+            </tr>
+            <tr>
+              <td><strong>Tanh</strong></td>
+              <td>(-1, 1)</td>
+              <td>Hidden layers in RNNs</td>
+              <td>Vanishing gradients (less severe than sigmoid)</td>
+            </tr>
+            <tr>
+              <td><strong>Softmax</strong></td>
+              <td>(0, 1) summing to 1</td>
+              <td>Multi-class classification output layer</td>
+              <td>Only meaningful as output, not hidden layer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 2: Layers -->
+      <div class="concept-section" id="layers">
+        <h2>Layers: Input, Hidden, Output</h2>
+        <p>
+          Neurons are organized into <strong>layers</strong>. Every layer takes the previous layer's outputs as its inputs, and feeds its outputs to the next layer. This is a <em>feedforward</em> network because data flows in one direction.
+        </p>
+
+        <!-- Layer diagram -->
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin:1.5rem 0; font-size:0.85rem;">
+          <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+            <small style="font-weight:600; color:var(--color-muted,#888)">INPUT LAYER</small>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <div style="background:#dbeafe; border:1.5px solid #3b82f6; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#dbeafe; border:1.5px solid #3b82f6; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#dbeafe; border:1.5px solid #3b82f6; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#dbeafe; border:1.5px solid #3b82f6; border-radius:50%; width:36px; height:36px;"></div>
+            </div>
+            <small>Features</small>
+          </div>
+          <div style="font-size:1.4rem; color:var(--color-muted,#ccc)">»</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+            <small style="font-weight:600; color:var(--color-muted,#888)">HIDDEN LAYER 1</small>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+            </div>
+            <small>Learned features</small>
+          </div>
+          <div style="font-size:1.4rem; color:var(--color-muted,#ccc)">»</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+            <small style="font-weight:600; color:var(--color-muted,#888)">HIDDEN LAYER 2</small>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#ede9fe; border:1.5px solid #7c3aed; border-radius:50%; width:36px; height:36px;"></div>
+            </div>
+            <small>Abstract features</small>
+          </div>
+          <div style="font-size:1.4rem; color:var(--color-muted,#ccc)">»</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; align-items:center;">
+            <small style="font-weight:600; color:var(--color-muted,#888)">OUTPUT LAYER</small>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <div style="background:#dcfce7; border:1.5px solid #16a34a; border-radius:50%; width:36px; height:36px;"></div>
+              <div style="background:#dcfce7; border:1.5px solid #16a34a; border-radius:50%; width:36px; height:36px;"></div>
+            </div>
+            <small>Predictions</small>
+          </div>
+        </div>
+
+        <p>
+          The number of hidden layers is the network's <strong>depth</strong> — this is what "deep" in deep learning refers to. Deeper networks can represent more abstract and complex patterns, but require more data and are harder to train.
+        </p>
+        <p>
+          Each layer learns a progressively more abstract representation of the input. In a face recognition network: layer 1 detects edges → layer 2 detects shapes → layer 3 detects facial features → output predicts identity.
+        </p>
+      </div>
+
+      <!-- Section 3: Loss & Backpropagation -->
+      <div class="concept-section" id="backprop">
+        <h2>Loss Functions &amp; Backpropagation</h2>
+        <p>
+          After a forward pass, the network has made predictions. The <strong>loss function</strong> measures how wrong those predictions are. During training, we want to minimize this loss by finding the weights that produce the best predictions.
+        </p>
+        <p>
+          The intuition for gradient descent is a ball rolling downhill. The loss function defines a landscape of hills and valleys. Gradient descent follows the slope (gradient) downward, nudging weights in the direction that reduces loss.
+        </p>
+        <p>
+          <strong>Backpropagation</strong> is the algorithm that efficiently computes these gradients. It applies the chain rule from calculus, working backwards from the loss through each layer, computing how much each weight contributed to the error.
+        </p>
+
+        <div class="callout callout-concept">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>Core Insight:</strong> Backpropagation is just the chain rule from calculus applied repeatedly through a composition of functions. It's a clever bookkeeping algorithm, not magic. Modern frameworks (PyTorch, TensorFlow) compute this automatically via <em>automatic differentiation</em>.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Training a Neural Network -->
+      <div class="concept-section" id="training">
+        <h2>Training a Neural Network</h2>
+        <p>Three hyperparameters dominate neural network training:</p>
+        <ul>
+          <li><strong>Epochs:</strong> How many times to pass through the entire training dataset. More epochs = more learning, but eventually diminishing returns (and overfitting).</li>
+          <li><strong>Batch size:</strong> How many samples to process before updating weights. Small batches (32–128) are noisier but more regularizing. Large batches (512+) converge more smoothly but need more memory.</li>
+          <li><strong>Learning rate:</strong> How large each weight update step is. Too large = overshoots the minimum. Too small = takes forever. Typical starting value: 1e-3.</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">mnist_pytorch.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+
+# 1. Load MNIST handwritten digits
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+train_data = datasets.MNIST("data/", train=True, download=True, transform=transform)
+test_data  = datasets.MNIST("data/", train=False, transform=transform)
+train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
+test_loader  = DataLoader(test_data, batch_size=64)
+
+# 2. Define the network (3 fully connected layers)
+class DigitClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Flatten(),              # 28x28 image → 784-dim vector
+            nn.Linear(784, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),           # regularization: randomly zero 30% of neurons
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, 10)         # 10 output classes (digits 0-9)
+        )
+    def forward(self, x):
+        return self.net(x)
+
+model = DigitClassifier()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+criterion = nn.CrossEntropyLoss()
+
+# 3. Training loop
+for epoch in range(10):
+    model.train()
+    running_loss = 0
+    for images, labels in train_loader:
+        optimizer.zero_grad()              # clear old gradients
+        output = model(images)             # forward pass
+        loss = criterion(output, labels)   # compute loss
+        loss.backward()                    # backpropagation
+        optimizer.step()                   # update weights
+        running_loss += loss.item()
+
+    # 4. Evaluate on test set each epoch
+    model.eval()
+    correct = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            preds = model(images).argmax(dim=1)
+            correct += (preds == labels).sum().item()
+
+    acc = correct / len(test_data)
+    print(f"Epoch {epoch+1:2d} | loss: {running_loss/len(train_loader):.3f} | test acc: {acc:.3f}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 5: Common Network Types -->
+      <div class="concept-section" id="network-types">
+        <h2>Common Network Types</h2>
+        <p>
+          Different architectures have been developed to exploit the structure of different data types. Using the right architecture is one of the most impactful design decisions.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Architecture</th>
+              <th>Key Idea</th>
+              <th>Best For</th>
+              <th>Famous Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MLP</strong><br><small>(Fully Connected)</small></td>
+              <td>Every neuron connected to every neuron in next layer</td>
+              <td>Tabular data, simple classification</td>
+              <td>Early neural nets, regression problems</td>
+            </tr>
+            <tr>
+              <td><strong>CNN</strong><br><small>(Convolutional)</small></td>
+              <td>Learnable filters detect local spatial patterns; weight sharing</td>
+              <td>Images, video, spatial data</td>
+              <td>ResNet, EfficientNet, YOLO</td>
+            </tr>
+            <tr>
+              <td><strong>RNN / LSTM</strong><br><small>(Recurrent)</small></td>
+              <td>Maintains hidden state across sequence steps; handles variable length</td>
+              <td>Time series, speech, older NLP</td>
+              <td>LSTM, GRU, seq2seq translation</td>
+            </tr>
+            <tr>
+              <td><strong>Transformer</strong><br><small>(Attention-based)</small></td>
+              <td>Self-attention lets every token attend to every other token; parallelizable</td>
+              <td>Language, code, images (ViT), multimodal</td>
+              <td>GPT-4, BERT, Claude, LLaMA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Digit Classifier with PyTorch</div>
+              <div class="lab-subtitle">Build and train a neural network to recognize handwritten digits (MNIST)</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>You'll train the MNIST digit classifier from the code block above, then experiment with the architecture and hyperparameters to understand their impact on accuracy and overfitting.</p>
+
+          <a href="https://colab.research.google.com/github/yourusername/noob-to-ai/blob/main/labs/08-neural-networks.ipynb" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:1.5rem; display:inline-flex; align-items:center; gap:.5rem;">
+            <i class="ri-google-line"></i> Open in Google Colab
+          </a>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <strong>Run the baseline</strong>
+              <p>Copy the <code>mnist_pytorch.py</code> code above. Train for 10 epochs. Target accuracy: ~97–98%.</p>
+            </li>
+            <li class="lab-step">
+              <strong>Remove Dropout and observe overfitting</strong>
+              <p>Delete the <code>nn.Dropout(0.3)</code> line. Retrain and compare training loss vs test accuracy over epochs. Does the gap widen?</p>
+            </li>
+            <li class="lab-step">
+              <strong>Experiment with learning rate</strong>
+              <p>Try <code>lr=0.1</code> (too high), <code>lr=1e-5</code> (too low), and <code>lr=1e-3</code> (just right). Plot the training loss curves.</p>
+            </li>
+            <li class="lab-step">
+              <strong>Add a layer</strong>
+              <p>Insert another <code>nn.Linear(128, 64)</code> + <code>nn.ReLU()</code> block. Does deeper always mean better here?</p>
+            </li>
+            <li class="lab-step">
+              <strong>Visualize incorrect predictions</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">visualize_errors.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">import matplotlib.pyplot as plt
+
+model.eval()
+mistakes_x, mistakes_true, mistakes_pred = [], [], []
+
+with torch.no_grad():
+    for images, labels in test_loader:
+        preds = model(images).argmax(dim=1)
+        wrong = (preds != labels)
+        mistakes_x.extend(images[wrong])
+        mistakes_true.extend(labels[wrong])
+        mistakes_pred.extend(preds[wrong])
+        if len(mistakes_x) >= 16:
+            break
+
+fig, axes = plt.subplots(4, 4, figsize=(8, 8))
+for i, ax in enumerate(axes.flat):
+    ax.imshow(mistakes_x[i].squeeze(), cmap="gray")
+    ax.set_title(f"True:{mistakes_true[i]} Pred:{mistakes_pred[i]}", fontsize=8)
+    ax.axis("off")
+plt.tight_layout()
+plt.show()</code></pre>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

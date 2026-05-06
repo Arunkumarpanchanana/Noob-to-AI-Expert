@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 16: Fine-Tuning — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/expert.html">Expert</a><span class="sep">›</span><span>Session 16</span></div>
+      <h1 class="session-title">Fine-Tuning</h1>
+      <p class="session-tagline">When prompting isn't enough. Learn when fine-tuning beats RAG, how to prepare training data, and how to fine-tune open-source models with LoRA.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-expert"><i class="fas fa-brain"></i> Expert</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="decision-tree">Prompting vs RAG vs Fine-Tuning</h2>
+        <p>These are not competing approaches — they solve different problems. Use the decision tree below before reaching for fine-tuning.</p>
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.5rem;margin:1.5rem 0;">
+          <div style="font-size:0.9rem;color:#e2e8f0;line-height:2.2;">
+            <strong style="color:#60a5fa;">Does the model know enough about your domain?</strong><br>
+            &nbsp;&nbsp;→ Yes → Use <strong style="color:#4ade80;">Prompting</strong> (fastest, cheapest)<br>
+            &nbsp;&nbsp;→ No: Is the knowledge static or changes rarely?<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Yes → Use <strong style="color:#f59e0b;">RAG</strong> (ground model in your docs)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ No: Do you need a specific style, format, or behavior?<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Yes → Use <strong style="color:#c084fc;">Fine-Tuning</strong> (bake in style/behavior)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ No → Start with RAG + Prompting first
+          </div>
+        </div>
+        <div class="callout callout-warn"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>Fine-Tuning Gotchas</h4><p>Fine-tuning doesn't add new knowledge reliably — use RAG for that. Fine-tuning is great for: style consistency, output format, domain-specific language patterns, and behavior that's hard to specify in a prompt. Budget $50–500 for a serious fine-tuning run.</p></div></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="training-data">Preparing Training Data</h2>
+        <p>Quality beats quantity. 500 perfect training examples beat 5,000 mediocre ones. Use the JSONL chat format required by most fine-tuning APIs.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import json
+import random
+
+# Each training example: a conversation the model should learn from
+def create_training_example(user_msg: str, assistant_reply: str, system: str = "") -> dict:
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": user_msg})
+    messages.append({"role": "assistant", "content": assistant_reply})
+    return {"messages": messages}
+
+training_data = [
+    create_training_example(
+        user_msg="Summarize this in one sentence: [article about climate change...]",
+        assistant_reply="Rising global temperatures driven by carbon emissions are causing extreme weather, sea level rise, and biodiversity loss at an unprecedented rate.",
+        system="You are a concise summarizer. Always respond in exactly one sentence."
+    ),
+    create_training_example(
+        user_msg="What's the capital of France?",
+        assistant_reply="Paris.",
+        system="You are a concise summarizer. Always respond in exactly one sentence."
+    ),
+]
+
+# Split into train/validation (90/10)
+random.shuffle(training_data)
+split = int(len(training_data) * 0.9)
+train, val = training_data[:split], training_data[split:]
+
+# Save as JSONL
+def save_jsonl(data: list, path: str):
+    with open(path, "w") as f:
+        for item in data:
+            f.write(json.dumps(item) + "\n")
+
+save_jsonl(train, "train.jsonl")
+save_jsonl(val, "val.jsonl")
+print(f"Train: {len(train)}, Val: {len(val)}")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="lora">LoRA Fine-Tuning with Hugging Face</h2>
+        <p>LoRA (Low-Rank Adaptation) fine-tunes only a tiny fraction of parameters — typically 0.1–1% — making it feasible on a single GPU. This is the standard approach for open-source model fine-tuning.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># pip install transformers peft datasets accelerate bitsandbytes
+# Run this in Colab with a T4 GPU runtime
+
+from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments
+from peft import LoraConfig, get_peft_model, TaskType
+from datasets import load_dataset
+import torch
+
+MODEL_NAME = "meta-llama/Llama-3.2-1B-Instruct"  # Small model, runs on free Colab
+
+# Load model in 4-bit quantization to fit in GPU memory
+from transformers import BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    quantization_config=bnb_config,
+    device_map="auto"
+)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+tokenizer.pad_token = tokenizer.eos_token
+
+# Configure LoRA — only trains a small set of adapter weights
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=16,               # Rank of the update matrices (higher = more params)
+    lora_alpha=32,      # Scaling factor
+    lora_dropout=0.1,
+    target_modules=["q_proj", "v_proj"]  # Which layers to adapt
+)
+
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+# trainable params: 1,572,864 || all params: 1,236,408,320 || trainable%: 0.13%</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="when-not-to-finetune">When NOT to Fine-Tune</h2>
+        <table class="def-table">
+          <thead><tr><th>Situation</th><th>Better Approach</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Need up-to-date knowledge</td><td>RAG</td><td>Fine-tuning bakes in static knowledge; RAG retrieves fresh docs</td></tr>
+            <tr><td>Need to follow complex instructions</td><td>Better system prompt</td><td>Instruction following improves with prompt engineering, not fine-tuning</td></tr>
+            <tr><td>Have fewer than 100 examples</td><td>Few-shot prompting</td><td>Fine-tuning needs 500+ high-quality examples to reliably improve</td></tr>
+            <tr><td>Need to cite sources</td><td>RAG</td><td>Fine-tuned models hallucinate citations; RAG can return actual source text</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Fine-Tune a Model for a Specific Style</h3>
+          <p>Estimated time: 75 minutes · Google Colab (T4 GPU)</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-16-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Generate Training Data with GPT/Claude</h4></div><p>Use an LLM to generate 200 (user_message, ideal_response) pairs for a specific style: responses must be in bullet points, under 50 words, use emoji. This is "synthetic data generation" — a common technique.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Fine-Tune with LoRA</h4></div><p>Load Llama-3.2-1B-Instruct. Apply LoRA config. Train for 3 epochs on your 180-example training set (20 validation). Monitor train loss and validation loss — if val loss increases while train decreases, you're overfitting.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Compare Before vs. After</h4></div><p>Run the same 10 prompts through: (1) base model, (2) fine-tuned model. Did the fine-tuned model adopt the target style? Use your eval pipeline from Session 15 to score both.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Export and Merge</h4></div><p>Save the LoRA adapter weights. Merge the adapter with the base model. Measure inference speed of base vs. merged model. Push the merged model to Hugging Face Hub (optional).</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/expert/15-llm-evaluation.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 15</span><span class="nav-title">LLM Evaluation</span></div></a>
+      <a href="/sessions/expert/17-responsible-ai.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 17</span><span class="nav-title">Responsible AI</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 16, slug: '16-fine-tuning', section: 'expert',
+  nextPath: '/sessions/expert/17-responsible-ai.html',
+  quizData: [
+    {id:'s16q01',type:'mcq',points:1,question:'You need your chatbot to always respond with bullet points and under 50 words. What is the most efficient solution?',options:[{id:'a',text:'Fine-tune the model on 500 examples of bullet-point responses'},{id:'b',text:'Add format instructions to the system prompt and few-shot examples',correct:true},{id:'c',text:'Build a post-processing script to convert output to bullet points'},{id:'d',text:'Use a smaller model that naturally produces shorter outputs'}],explanation:'Format constraints (bullet points, length limits) are exactly what system prompts handle well. Add clear instructions + 2-3 examples to the system prompt. Fine-tuning for format alone is expensive overkill. Post-processing works but adds latency and can corrupt meaning. Always try prompting first.',hint:'What is the cheapest and fastest way to control output format?'},
+    {id:'s16q02',type:'mcq',points:1,question:'What does LoRA (Low-Rank Adaptation) do that makes it practical for fine-tuning on consumer hardware?',options:[{id:'a',text:'It distills the model into a smaller version'},{id:'b',text:'It trains only a tiny fraction (~0.1-1%) of parameters via low-rank adapter matrices',correct:true},{id:'c',text:'It uses 8-bit quantization during training'},{id:'d',text:'It distributes training across multiple GPUs automatically'}],explanation:'LoRA freezes the original model weights and adds small "adapter" matrices alongside specific layers. Only these adapters are trained — typically 0.1-1% of total parameters. This makes fine-tuning feasible on a single GPU. The adapters can be saved separately (small file) and merged into the base model at inference time.',hint:'Think about "low-rank" — it trains a compressed representation of the updates.'},
+    {id:'s16q03',type:'truefalse',points:1,question:'Fine-tuning is the best approach to give your model access to your company\'s internal documentation.',correctAnswer:false,explanation:'FALSE. Fine-tuning is poor for adding factual knowledge — models can still hallucinate even after fine-tuning on facts, and the knowledge becomes stale instantly when documents update. RAG is the right solution: embed documents, retrieve relevant chunks at query time, and pass them in context. Fine-tuning shines for style, format, and domain-specific behavior patterns, not knowledge.',hint:'What happens when your internal docs get updated after fine-tuning?'},
+    {id:'s16q04',type:'mcq',points:1,question:'During fine-tuning, your training loss is decreasing steadily but validation loss stopped decreasing at epoch 2 and started increasing at epoch 4. What does this indicate?',options:[{id:'a',text:'The model is learning correctly — keep training'},{id:'b',text:'The learning rate is too low'},{id:'c',text:'Overfitting — the model is memorizing training data instead of generalizing',correct:true},{id:'d',text:'The validation set is too small to be reliable'}],explanation:'Classic overfitting pattern: training loss keeps dropping (memorizing examples), but validation loss diverges (can\'t generalize). Solutions: stop at epoch 2 (early stopping), reduce learning rate, add dropout, or get more/better training data. Always monitor val loss during fine-tuning and stop when it stops improving.',hint:'What does it mean when training and validation metrics diverge?'},
+    {id:'s16q05',type:'multi',points:2,question:'Fine-tuning is the RIGHT choice when: (select all that apply)',options:[{id:'a',text:'You need the model to consistently adopt a specific writing style or tone',correct:true},{id:'b',text:'You need the model to cite up-to-date company documents'},{id:'c',text:'You need specific output format (e.g., always return structured JSON)',correct:true},{id:'d',text:'You need the model to follow complex multi-step instructions'},{id:'e',text:'You have 1000+ high-quality labeled examples of the target behavior',correct:true}],explanation:'Fine-tuning excels at: style/tone consistency (a), output format baking (c), and when you have sufficient data (e). For up-to-date knowledge, RAG is better (b). For complex instructions, better prompting is better first (d). Fine-tuning is expensive and slow — only justified when the benefit (consistent behavior at inference) outweighs the cost of data prep + training + maintenance.'}
+  ]
+};
+</script>
+</body>
+</html>

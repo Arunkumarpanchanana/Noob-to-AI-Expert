@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 15: LLM Evaluation — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/expert.html">Expert</a><span class="sep">›</span><span>Session 15</span></div>
+      <h1 class="session-title">LLM Evaluation</h1>
+      <p class="session-tagline">You can't improve what you can't measure. Build golden datasets, automated eval suites, and LLM-as-judge pipelines to systematically improve your AI apps.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 75 min</span>
+        <span><span class="badge badge-expert"><i class="fas fa-brain"></i> Expert</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="why-eval">Why Evaluation Matters</h2>
+        <p>Without evals, you're flying blind. You can't safely upgrade models, change prompts, or add features without knowing if you've regressed. Evals are to AI apps what tests are to software.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">👤</div><h4 style="color:#38bdf8">Human Eval</h4><p>Highest quality. Experts rate outputs on rubrics. Slow and expensive. Use for: final validation, edge case review.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🤖</div><h4 style="color:#4ade80">LLM-as-Judge</h4><p>Strong LLM grades outputs. Scales to thousands of examples. 70–90% correlation with human judges.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">⚙️</div><h4 style="color:#c084fc">Automated</h4><p>Code-based checks: exact match, regex, JSON validity, substring presence. Fast, cheap, 100% reproducible.</p></div>
+        </div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="golden-dataset">Building a Golden Dataset</h2>
+        <p>A golden dataset is a set of (input, expected output) pairs where humans have verified the correct answer. It's the foundation of all systematic evaluation.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import json
+from dataclasses import dataclass, asdict
+from typing import Literal
+
+@dataclass
+class EvalCase:
+    id: str
+    input: str
+    expected_output: str
+    expected_intent: str
+    difficulty: Literal["easy", "medium", "hard"]
+    tags: list[str]
+
+golden_dataset = [
+    EvalCase(
+        id="cs_001",
+        input="How do I reset my password?",
+        expected_output="Go to login page → click 'Forgot password' → enter email → check inbox",
+        expected_intent="how_to",
+        difficulty="easy",
+        tags=["authentication", "self_serve"]
+    ),
+    EvalCase(
+        id="cs_002",
+        input="I was charged twice last month",
+        expected_output="I'm sorry about that. I'm escalating this to our billing team who will contact you within 24 hours.",
+        expected_intent="billing_dispute",
+        difficulty="medium",
+        tags=["billing", "escalation"]
+    ),
+    EvalCase(
+        id="cs_003",
+        input="Can you tell me your competitors' pricing?",
+        expected_output="I'm not able to discuss competitor pricing. I'd be happy to walk you through our pricing plans.",
+        expected_intent="competitor_question",
+        difficulty="hard",
+        tags=["guardrail", "competitor"]
+    ),
+]
+
+# Save dataset
+with open("golden_dataset.json", "w") as f:
+    json.dump([asdict(c) for c in golden_dataset], f, indent=2)
+
+print(f"Saved {len(golden_dataset)} eval cases")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="llm-judge">LLM-as-Judge</h2>
+        <p>Use a strong model to evaluate outputs from another model. This scales to thousands of test cases while maintaining quality close to human judgment.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic()
+
+JUDGE_SYSTEM = """You are an expert evaluator for AI customer support responses.
+Score responses on a 1-5 scale on these dimensions:
+- accuracy: Is the information correct?
+- helpfulness: Does it solve the user's problem?
+- tone: Is it professional and empathetic?
+- safety: Does it avoid violating any constraints (like discussing competitors)?
+
+Return ONLY valid JSON: {"accuracy": N, "helpfulness": N, "tone": N, "safety": N, "rationale": "..."}"""
+
+def llm_judge(user_input: str, model_output: str, expected: str) -> dict:
+    prompt = f"""User question: {user_input}
+
+Expected response (reference): {expected}
+
+Actual model response: {model_output}
+
+Evaluate the actual response."""
+
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=512,
+        system=JUDGE_SYSTEM,
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    import json, re
+    text = response.content[0].text
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        return json.loads(match.group())
+    return {"error": "parse_failed", "raw": text}
+
+# Run evaluation
+result = llm_judge(
+    user_input="How do I reset my password?",
+    model_output="To reset your password: go to the login page and click 'Forgot password', then follow the email instructions.",
+    expected="Go to login page → click 'Forgot password' → enter email → check inbox"
+)
+print(result)
+# {"accuracy": 5, "helpfulness": 5, "tone": 4, "safety": 5, "rationale": "..."}</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="regression-testing">Regression Testing</h2>
+        <p>Run your full eval suite every time you change a prompt, upgrade a model, or deploy a new version. A regression is when a score drops compared to baseline.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import statistics
+
+def run_eval_suite(model_fn, dataset: list[EvalCase]) -> dict:
+    """Run the full eval suite and return aggregate metrics."""
+    results = []
+
+    for case in dataset:
+        output = model_fn(case.input)
+        scores = llm_judge(case.input, output, case.expected_output)
+        results.append({
+            "case_id": case.id,
+            "difficulty": case.difficulty,
+            "scores": scores,
+            "output": output
+        })
+
+    # Aggregate metrics
+    all_accuracy = [r["scores"].get("accuracy", 0) for r in results]
+    all_helpfulness = [r["scores"].get("helpfulness", 0) for r in results]
+
+    return {
+        "total_cases": len(results),
+        "avg_accuracy": statistics.mean(all_accuracy),
+        "avg_helpfulness": statistics.mean(all_helpfulness),
+        "pass_rate": sum(1 for r in results if r["scores"].get("accuracy", 0) >= 4) / len(results),
+        "results": results
+    }
+
+# Compare two prompt versions
+def model_v1(input: str) -> str:
+    return "Respond based on FAQ..."  # simplified
+
+baseline = run_eval_suite(model_v1, golden_dataset[:10])
+print(f"Baseline pass rate: {baseline['pass_rate']:.1%}")</code></pre></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build an Automated Eval Suite</h3>
+          <p>Estimated time: 60 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-15-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Create a 20-Case Golden Dataset</h4></div><p>Build a dataset of 20 customer support questions with expected responses, intents, and difficulty tags. Include at least 5 hard cases (competitor questions, angry users, ambiguous requests).</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Implement the LLM-as-Judge</h4></div><p>Build the 4-dimension judge (accuracy, helpfulness, tone, safety). Run it on your 20 cases. Calculate aggregate scores. Identify your top 3 worst-performing cases and why.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Run a Regression Test</h4></div><p>Create two versions of your system prompt (v1 = basic, v2 = improved). Run both through the full eval suite. Generate a comparison table: which cases improved, which regressed, overall delta.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Hallucination Detection</h4></div><p>Add a specialized eval that checks if responses contain any claims not present in the provided context. Test with 5 questions about facts only in your context vs. 5 questions with no relevant context.</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/expert/14-ai-agents.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 14</span><span class="nav-title">AI Agents</span></div></a>
+      <a href="/sessions/expert/16-fine-tuning.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 16</span><span class="nav-title">Fine-Tuning</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 15, slug: '15-llm-evaluation', section: 'expert',
+  nextPath: '/sessions/expert/16-fine-tuning.html',
+  quizData: [
+    {id:'s15q01',type:'mcq',points:1,question:'What is a "golden dataset" in the context of LLM evaluation?',options:[{id:'a',text:'The training dataset used to build the LLM'},{id:'b',text:'A human-verified set of (input, expected output) pairs used as ground truth for evaluation',correct:true},{id:'c',text:'A dataset with the highest diversity of examples'},{id:'d',text:'The most expensive benchmark dataset'}],explanation:'A golden dataset is a curated set of (input, expected output) pairs where experts have verified the correct answers. It\'s the foundation of systematic evaluation. Without it, you can\'t objectively measure model quality or detect regressions. Creating and maintaining a golden dataset is ongoing investment — start with 20-50 cases, grow over time.',hint:'What makes a dataset "golden" is that humans have verified the correct answers.'},
+    {id:'s15q02',type:'mcq',points:1,question:'LLM-as-judge evaluation typically achieves what level of correlation with human judges?',options:[{id:'a',text:'20-30% — too unreliable for production use'},{id:'b',text:'50-60% — roughly coin-flip accuracy'},{id:'c',text:'70-90% — strong enough for systematic regression testing',correct:true},{id:'d',text:'99%+ — effectively replaces human evaluation'}],explanation:'Well-designed LLM judges (clear rubric, strong model, specific dimensions) achieve 70-90% correlation with human judges. This is strong enough for regression testing and systematic improvement — much better than no evaluation. It\'s not a replacement for human evaluation on critical decisions, but scales to thousands of cases at low cost.',hint:'LLM judges are useful but not perfect substitutes for human judgment.'},
+    {id:'s15q03',type:'truefalse',points:1,question:'A regression test passes if the new model version scores higher on every single eval case.',correctAnswer:false,explanation:'FALSE. Regression tests typically use aggregate metrics and thresholds, not per-case perfection. A regression is detected when overall pass rate or average score drops below a threshold compared to baseline (e.g., "avg_accuracy must stay ≥ 4.0, pass_rate ≥ 85%"). Some cases may improve while others regress — what matters is the aggregate trend and that no critical safety/guardrail cases regress.'},
+    {id:'s15q04',type:'mcq',points:1,question:'You\'re evaluating a customer support chatbot and want to check if it ever discusses competitor pricing. Which evaluation approach is most appropriate?',options:[{id:'a',text:'Human eval — have reviewers read every response'},{id:'b',text:'LLM-as-judge with a specific "safety" dimension that checks for constraint violations',correct:true},{id:'c',text:'Automated exact match against expected responses'},{id:'d',text:'Perplexity score measurement'}],explanation:'Constraint violations (competitor mentions, policy violations) are exactly where LLM-as-judge shines — a judge model can check "does this response mention any competitor by name?" reliably at scale. Exact match doesn\'t work (many ways to violate/comply). Human eval doesn\'t scale. Perplexity measures language quality, not constraint adherence.',hint:'Which method can check semantic constraints like "never mention competitors" at scale?'},
+    {id:'s15q05',type:'multi',points:2,question:'Which of the following should be included in a comprehensive LLM evaluation pipeline? Select all that apply.',options:[{id:'a',text:'A golden dataset with human-verified expected outputs',correct:true},{id:'b',text:'Automated code-based checks (JSON validity, exact match for simple cases)',correct:true},{id:'c',text:'LLM-as-judge for subjective quality dimensions',correct:true},{id:'d',text:'Training the model from scratch on evaluation data'},{id:'e',text:'Regression tracking — compare scores against a baseline',correct:true}],explanation:'A complete eval pipeline uses all three evaluation types together: automated checks (fast, cheap, deterministic), LLM-as-judge (scalable subjective eval), and golden dataset (ground truth). Regression tracking against baseline is essential — you need to know if changes helped or hurt. Training from scratch on eval data would contaminate your eval (you\'d be testing on training data).'}
+  ]
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>Fine-Tuning LLMs — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 16,
+    slug: "16-fine-tuning",
+    section: "expert",
+    title: "Fine-Tuning LLMs",
+    nextSlug: "/sessions/expert/17-responsible-ai.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "Fine-tuning is most appropriate when you need to:",
+        options: [
+          "Give the model access to recent news",
+          "Make the model consistently follow a very specific output format or style",
+          "Replace the need for a system prompt",
+          "Reduce the context window size"
+        ],
+        correct: 1,
+        explanation: "Fine-tuning excels at teaching consistent behavior, format, and style. For knowledge/facts, use RAG. Fine-tuning doesn't reliably add factual knowledge and can cause hallucinations about the fine-tuning domain."
+      },
+      {
+        type: "mcq",
+        question: "LoRA (Low-Rank Adaptation) works by:",
+        options: [
+          "Deleting layers from the base model",
+          "Adding small trainable rank-decomposition matrices alongside frozen base weights",
+          "Copying the entire model and retraining",
+          "Using a larger learning rate"
+        ],
+        correct: 1,
+        explanation: "LoRA freezes the original model weights and adds pairs of small matrices (A and B, where A×B approximates the weight update). Only these small matrices are trained, reducing parameters by 10-10,000x."
+      },
+      {
+        type: "truefalse",
+        question: "You need at least 100,000 examples to successfully fine-tune an LLM.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "GPT-3.5 fine-tunes can work well with 50-200 high-quality examples for specific formatting tasks. Quality and task difficulty matter more than quantity for many fine-tuning scenarios."
+      },
+      {
+        type: "mcq",
+        question: "RLHF (Reinforcement Learning from Human Feedback) is used to:",
+        options: [
+          "Speed up model training",
+          "Align model outputs with human preferences",
+          "Reduce model size",
+          "Fine-tune without a GPU"
+        ],
+        correct: 1,
+        explanation: "RLHF trains a reward model from human preference ratings, then uses RL to optimize the LLM's outputs against that reward model. Used to make models helpful, harmless, and honest (e.g., ChatGPT, Claude)."
+      },
+      {
+        type: "multi",
+        question: "Which are valid reasons to choose fine-tuning over RAG? (Select all that apply)",
+        options: [
+          "Need consistent JSON output format",
+          "Need access to real-time data",
+          "Need to replicate a specific writing style",
+          "Need to reduce prompt length/cost for a deployed app"
+        ],
+        correct: [0, 2, 3],
+        explanation: "Fine-tune for: format consistency, style replication, prompt efficiency. Use RAG for real-time or private data — fine-tuning doesn't reliably store factual knowledge and the knowledge has a cutoff."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/expert.html">Expert</a><span class="sep">›</span>
+          <span>Fine-Tuning LLMs</span>
+        </div>
+        <h1 class="session-title">Fine-Tuning LLMs</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-expert">Expert</span>
+          <span><i class="ri-time-line"></i> 75 min</span>
+          <span><i class="ri-number-1"></i> Session 16 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: The Decision: Prompt vs RAG vs Fine-tune -->
+      <div class="concept-section" id="decision-tree">
+        <h2>The Decision: Prompt vs RAG vs Fine-tune</h2>
+        <p>
+          Fine-tuning is the most powerful option — and the most expensive, time-consuming, and risky. Before committing to it, work through this decision tree to make sure it's actually the right tool for your problem.
+        </p>
+
+        <div style="background: var(--surface-2, #f4f4f8); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; font-size: 0.9rem; line-height: 1.8;">
+          <strong>Decision Tree:</strong><br>
+          1. Can a well-crafted system prompt solve it? → <strong>Use prompting first.</strong><br>
+          2. Does the model need access to your private/up-to-date data? → <strong>Use RAG.</strong><br>
+          3. Is the output format or style extremely specific and the prompt is getting too long? → <strong>Consider fine-tuning.</strong><br>
+          4. Is the task very domain-specific and general models consistently fail? → <strong>Fine-tuning might help.</strong><br>
+          5. Is latency critical and your system prompt is huge? → <strong>Fine-tune to internalize instructions.</strong>
+        </div>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Approach</th>
+              <th>Cost</th>
+              <th>When It Wins</th>
+              <th>Limitations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Prompting</strong></td>
+              <td>Lowest</td>
+              <td>Most tasks; fast iteration; no training needed</td>
+              <td>Long prompts cost more; inconsistent on complex formats</td>
+            </tr>
+            <tr>
+              <td><strong>RAG</strong></td>
+              <td>Low–Medium</td>
+              <td>Private/dynamic knowledge; verifiable facts</td>
+              <td>Retrieval can fail; adds latency; requires doc pipeline</td>
+            </tr>
+            <tr>
+              <td><strong>Fine-tuning</strong></td>
+              <td>High</td>
+              <td>Consistent style/format; domain behavior; prompt compression</td>
+              <td>Training cost; data prep burden; knowledge goes stale; risk of overfitting</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-concept">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>The golden rule of fine-tuning</strong>
+            <p>Fine-tuning is not a shortcut for giving the model knowledge — use RAG for that. Fine-tune for style, format, and behavior. Think of it as training a new employee: you use training to teach <em>how</em> to do the job, not to stuff their brain with a knowledge base.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: How Fine-Tuning Works -->
+      <div class="concept-section" id="how-finetuning-works">
+        <h2>How Fine-Tuning Works</h2>
+        <p>
+          Fine-tuning starts from a pre-trained model and continues gradient descent on your smaller, task-specific dataset. The model's weights are nudged to produce outputs closer to your training examples. The key challenge: doing this without destroying the broad capabilities the model already has (catastrophic forgetting).
+        </p>
+
+        <p>Modern fine-tuning techniques avoid this by updating only a small fraction of weights:</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Parameters Trained</th>
+              <th>GPU Memory</th>
+              <th>Use When</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Full fine-tune</strong></td>
+              <td>All weights (7B–70B+)</td>
+              <td>Very high (80GB+ for 13B)</td>
+              <td>Maximum performance; you have GPU cluster access</td>
+            </tr>
+            <tr>
+              <td><strong>LoRA</strong></td>
+              <td>Small rank matrices (~0.1% of weights)</td>
+              <td>Low (runs on single A100 or even T4)</td>
+              <td>Most production fine-tuning; best efficiency/quality tradeoff</td>
+            </tr>
+            <tr>
+              <td><strong>RLHF</strong></td>
+              <td>Full weights + reward model</td>
+              <td>Very high</td>
+              <td>Alignment training; used by OpenAI, Anthropic, Meta for base models</td>
+            </tr>
+            <tr>
+              <td><strong>DPO</strong></td>
+              <td>Full or LoRA weights</td>
+              <td>Medium</td>
+              <td>Preference-based alignment without RL; simpler than RLHF</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <strong>How LoRA works:</strong> Instead of updating the full weight matrix W (which is enormous), LoRA adds two small matrices A and B where A × B approximates the weight update ΔW. If W is 4096 × 4096 = 16M parameters, a LoRA with rank 16 adds only 4096×16 + 16×4096 = 131K parameters — 120x fewer. Only A and B are trained; the original W is frozen.
+        </p>
+      </div>
+
+      <!-- Section 3: Preparing Your Dataset -->
+      <div class="concept-section" id="dataset-preparation">
+        <h2>Preparing Your Dataset</h2>
+        <p>
+          Dataset quality is the single biggest factor in fine-tuning success. The format differs by platform, but the quality criteria are universal: consistent format, correct outputs, diverse coverage.
+        </p>
+
+        <p><strong>Minimum dataset sizes:</strong></p>
+        <ul>
+          <li><strong>50–100 examples:</strong> Simple format/style tasks (OpenAI GPT-3.5 fine-tune)</li>
+          <li><strong>200–500 examples:</strong> Domain adaptation, complex formatting</li>
+          <li><strong>1000+ examples:</strong> Specialized behavior, code generation, classification</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>dataset_format.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import json
+
+# --- OpenAI fine-tuning format (JSONL) ---
+# Each line is one training example with a complete conversation
+
+openai_examples = [
+    {
+        "messages": [
+            {"role": "system", "content": "You are a JSON extraction assistant. Output only valid JSON."},
+            {"role": "user", "content": "Extract name and age: 'John Smith is 34 years old.'"},
+            {"role": "assistant", "content": '{"name": "John Smith", "age": 34}'},
+        ]
+    },
+    {
+        "messages": [
+            {"role": "system", "content": "You are a JSON extraction assistant. Output only valid JSON."},
+            {"role": "user", "content": "Extract name and age: 'Maria Garcia, age 28, joined last week.'"},
+            {"role": "assistant", "content": '{"name": "Maria Garcia", "age": 28}'},
+        ]
+    },
+]
+
+# Write to JSONL
+with open("training_data.jsonl", "w") as f:
+    for example in openai_examples:
+        f.write(json.dumps(example) + "\n")
+
+print(f"Wrote {len(openai_examples)} training examples")
+
+# --- HuggingFace / Alpaca format (instruction fine-tuning) ---
+hf_examples = [
+    {
+        "instruction": "Classify the sentiment of this review.",
+        "input": "The product arrived broken and customer service was unhelpful.",
+        "output": "NEGATIVE",
+    },
+    {
+        "instruction": "Classify the sentiment of this review.",
+        "input": "Exceeded my expectations — fast shipping and great quality!",
+        "output": "POSITIVE",
+    },
+]
+
+# Validate dataset quality
+def validate_dataset(examples: list[dict]) -> None:
+    required_keys = {"instruction", "input", "output"}
+    for i, ex in enumerate(examples):
+        missing = required_keys - set(ex.keys())
+        if missing:
+            raise ValueError(f"Example {i} missing keys: {missing}")
+        for key, val in ex.items():
+            if not val.strip():
+                raise ValueError(f"Example {i} has empty '{key}'")
+    print(f"Dataset valid: {len(examples)} examples, all keys present and non-empty")
+
+validate_dataset(hf_examples)</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: Running a Fine-Tune -->
+      <div class="concept-section" id="running-finetune">
+        <h2>Running a Fine-Tune</h2>
+        <p>
+          The easiest starting point is the OpenAI fine-tuning API — no GPUs to provision, pay-per-use, and the resulting model is hosted for you. For open-source models (Llama 3, Mistral, Qwen), HuggingFace + PEFT gives you full control at the cost of managing compute.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>openai_finetune.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import os, time
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+# --- Step 1: Upload training data ---
+with open("training_data.jsonl", "rb") as f:
+    upload_response = client.files.create(file=f, purpose="fine-tune")
+
+file_id = upload_response.id
+print(f"Uploaded training file: {file_id}")
+
+# --- Step 2: Create the fine-tuning job ---
+job = client.fine_tuning.jobs.create(
+    training_file=file_id,
+    model="gpt-3.5-turbo",  # or "gpt-4o-mini" (check current availability)
+    hyperparameters={
+        "n_epochs": 3,          # 3 epochs is a good starting point
+        "batch_size": "auto",   # OpenAI will choose based on dataset size
+        "learning_rate_multiplier": "auto",
+    },
+    suffix="json-extractor",  # appended to model name for easy identification
+)
+
+job_id = job.id
+print(f"Fine-tune job created: {job_id}")
+
+# --- Step 3: Poll for completion ---
+while True:
+    status = client.fine_tuning.jobs.retrieve(job_id)
+    print(f"Status: {status.status}")
+    if status.status in ("succeeded", "failed", "cancelled"):
+        break
+    time.sleep(30)
+
+if status.status == "succeeded":
+    model_id = status.fine_tuned_model
+    print(f"Fine-tuned model ready: {model_id}")
+
+    # --- Step 4: Use the fine-tuned model ---
+    response = client.chat.completions.create(
+        model=model_id,
+        messages=[
+            {"role": "system", "content": "You are a JSON extraction assistant."},
+            {"role": "user", "content": "Extract name and age: 'Alice Chen, 31, software engineer.'"},
+        ]
+    )
+    print("Response:", response.choices[0].message.content)</code></pre>
+        </div>
+
+        <div class="callout callout-info">
+          <span class="callout-icon"><i class="ri-information-line"></i></span>
+          <div class="callout-body">
+            <strong>Cost and time estimates</strong>
+            <p>OpenAI GPT-3.5 fine-tuning: ~$0.008/1K training tokens. A 100-example dataset with ~500 tokens/example × 3 epochs ≈ $1.20. Training takes 10–30 minutes. HuggingFace LoRA on a free Colab T4 GPU: 200 examples trains in about 15 minutes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Evaluating and Iterating -->
+      <div class="concept-section" id="evaluating-iterating">
+        <h2>Evaluating and Iterating</h2>
+        <p>
+          After training, always run your evaluation suite against both the base model and fine-tuned model before promoting to production. Key things to measure:
+        </p>
+
+        <ul>
+          <li><strong>Task performance:</strong> Does the fine-tuned model score higher on your golden dataset?</li>
+          <li><strong>Format compliance:</strong> Does it consistently produce the required output format?</li>
+          <li><strong>Generalization:</strong> Does it perform well on inputs not seen during training?</li>
+          <li><strong>Regression:</strong> Does it still handle basic tasks the base model could do?</li>
+        </ul>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Symptom</th>
+              <th>Likely Cause</th>
+              <th>Fix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Perfect on training data, poor on new inputs</td>
+              <td>Overfitting — training set too small or too repetitive</td>
+              <td>Add more diverse examples; reduce n_epochs</td>
+            </tr>
+            <tr>
+              <td>Model ignores format instructions entirely</td>
+              <td>Too few training examples showing the desired format</td>
+              <td>Add 2–3x more examples with varied format demonstrations</td>
+            </tr>
+            <tr>
+              <td>Model "forgets" basic capabilities (e.g., counting)</td>
+              <td>Catastrophic forgetting due to narrow training data</td>
+              <td>Add diverse "maintenance" examples covering basic tasks</td>
+            </tr>
+            <tr>
+              <td>Model produces the right format but wrong content</td>
+              <td>Base model knowledge is insufficient; format ≠ knowledge</td>
+              <td>Combine fine-tuning with RAG for the knowledge component</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>Iterating on fine-tuned models</strong>
+            <p>Fine-tuning is rarely a one-shot process. Plan for 3–5 iterations: train → eval → analyze errors → add targeted examples → retrain. Each iteration, focus on the specific failure modes your evaluation surfaced. Keep all your training data versioned so you can reproduce any model.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Fine-tune a Small Model with LoRA</div>
+              <div class="lab-subtitle">Use HuggingFace + PEFT to fine-tune GPT-2 on a custom dataset</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            You'll fine-tune GPT-2 (or a small Llama variant) using LoRA on a custom dataset — all on a free Colab T4 GPU. By the end you'll have a model that produces outputs in a specific format that the base model doesn't naturally use.
+          </p>
+
+          <a href="https://colab.research.google.com" target="_blank" rel="noopener" class="colab-badge"><span>📓</span> Open in Colab</a>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Install PEFT and dependencies</div>
+                <div class="lab-step-desc">Install <code>transformers peft datasets accelerate bitsandbytes</code>. Load GPT-2 and its tokenizer. Verify the base model generates unstructured completions for your task.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Prepare your dataset</div>
+                <div class="lab-step-desc">Create 50–100 instruction/output pairs in a specific format (e.g., JSON extraction, sentiment classification, or a custom greeting style). Format them as HuggingFace Dataset objects.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Configure and apply LoRA</div>
+                <div class="lab-step-desc">Create a <code>LoraConfig</code> with rank 16, target the attention projection layers (<code>c_attn</code> for GPT-2). Apply it with <code>get_peft_model()</code>. Print the trainable parameter count and compare to total parameters.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Train with the Trainer API</div>
+                <div class="lab-step-desc">Use HuggingFace <code>Trainer</code> with 3 epochs, batch size 4, and learning rate 3e-4. Monitor training loss — it should decrease steadily without going to near-zero (overfitting signal).</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Evaluate: base vs. fine-tuned</div>
+                <div class="lab-step-desc">Run 10 test prompts through both the base and fine-tuned model. Measure format compliance rate (did it produce the required format?). Calculate the improvement percentage.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

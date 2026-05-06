@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expert Track — ML Engineer to AI Architect | Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <style>
+    .section-hero { padding: 8rem 1.5rem 3rem; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(139,92,246,0.07) 0%, transparent 60%); text-align: center; }
+    .section-hero h1 { font-size: 3rem; font-weight: 800; color: var(--text); margin: 0 0 0.75rem; letter-spacing: -0.04em; }
+    .section-hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 580px; margin: 0 auto 2rem; }
+    .session-list { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .session-item { display: flex; gap: 1.5rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; align-items: flex-start; box-shadow: var(--shadow-sm); }
+    .session-item:hover { border-color: #7c3aed; transform: translateX(4px); background: #faf5ff; text-decoration: none; box-shadow: var(--shadow-md); }
+    .session-item.completed { border-color: #ddd6fe; background: #faf5ff; }
+    .session-num { width: 48px; height: 48px; border-radius: 12px; background: #ede9fe; color: #6d28d9; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; border: 1px solid #ddd6fe; }
+    .session-item.capstone .session-num { background: #fef9c3; color: #d97706; border-color: #fde68a; }
+    .session-info { flex: 1; }
+    .session-info h3 { margin: 0 0 0.3rem; font-size: 1.05rem; color: var(--text); }
+    .session-info p { margin: 0 0 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+    .session-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .tag { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; }
+    .check-icon { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-light); flex-shrink: 0; margin-top: 0.2rem; }
+    .check-icon.done { background: #ede9fe; border-color: #7c3aed; color: #6d28d9; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="section-hero">
+  <div><span class="badge badge-expert" style="margin-bottom:1rem;display:inline-flex;"><i class="fas fa-brain"></i> Expert Track</span></div>
+  <h1>ML Engineer → AI Architect</h1>
+  <p>8 sessions that take you from "I can build AI apps" to "I can architect, evaluate, secure, and scale production AI systems" — ending with a full capstone project.</p>
+  <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;color:var(--text-muted);font-size:0.9rem;">
+    <span><i class="fas fa-layer-group" style="margin-right:0.4rem;color:#7c3aed;"></i>8 Sessions</span>
+    <span><i class="fas fa-clock" style="margin-right:0.4rem;color:#7c3aed;"></i>~12 hours total</span>
+    <span><i class="fas fa-flask" style="margin-right:0.4rem;color:#7c3aed;"></i>8 Labs</span>
+    <span><i class="fas fa-check-circle" style="margin-right:0.4rem;color:#7c3aed;"></i>40 Quiz Questions</span>
+  </div>
+  <div style="margin-top:2rem;" id="section-progress">
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:999px;height:8px;max-width:400px;margin:0 auto 0.5rem;overflow:hidden;">
+      <div id="prog-bar" style="height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:999px;width:0%;transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text-muted);" id="prog-text">0 / 8 sessions completed</div>
+  </div>
+</div>
+
+<div class="session-list">
+  <h2 style="color:var(--text);font-size:1.3rem;margin-bottom:1.5rem;font-weight:700;">Sessions in This Track</h2>
+  <div id="session-list-container"></div>
+
+  <div style="margin-top:2rem;padding:2rem;background:#faf5ff;border:1px solid #ddd6fe;border-radius:14px;text-align:center;box-shadow:var(--shadow-sm);">
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🏆</div>
+    <h3 style="color:#6d28d9;margin:0 0 0.5rem;font-size:1.2rem;">Course Complete!</h3>
+    <p style="color:var(--text-muted);margin:0 0 1.25rem;max-width:500px;margin-left:auto;margin-right:auto;">You've gone from zero to AI architect across 20 sessions. The capstone puts it all together — build something real and ship it.</p>
+    <a href="/sessions/expert/20-capstone.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;padding:0.8rem 2rem;border-radius:8px;font-weight:700;font-size:1rem;text-decoration:none;box-shadow:0 4px 20px rgba(139,92,246,0.2);"><i class="fas fa-trophy"></i> Start Capstone Project</a>
+  </div>
+
+  <div style="margin-top:1rem;text-align:center;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);">
+    <h3 style="color:var(--text);margin:0 0 0.5rem;font-size:0.95rem;">New to Expert?</h3>
+    <p style="color:var(--text-muted);margin:0 0 1rem;font-size:0.85rem;">Complete Intermediate first to build the ML and RAG foundations this track builds on.</p>
+    <a href="/sections/intermediate.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:0.6rem 1.2rem;border-radius:8px;font-weight:600;font-size:0.85rem;text-decoration:none;"><i class="fas fa-arrow-left"></i> Go to Intermediate</a>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="/assets/js/progress.js"></script>
+<script src="/assets/js/main.js"></script>
+<script>
+const SESSIONS = [
+  {id:13,title:'Advanced Prompting',desc:'Prompt chains, system prompt engineering, tool instructions, and guardrails for production reliability.',path:'/sessions/expert/13-advanced-prompting.html',duration:'75 min',topics:['Prompt chains','Guardrails','Few-shot selection'],capstone:false},
+  {id:14,title:'AI Agents',desc:'Give the LLM hands. Tool calling, planning loops, memory, single vs. multi-agent architectures.',path:'/sessions/expert/14-ai-agents.html',duration:'90 min',topics:['Tool calling','Agent loop','Multi-agent'],capstone:false},
+  {id:15,title:'LLM Evaluation',desc:'Build golden datasets, LLM-as-judge pipelines, and regression testing for systematic improvement.',path:'/sessions/expert/15-llm-evaluation.html',duration:'75 min',topics:['Golden dataset','LLM-as-judge','Regression tests'],capstone:false},
+  {id:16,title:'Fine-Tuning',desc:'When prompting isn\'t enough. LoRA fine-tuning, training data prep, and the prompting vs RAG vs fine-tuning decision.',path:'/sessions/expert/16-fine-tuning.html',duration:'90 min',topics:['LoRA','Training data','Decision tree'],capstone:false},
+  {id:17,title:'Responsible AI',desc:'Bias, privacy, prompt injection, data leakage — and the practical defenses every engineer must know.',path:'/sessions/expert/17-responsible-ai.html',duration:'75 min',topics:['Bias auditing','Prompt injection','PII redaction'],capstone:false},
+  {id:18,title:'Multimodal AI',desc:'Images, audio, and documents. Vision models, speech APIs, and multimodal RAG pipelines.',path:'/sessions/expert/18-multimodal-ai.html',duration:'75 min',topics:['Vision models','Whisper','Multimodal RAG'],capstone:false},
+  {id:19,title:'Production Deployment',desc:'Cost, latency, caching, observability, retries, and rate limits at scale.',path:'/sessions/expert/19-production-deployment.html',duration:'90 min',topics:['Caching','Observability','Rate limiting'],capstone:false},
+  {id:20,title:'Capstone Project',desc:'Apply everything across all 20 sessions. Choose a track, build, evaluate, and ship.',path:'/sessions/expert/20-capstone.html',duration:'4–8 hrs',topics:['Full-stack AI','Eval suite','Deployed app'],capstone:true},
+];
+
+function renderSessions() {
+  const container = document.getElementById('session-list-container');
+  let completed = 0;
+  container.innerHTML = SESSIONS.map(s => {
+    const state = Progress.getSession(s.id);
+    const done = state.quizPassed;
+    if (done) completed++;
+    return `
+      <a href="${s.path}" class="session-item ${done?'completed':''} ${s.capstone?'capstone':''}">
+        <div class="session-num">${s.capstone ? '🏆' : String(s.id).padStart(2,'0')}</div>
+        <div class="session-info">
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+          <div class="session-tags">
+            <span class="tag"><i class="fas fa-clock" style="margin-right:0.3rem;"></i>${s.duration}</span>
+            ${s.topics.map(t=>`<span class="tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="check-icon ${done?'done':''}">${done?'✓':''}</div>
+      </a>`;
+  }).join('');
+  const pct = Math.round(completed/SESSIONS.length*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = `${completed} / ${SESSIONS.length} sessions completed`;
+}
+
+document.addEventListener('DOMContentLoaded', renderSessions);
+</script>
+</body>
+</html>

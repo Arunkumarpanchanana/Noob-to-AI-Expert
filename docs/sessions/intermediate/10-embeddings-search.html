@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>Embeddings &amp; Semantic Search — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 10,
+    slug: "10-embeddings-search",
+    section: "intermediate",
+    title: "Embeddings & Semantic Search",
+    nextSlug: "/sessions/intermediate/11-rag.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "What does cosine similarity measure between two vectors?",
+        options: [
+          "The Euclidean distance",
+          "The angle between vectors (semantic similarity)",
+          "The sum of their elements",
+          "The length difference"
+        ],
+        correct: 1,
+        explanation: "Cosine similarity measures the cosine of the angle between two vectors. Values range from -1 to 1, where 1 = identical direction (very similar meaning), 0 = perpendicular (unrelated), -1 = opposite."
+      },
+      {
+        type: "mcq",
+        question: "In semantic search, how is a user's query compared to documents?",
+        options: [
+          "Exact word matching",
+          "Both are converted to embeddings and compared by vector similarity",
+          "SQL LIKE queries",
+          "Hash comparison"
+        ],
+        correct: 1,
+        explanation: "Semantic search embeds both the query and documents into the same vector space, then finds documents whose embedding vectors are closest to the query vector."
+      },
+      {
+        type: "truefalse",
+        question: "The OpenAI text-embedding-3-small model produces 1536-dimensional vectors for all text inputs.",
+        options: ["True", "False"],
+        correct: 0,
+        explanation: "text-embedding-3-small produces 1536-dimensional vectors by default (can be shortened). text-embedding-3-large produces 3072-dimensional vectors."
+      },
+      {
+        type: "mcq",
+        question: "What is a vector database optimized for?",
+        options: [
+          "ACID transactions",
+          "Approximate nearest neighbor search at scale",
+          "Full-text search",
+          "Relational joins"
+        ],
+        correct: 1,
+        explanation: "Vector databases (Pinecone, Weaviate, Chroma) are optimized for Approximate Nearest Neighbor (ANN) search — finding the most similar vectors out of millions efficiently."
+      },
+      {
+        type: "multi",
+        question: "Which tasks can embeddings be used for? (Select all that apply)",
+        options: [
+          "Semantic search",
+          "Text classification",
+          "Detecting duplicate content",
+          "Generating new text directly"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Embeddings are great for search, classification, clustering, and deduplication. But they're fixed-length representations — you can't directly generate new text from them (you need a generative model for that)."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>Embeddings &amp; Semantic Search</span>
+        </div>
+        <h1 class="session-title">Embeddings &amp; Semantic Search</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 55 min</span>
+          <span><i class="ri-number-1"></i> Session 10 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: What Are Embeddings? -->
+      <div class="concept-section" id="what-are-embeddings">
+        <h2>What Are Embeddings?</h2>
+        <p>
+          An embedding is a dense numerical representation of text — a list of floating-point numbers that encodes semantic meaning. When you pass a sentence to an embedding model, you get back a fixed-size vector: for example, OpenAI's <code>text-embedding-3-small</code> returns an array of 1536 floats for any input, whether it's one word or five paragraphs.
+        </p>
+        <p>
+          What makes embeddings powerful is that <strong>similar meanings produce similar vectors</strong>. The words "dog" and "puppy" will have vectors that are close together in this high-dimensional space. "Bank (financial institution)" and "bank (river bank)" will be farther apart. This spatial relationship is what makes semantic tasks possible.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Text</th>
+              <th>Embedding (simplified 4-D)</th>
+              <th>Relationship</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"The car engine failed"</td>
+              <td>[0.82, 0.14, 0.61, 0.33]</td>
+              <td rowspan="2" style="text-align:center; vertical-align:middle;"><strong>Very similar</strong><br>cosine ≈ 0.96</td>
+            </tr>
+            <tr>
+              <td>"The automobile motor broke down"</td>
+              <td>[0.79, 0.18, 0.58, 0.37]</td>
+            </tr>
+            <tr>
+              <td>"I love pasta carbonara"</td>
+              <td>[0.12, 0.91, 0.08, 0.74]</td>
+              <td><strong>Unrelated</strong><br>cosine ≈ 0.11</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The dimensionality (1536, 3072, 768, etc.) represents the model's capacity to capture nuanced meaning. More dimensions generally mean finer-grained semantic distinctions, at the cost of storage and compute.
+        </p>
+
+        <div class="callout callout-concept">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>Core Concept</strong>
+            <p>Embeddings turn text into numbers that preserve semantic meaning. The closer two vectors are in this space, the more similar their meanings — regardless of the exact words used.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Cosine Similarity -->
+      <div class="concept-section" id="cosine-similarity">
+        <h2>Cosine Similarity</h2>
+        <p>
+          Cosine similarity is the standard way to measure how similar two embedding vectors are. Rather than measuring the straight-line distance between them (Euclidean distance), it measures the <em>angle</em> between the two vectors. This makes it robust to differences in vector magnitude — a short text and a long text covering the same topic will have a small angle, even though their raw vector lengths differ.
+        </p>
+
+        <p>The formula is:</p>
+        <div style="background: var(--surface-2, #f4f4f8); border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0; font-family: monospace; font-size: 1.05rem;">
+          cosine_similarity(A, B) = (A · B) / (||A|| × ||B||)
+        </div>
+        <p>
+          The dot product (A · B) sums the element-wise products. The denominator normalizes by each vector's magnitude. The result is always between -1 and 1: 1 means identical direction, 0 means perpendicular (unrelated), -1 means opposite.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>cosine_similarity.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import numpy as np
+
+def cosine_similarity(a, b):
+    """Compute cosine similarity between two 1-D vectors."""
+    dot_product = np.dot(a, b)
+    magnitude_a = np.linalg.norm(a)
+    magnitude_b = np.linalg.norm(b)
+    return dot_product / (magnitude_a * magnitude_b)
+
+# Example: two related sentences (simplified 4-D vectors)
+car_engine    = np.array([0.82, 0.14, 0.61, 0.33])
+auto_motor    = np.array([0.79, 0.18, 0.58, 0.37])
+pasta_recipe  = np.array([0.12, 0.91, 0.08, 0.74])
+
+print(f"car_engine vs auto_motor:   {cosine_similarity(car_engine, auto_motor):.4f}")
+# Output: ~0.9987 — very similar
+print(f"car_engine vs pasta_recipe: {cosine_similarity(car_engine, pasta_recipe):.4f}")
+# Output: ~0.3142 — unrelated
+
+# With numpy broadcasting for batch similarity
+from sklearn.metrics.pairwise import cosine_similarity as sk_cosine
+
+vectors = np.stack([car_engine, auto_motor, pasta_recipe])
+query   = car_engine.reshape(1, -1)
+
+scores = sk_cosine(query, vectors)[0]
+ranked = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
+for idx, score in ranked:
+    print(f"  [{score:.4f}] index {idx}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 3: Semantic Search vs Keyword Search -->
+      <div class="concept-section" id="semantic-vs-keyword">
+        <h2>Semantic Search vs Keyword Search</h2>
+        <p>
+          Traditional search engines match exact words. If a user searches "car problems", a keyword search won't find a document that only uses the word "automobile" — even though the meaning is identical. Semantic search bridges this gap by comparing meaning instead of characters.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Keyword Search</th>
+              <th>Semantic Search</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Matching method</strong></td>
+              <td>Exact word / token match (TF-IDF, BM25)</td>
+              <td>Vector similarity in embedding space</td>
+            </tr>
+            <tr>
+              <td><strong>Synonyms</strong></td>
+              <td>Misses unless explicitly added</td>
+              <td>Handled naturally</td>
+            </tr>
+            <tr>
+              <td><strong>Paraphrases</strong></td>
+              <td>Fails ("I need a vehicle" vs "car")</td>
+              <td>Works well</td>
+            </tr>
+            <tr>
+              <td><strong>Typos &amp; abbreviations</strong></td>
+              <td>Fails without fuzzy matching</td>
+              <td>Often robust</td>
+            </tr>
+            <tr>
+              <td><strong>Precision for exact terms</strong></td>
+              <td>Excellent (product codes, names)</td>
+              <td>Can be less precise</td>
+            </tr>
+            <tr>
+              <td><strong>Computational cost</strong></td>
+              <td>Low — inverted index</td>
+              <td>Higher — ANN search over vectors</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Query: "How do I fix my car?" — Semantic search also retrieves:
+        </p>
+        <ul>
+          <li>"Automobile repair guide" — synonym match</li>
+          <li>"Vehicle maintenance tips" — conceptual match</li>
+          <li>"My engine won't start" — contextual match</li>
+        </ul>
+
+        <div class="callout callout-info">
+          <span class="callout-icon"><i class="ri-information-line"></i></span>
+          <div class="callout-body">
+            <strong>Hybrid Search</strong>
+            <p>Production search systems often combine both: BM25 for keyword precision plus embeddings for semantic recall. Pinecone, Weaviate, and Elasticsearch all support hybrid search modes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Building a Semantic Search System -->
+      <div class="concept-section" id="building-semantic-search">
+        <h2>Building a Semantic Search System</h2>
+        <p>
+          A semantic search system has two distinct phases: <strong>offline indexing</strong> (run once) and <strong>online retrieval</strong> (run per query). The offline phase is expensive; the online phase should be fast.
+        </p>
+
+        <p><strong>Four steps to build it:</strong></p>
+        <ol>
+          <li><strong>Embed documents:</strong> Pass each document (or chunk) through an embedding model to get a vector.</li>
+          <li><strong>Store in a vector database:</strong> Persist vectors with their metadata for fast similarity lookup.</li>
+          <li><strong>Embed the query:</strong> At query time, embed the user's question with the same model.</li>
+          <li><strong>Find nearest neighbors:</strong> Retrieve the top-k most similar document vectors using ANN (approximate nearest neighbor) search.</li>
+        </ol>
+
+        <p><strong>Popular vector databases:</strong></p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Database</th>
+              <th>Type</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pinecone</strong></td>
+              <td>Managed cloud</td>
+              <td>Production, serverless, no infrastructure</td>
+            </tr>
+            <tr>
+              <td><strong>Weaviate</strong></td>
+              <td>Open source / cloud</td>
+              <td>Hybrid search, GraphQL API</td>
+            </tr>
+            <tr>
+              <td><strong>Chroma</strong></td>
+              <td>Open source (local-first)</td>
+              <td>Prototyping, local dev, Python-native</td>
+            </tr>
+            <tr>
+              <td><strong>pgvector</strong></td>
+              <td>Postgres extension</td>
+              <td>Teams already using Postgres</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>semantic_search.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sentence_transformers import SentenceTransformer
+import chromadb
+import numpy as np
+
+# --- 1. Load an open-source embedding model (free, runs locally) ---
+model = SentenceTransformer("all-MiniLM-L6-v2")  # 384-dimensional vectors
+
+# --- 2. Your document corpus ---
+documents = [
+    "How to change a car tire",
+    "Automobile engine repair guide",
+    "Python machine learning tutorial",
+    "Deep learning with PyTorch",
+    "Cooking pasta carbonara recipe",
+    "Vehicle brake maintenance tips",
+]
+doc_ids = [f"doc_{i}" for i in range(len(documents))]
+
+# --- 3. Embed documents ---
+doc_embeddings = model.encode(documents, normalize_embeddings=True)
+print(f"Embedding shape: {doc_embeddings.shape}")  # (6, 384)
+
+# --- 4. Store in Chroma (in-memory for demo) ---
+client = chromadb.Client()
+collection = client.create_collection("course_docs")
+collection.add(
+    documents=documents,
+    embeddings=doc_embeddings.tolist(),
+    ids=doc_ids
+)
+
+# --- 5. Search at query time ---
+query = "My vehicle needs repair"
+query_embedding = model.encode([query], normalize_embeddings=True)
+
+results = collection.query(
+    query_embeddings=query_embedding.tolist(),
+    n_results=3
+)
+
+print(f"\nQuery: '{query}'")
+print("Top 3 results:")
+for i, (doc, distance) in enumerate(
+    zip(results["documents"][0], results["distances"][0])
+):
+    print(f"  {i+1}. [{1 - distance:.3f}] {doc}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 5: Applications of Embeddings -->
+      <div class="concept-section" id="applications">
+        <h2>Applications of Embeddings</h2>
+        <p>
+          Embeddings are a general-purpose representation layer that unlocks many tasks beyond just search. Here are three common production use cases with code.
+        </p>
+
+        <h3>1. Similarity Scoring</h3>
+        <p>Score how similar two pieces of text are — useful for review deduplication, plagiarism detection, or FAQ matching.</p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>similarity_scoring.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sentence_transformers import SentenceTransformer, util
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+ticket_1 = "App crashes when I tap the login button"
+ticket_2 = "The app keeps closing on the sign-in screen"
+ticket_3 = "How do I cancel my subscription?"
+
+embs = model.encode([ticket_1, ticket_2, ticket_3])
+
+sim_1_2 = util.cos_sim(embs[0], embs[1]).item()
+sim_1_3 = util.cos_sim(embs[0], embs[2]).item()
+
+print(f"Ticket 1 vs 2 (likely duplicate): {sim_1_2:.3f}")  # ~0.89
+print(f"Ticket 1 vs 3 (different issue):  {sim_1_3:.3f}")  # ~0.21</code></pre>
+        </div>
+
+        <h3>2. Clustering Topics</h3>
+        <p>Group documents into topics automatically — no labels needed. Useful for organizing a knowledge base or discovering themes in customer feedback.</p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>clustering.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sentence_transformers import SentenceTransformer
+from sklearn.cluster import KMeans
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+feedback = [
+    "The checkout is too slow",
+    "Payment keeps failing",
+    "I love the new dark mode",
+    "The UI looks great on mobile",
+    "Order confirmation emails are delayed",
+    "Billing didn't go through",
+]
+
+embeddings = model.encode(feedback)
+kmeans = KMeans(n_clusters=3, random_state=42)
+labels = kmeans.fit_predict(embeddings)
+
+for text, cluster in zip(feedback, labels):
+    print(f"  Cluster {cluster}: {text}")</code></pre>
+        </div>
+
+        <h3>3. Recommendation System</h3>
+        <p>Find content similar to what a user just viewed or liked — embeddings power the "more like this" feature.</p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>recommendations.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sentence_transformers import SentenceTransformer, util
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+articles = [
+    "Introduction to neural networks",
+    "Deep learning for computer vision",
+    "Transformer architecture explained",
+    "Python for beginners",
+    "How to bake sourdough bread",
+    "Garden vegetable growing guide",
+]
+
+embeddings = model.encode(articles, normalize_embeddings=True)
+
+# User just read article 0 — find similar ones
+viewed = embeddings[0]
+scores = util.cos_sim(viewed, embeddings)[0]
+
+# Sort by similarity, skip the viewed article itself
+ranked = sorted(
+    [(i, s.item()) for i, s in enumerate(scores) if i != 0],
+    key=lambda x: x[1], reverse=True
+)
+print("Recommended (based on article 0):")
+for idx, score in ranked[:3]:
+    print(f"  [{score:.3f}] {articles[idx]}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Course Notes Search Engine</div>
+              <div class="lab-subtitle">Embed course notes and search them with natural language queries</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            In this lab you'll build a semantic search engine over the text notes from this course. By the end, you'll be able to type a question like "how does attention work?" and instantly retrieve the most relevant section — even if it uses different wording.
+          </p>
+
+          <a href="https://colab.research.google.com" target="_blank" rel="noopener" class="colab-badge"><span>📓</span> Open in Colab</a>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Install dependencies and load notes</div>
+                <div class="lab-step-desc">Install sentence-transformers and chromadb. Load a set of course note text snippets (provided in the notebook).</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Embed all notes</div>
+                <div class="lab-step-desc">Use <code>all-MiniLM-L6-v2</code> to encode every note snippet into a 384-dimensional vector. This is the offline indexing step.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Store in Chroma</div>
+                <div class="lab-step-desc">Create a Chroma collection and add all embeddings with their original text as metadata.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Build an interactive search loop</div>
+                <div class="lab-step-desc">Prompt the user for a question, embed it, query Chroma for the top 3 results, and display them with similarity scores.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Compare with keyword search</div>
+                <div class="lab-step-desc">Run the same query using a simple Python <code>in</code> keyword check. Observe where semantic search finds results that keyword search misses.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>Model Evaluation — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 7,
+    slug: "07-model-evaluation",
+    section: "intermediate",
+    title: "Model Evaluation",
+    nextSlug: "/sessions/intermediate/08-neural-networks.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "A spam filter that marks every email as spam would have:",
+        options: ["Perfect recall, zero precision", "Perfect precision, zero recall", "Perfect accuracy", "High F1 score"],
+        correct: 0,
+        explanation: "If everything is classified as spam: recall=1 (catches all real spam), but precision=0 (also flags all legitimate emails as spam). This is the precision-recall tradeoff."
+      },
+      {
+        type: "mcq",
+        question: "What does a 'False Positive' mean in medical testing?",
+        options: ["Test missed a sick patient", "Healthy patient tests positive (incorrectly)", "Test correctly identified disease", "Test was not run"],
+        correct: 1,
+        explanation: "False Positive = the test says positive, but the true state is negative. In medicine: a healthy patient told they have a disease. This causes unnecessary anxiety and treatment."
+      },
+      {
+        type: "truefalse",
+        question: "An AUC score of 0.5 means a model performs no better than random guessing.",
+        options: ["True", "False"],
+        correct: 0,
+        explanation: "AUC=0.5 means the model's discriminative ability is equivalent to random chance. AUC=1.0 is perfect. AUC below 0.5 means the model is inversely predictive."
+      },
+      {
+        type: "mcq",
+        question: "F1 score is the:",
+        options: ["Sum of precision and recall", "Arithmetic mean of precision and recall", "Harmonic mean of precision and recall", "Product of precision and recall"],
+        correct: 2,
+        explanation: "F1 = 2 × (precision × recall) / (precision + recall) — the harmonic mean, which penalizes extreme imbalances between precision and recall more than the arithmetic mean would."
+      },
+      {
+        type: "multi",
+        question: "K-fold cross-validation is preferred over a single train/test split because: (Select all that apply)",
+        options: ["Uses all data for both training and validation", "Provides a more reliable estimate of generalization", "Is always faster to compute", "Reduces sensitivity to how data was split"],
+        correct: [0, 1, 3],
+        explanation: "K-fold uses each sample for validation exactly once and trains on the rest, giving more reliable estimates. It's computationally more expensive (k times slower), not faster."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>Model Evaluation</span>
+        </div>
+        <h1 class="session-title">Model Evaluation</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 55 min</span>
+          <span><i class="ri-number-1"></i> Session 7 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Why Accuracy Isn't Enough -->
+      <div class="concept-section" id="accuracy-problem">
+        <h2>Why Accuracy Isn't Enough</h2>
+        <p>
+          Accuracy — the percentage of correct predictions — sounds like the obvious metric. But it fails completely in the presence of class imbalance, which is everywhere in real-world ML.
+        </p>
+        <p>
+          Consider a fraud detection model. Suppose 99% of transactions are legitimate and only 1% are fraudulent. A model that always predicts "not fraud" — without looking at a single feature — achieves <strong>99% accuracy</strong>. It is completely useless and yet looks great by accuracy alone.
+        </p>
+        <p>
+          This is the core problem: accuracy doesn't tell you <em>which</em> cases the model gets wrong, and some errors are far more costly than others. Missing a fraud (false negative) costs money. Flagging a legitimate transaction (false positive) annoys customers. The right metric depends on which error you care more about.
+        </p>
+
+        <div class="callout callout-concept">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>Rule of Thumb:</strong> Whenever your classes are imbalanced (more than 80/20 split), treat accuracy as a starting point only. Always look at precision, recall, and F1 alongside it.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Confusion Matrix -->
+      <div class="concept-section" id="confusion-matrix">
+        <h2>The Confusion Matrix</h2>
+        <p>
+          The confusion matrix breaks down predictions into four categories. We'll use a spam filter as our running example where the "positive" class is spam.
+        </p>
+
+        <table class="compare-table" style="text-align:center;">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Predicted: Spam</th>
+              <th>Predicted: Not Spam</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Actual: Spam</strong></td>
+              <td style="background:rgba(16,185,129,0.15); color:#065f46; font-weight:700;">
+                TP — True Positive<br>
+                <small>Correctly caught spam</small>
+              </td>
+              <td style="background:rgba(239,68,68,0.12); color:#7f1d1d; font-weight:700;">
+                FN — False Negative<br>
+                <small>Spam that slipped through</small>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Actual: Not Spam</strong></td>
+              <td style="background:rgba(239,68,68,0.12); color:#7f1d1d; font-weight:700;">
+                FP — False Positive<br>
+                <small>Legit email marked as spam</small>
+              </td>
+              <td style="background:rgba(16,185,129,0.15); color:#065f46; font-weight:700;">
+                TN — True Negative<br>
+                <small>Correctly passed legit email</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ul style="margin-top:1rem;">
+          <li><strong>True Positive (TP):</strong> Model said spam, it really was spam. Correct.</li>
+          <li><strong>True Negative (TN):</strong> Model said not spam, it really wasn't. Correct.</li>
+          <li><strong>False Positive (FP):</strong> Model said spam, but it was legitimate. The model cried wolf.</li>
+          <li><strong>False Negative (FN):</strong> Model said not spam, but it was spam. The bad email got through.</li>
+        </ul>
+
+        <div class="callout callout-concept">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>Context Matters:</strong> False Positives and False Negatives have different costs depending on the application. In cancer screening, a False Negative (missed cancer) is catastrophic. In a spam filter, a False Positive (good email in spam folder) is merely annoying.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Precision, Recall, F1 -->
+      <div class="concept-section" id="precision-recall">
+        <h2>Precision, Recall, and F1</h2>
+        <p>
+          From the confusion matrix, we derive three metrics that tell a richer story than accuracy:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Formula</th>
+              <th>Answers the Question</th>
+              <th>Prefer When</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Precision</strong></td>
+              <td>TP / (TP + FP)</td>
+              <td>Of all items flagged as positive, what fraction actually were?</td>
+              <td>FP are costly — e.g., don't want to spam-block real emails</td>
+            </tr>
+            <tr>
+              <td><strong>Recall</strong></td>
+              <td>TP / (TP + FN)</td>
+              <td>Of all actual positives, what fraction did we catch?</td>
+              <td>FN are costly — e.g., don't want to miss cancer diagnoses</td>
+            </tr>
+            <tr>
+              <td><strong>F1 Score</strong></td>
+              <td>2 × (P × R) / (P + R)</td>
+              <td>Single balanced score — harmonic mean of precision and recall</td>
+              <td>You need one metric that balances both concerns</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The harmonic mean penalizes extreme imbalances. An F1 score of 0.9 requires <em>both</em> precision and recall to be high. A model with precision=1.0 and recall=0.1 gets F1=0.18 — a justifiably low score.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">sklearn_metrics.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    precision_score,
+    recall_score,
+    f1_score
+)
+
+# y_test: true labels, y_pred: model predictions
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Full report with per-class and weighted averages
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=["Not Spam", "Spam"]))
+
+# Individual metrics
+precision = precision_score(y_test, y_pred)
+recall    = recall_score(y_test, y_pred)
+f1        = f1_score(y_test, y_pred)
+print(f"Precision: {precision:.3f}")
+print(f"Recall:    {recall:.3f}")
+print(f"F1 Score:  {f1:.3f}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: AUC-ROC -->
+      <div class="concept-section" id="auc-roc">
+        <h2>AUC-ROC Curve</h2>
+        <p>
+          Most classifiers output a probability (e.g., 0.87 probability of spam), and you apply a threshold (e.g., 0.5) to convert that to a class label. The choice of threshold trades off precision vs recall.
+        </p>
+        <p>
+          The <strong>ROC (Receiver Operating Characteristic) curve</strong> shows this tradeoff at every possible threshold, plotting:
+        </p>
+        <ul>
+          <li><strong>Y-axis: True Positive Rate</strong> = recall = TP/(TP+FN)</li>
+          <li><strong>X-axis: False Positive Rate</strong> = FP/(FP+TN)</li>
+        </ul>
+        <p>
+          <strong>AUC (Area Under the Curve)</strong> summarizes this as a single number:
+        </p>
+        <ul>
+          <li><strong>AUC = 1.0:</strong> Perfect model at all thresholds</li>
+          <li><strong>AUC = 0.5:</strong> Random guessing (diagonal line)</li>
+          <li><strong>AUC &lt; 0.5:</strong> Worse than random — model has inverted its predictions</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">roc_auc.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sklearn.metrics import roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
+
+# Use predict_proba to get probability scores (not just 0/1 labels)
+y_proba = model.predict_proba(X_test)[:, 1]   # probability of positive class
+
+auc = roc_auc_score(y_test, y_proba)
+print(f"AUC-ROC: {auc:.3f}")
+
+# Plot the curve
+fpr, tpr, thresholds = roc_curve(y_test, y_proba)
+plt.figure(figsize=(6, 5))
+plt.plot(fpr, tpr, label=f"Model (AUC = {auc:.2f})")
+plt.plot([0, 1], [0, 1], "k--", label="Random (AUC = 0.5)")
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate (Recall)")
+plt.title("ROC Curve")
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>When to Use AUC-ROC:</strong> Use AUC-ROC when you need a threshold-independent metric — for example, when comparing different models before deciding on a deployment threshold. For heavily imbalanced datasets, Precision-Recall AUC is often more informative.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Cross-Validation -->
+      <div class="concept-section" id="cross-validation">
+        <h2>Cross-Validation</h2>
+        <p>
+          A single train/test split is fragile. If you happen to split such that all the hard examples land in training and easy ones in test, you'll overestimate performance — and vice versa. <strong>K-fold cross-validation</strong> fixes this by using every sample for both training and validation.
+        </p>
+
+        <p>How it works with K=5 folds:</p>
+        <ol>
+          <li>Split data into 5 equal chunks (folds).</li>
+          <li>Train on folds 1–4, validate on fold 5. Record score.</li>
+          <li>Train on folds 1–3 and 5, validate on fold 4. Record score.</li>
+          <li>Repeat until every fold has been the validation set once.</li>
+          <li>Average the 5 scores. This average is your cross-validated performance estimate.</li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">cross_validation.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# StratifiedKFold preserves class proportions in each fold
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+scores = cross_val_score(
+    model, X, y,
+    cv=cv,
+    scoring="f1"      # or "accuracy", "roc_auc", "precision", "recall"
+)
+
+print(f"F1 per fold:  {scores.round(3)}")
+print(f"Mean F1:      {scores.mean():.3f}")
+print(f"Std deviation: {scores.std():.3f}")
+# Low std = consistent performance across different data subsets
+# High std = model is sensitive to which data it sees — investigate further</code></pre>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Spam Classifier Evaluation</div>
+              <div class="lab-subtitle">Build a classifier and evaluate it with every metric from this session</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>In this lab you'll train a spam classifier on the SMS Spam Collection dataset, then evaluate it with the full arsenal: confusion matrix, precision, recall, F1, ROC-AUC, and cross-validation.</p>
+
+          <a href="https://colab.research.google.com/github/yourusername/noob-to-ai/blob/main/labs/07-model-evaluation.ipynb" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:1.5rem; display:inline-flex; align-items:center; gap:.5rem;">
+            <i class="ri-google-line"></i> Open in Google Colab
+          </a>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <strong>Load the dataset</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">step1_load.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">import pandas as pd
+url = "https://raw.githubusercontent.com/yourusername/noob-to-ai/main/data/spam.csv"
+df = pd.read_csv(url)
+print(df['label'].value_counts())
+# Note the class imbalance: ~87% ham, ~13% spam</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Vectorize text and train classifier</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">step2_train.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+
+pipeline = Pipeline([
+    ("tfidf", TfidfVectorizer(max_features=5000)),
+    ("clf", LogisticRegression(class_weight="balanced"))
+])
+pipeline.fit(X_train, y_train)</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Evaluate with all metrics</strong>
+              <p>Generate the confusion matrix, classification report, and ROC curve from the code in this session.</p>
+            </li>
+            <li class="lab-step">
+              <strong>Experiment with the threshold</strong>
+              <p>Change the classification threshold from 0.5 to 0.3, then to 0.7. Observe how precision and recall change while F1 stays bounded.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

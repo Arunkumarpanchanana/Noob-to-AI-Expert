@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>LLM Evaluation — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 15,
+    slug: "15-llm-evaluation",
+    section: "expert",
+    title: "LLM Evaluation",
+    nextSlug: "/sessions/expert/16-fine-tuning.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "A 'golden dataset' for LLM evaluation is:",
+        options: [
+          "A dataset with only positive examples",
+          "Curated question-answer pairs with human-verified expected outputs",
+          "The training data for the model",
+          "Public benchmark datasets only"
+        ],
+        correct: 1,
+        explanation: "A golden dataset contains carefully curated test cases with expected outputs and evaluation criteria. They're 'golden' because they represent ground-truth quality standards for your specific use case."
+      },
+      {
+        type: "mcq",
+        question: "LLM-as-judge evaluation uses:",
+        options: [
+          "Human evaluators scoring outputs",
+          "Another LLM to score or critique generated outputs against a rubric",
+          "A fixed regex pattern",
+          "Statistical significance tests"
+        ],
+        correct: 1,
+        explanation: "LLM-as-judge uses a (usually more capable) LLM to evaluate outputs using a detailed rubric. It scales better than human eval but can inherit the judge model's biases."
+      },
+      {
+        type: "truefalse",
+        question: "BLEU score is a good metric for evaluating open-ended LLM chat responses.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "BLEU measures n-gram overlap with reference text — good for translation but poor for open-ended generation where multiple valid responses exist. Use LLM-as-judge or semantic similarity instead."
+      },
+      {
+        type: "mcq",
+        question: "Hallucination 'faithfulness' checking verifies that:",
+        options: [
+          "The output contains no negative content",
+          "The output doesn't contradict the provided source context",
+          "The output is grammatically correct",
+          "The output matches a keyword list"
+        ],
+        correct: 1,
+        explanation: "Faithfulness checks whether the model's answer is grounded in and consistent with the provided context (especially in RAG systems). An answer can be factually true but unfaithful to a wrong source."
+      },
+      {
+        type: "multi",
+        question: "A good LLM evaluation pipeline should: (Select all that apply)",
+        options: [
+          "Run on every prompt/model change",
+          "Track metrics over time to detect regressions",
+          "Include both automated metrics and periodic human review",
+          "Only be run before the initial launch"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Eval should be continuous (run on every change), tracked over time (detect regressions), and combine automated + human review. Evaluating only at launch misses the ongoing drift and degradation that affects production AI systems."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/expert.html">Expert</a><span class="sep">›</span>
+          <span>LLM Evaluation</span>
+        </div>
+        <h1 class="session-title">LLM Evaluation</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-expert">Expert</span>
+          <span><i class="ri-time-line"></i> 60 min</span>
+          <span><i class="ri-number-1"></i> Session 15 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Why LLM Evaluation is Hard -->
+      <div class="concept-section" id="eval-hard">
+        <h2>Why LLM Evaluation is Hard</h2>
+        <p>
+          With traditional ML classification, evaluating quality is straightforward: compare the predicted class to the true label, compute accuracy. LLMs break this model entirely. A question like "Explain quantum entanglement in simple terms" has no single correct answer — there are hundreds of equally valid, high-quality responses. And dozens of technically correct but useless ones.
+        </p>
+
+        <p>The challenges stack up:</p>
+        <ul>
+          <li><strong>Open-ended outputs:</strong> No single ground truth. Multiple valid answers exist.</li>
+          <li><strong>Context-dependence:</strong> "Good" depends on the user's background, the use case, the desired tone.</li>
+          <li><strong>Hallucination is subtle:</strong> Incorrect information often sounds more confident and fluent than correct information.</li>
+          <li><strong>Latent quality dimensions:</strong> Helpfulness, accuracy, safety, coherence, and tone are all important — and often trade off against each other.</li>
+        </ul>
+
+        <div class="callout callout-warning">
+          <span class="callout-icon"><i class="ri-error-warning-line"></i></span>
+          <div class="callout-body">
+            <strong>Vibes don't scale</strong>
+            <p>Vibes-based evaluation — "it seems pretty good when I try it" — doesn't scale. You need systematic evaluation to improve your AI product. Without it, you can't tell whether a prompt change made things better or worse, and you'll ship regressions without knowing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Golden Datasets -->
+      <div class="concept-section" id="golden-datasets">
+        <h2>Golden Datasets</h2>
+        <p>
+          A <strong>golden dataset</strong> is a curated collection of test cases with human-verified expected outputs. Each example has three parts: a question or input, a reference answer, and an evaluation rubric explaining what "good" looks like for this input.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Scale</th>
+              <th>When to Use</th>
+              <th>Build Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>20 examples</strong></td>
+              <td>Early prototype, sanity check, daily development feedback</td>
+              <td>1–2 hours</td>
+            </tr>
+            <tr>
+              <td><strong>200 examples</strong></td>
+              <td>Pre-launch validation, prompt A/B testing with statistical confidence</td>
+              <td>1–2 days</td>
+            </tr>
+            <tr>
+              <td><strong>2000 examples</strong></td>
+              <td>Production regression suite, fine-tuning evaluation, safety red-teaming</td>
+              <td>1–2 weeks</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>What makes a high-quality golden dataset:</p>
+        <ul>
+          <li><strong>Diverse coverage:</strong> Include easy, hard, edge cases, and adversarial inputs.</li>
+          <li><strong>Real user queries:</strong> Don't make up examples — sample from actual user traffic when possible.</li>
+          <li><strong>Clear rubrics:</strong> Annotators and the LLM judge must agree on what "correct" means.</li>
+          <li><strong>Inter-annotator agreement:</strong> If two humans can't agree, the question is ambiguous — clarify or discard it.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>Start with 50</strong>
+            <p>Start with 50 diverse, high-quality examples. Quality beats quantity for early-stage evals. A 50-example dataset you trust is far more valuable than 500 examples with inconsistent or unclear expected answers.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Automated Evaluation -->
+      <div class="concept-section" id="automated-eval">
+        <h2>Automated Evaluation</h2>
+        <p>
+          Automated metrics fall on a spectrum from simple (fast, cheap, brittle) to sophisticated (slow, expensive, accurate). For production evals, you'll typically combine several:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>What It Measures</th>
+              <th>Best For</th>
+              <th>Limitations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>String match / regex</strong></td>
+              <td>Exact output format compliance</td>
+              <td>JSON structure, required keywords, forbidden words</td>
+              <td>Zero tolerance for valid paraphrases</td>
+            </tr>
+            <tr>
+              <td><strong>BLEU / ROUGE</strong></td>
+              <td>N-gram overlap with reference text</td>
+              <td>Summarization (rough), machine translation</td>
+              <td>Poor for open-ended generation; misses semantic equivalence</td>
+            </tr>
+            <tr>
+              <td><strong>BERTScore</strong></td>
+              <td>Semantic similarity to reference using BERT embeddings</td>
+              <td>Summarization quality with paraphrase tolerance</td>
+              <td>Still requires a reference answer</td>
+            </tr>
+            <tr>
+              <td><strong>LLM-as-judge</strong></td>
+              <td>Holistic quality scoring against a rubric</td>
+              <td>Open-ended tasks, helpfulness, coherence, tone</td>
+              <td>Slower, costs LLM API calls, judge bias</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>llm_as_judge.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import os, json
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+JUDGE_PROMPT = """You are an expert evaluator of AI assistant responses.
+Score the following response on a scale of 1-5 for each dimension,
+then provide an overall score.
+
+## Evaluation Dimensions
+- Accuracy (1-5): Is the information factually correct?
+- Helpfulness (1-5): Does it actually answer the question?
+- Clarity (1-5): Is it easy to understand?
+- Conciseness (1-5): Is it appropriately concise (not padded)?
+
+## Output Format (JSON only, no explanation outside the JSON)
+{
+  "accuracy": <1-5>,
+  "helpfulness": <1-5>,
+  "clarity": <1-5>,
+  "conciseness": <1-5>,
+  "overall": <1-5>,
+  "rationale": "<one sentence explaining the overall score>"
+}"""
+
+def judge_response(question: str, response: str) -> dict:
+    prompt = f"QUESTION: {question}\n\nRESPONSE TO EVALUATE:\n{response}"
+    result = client.chat.completions.create(
+        model="gpt-4o",  # use a strong judge
+        messages=[
+            {"role": "system", "content": JUDGE_PROMPT},
+            {"role": "user",   "content": prompt},
+        ],
+        response_format={"type": "json_object"},
+    )
+    return json.loads(result.choices[0].message.content)
+
+# Example
+question = "What is the capital of France?"
+good_response = "The capital of France is Paris, which has been the country's capital since the 10th century."
+bad_response  = "France is a country in Western Europe known for the Eiffel Tower and great food."
+
+print("Good response score:", judge_response(question, good_response))
+print("Bad response score: ", judge_response(question, bad_response))</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: Hallucination Detection -->
+      <div class="concept-section" id="hallucination-detection">
+        <h2>Hallucination Detection</h2>
+        <p>
+          Hallucination detection in RAG systems focuses on two properties: <strong>faithfulness</strong> (does the answer contradict the retrieved context?) and <strong>groundedness</strong> (is every claim in the answer supported by the context?). An answer can be factually correct in the real world but still "unfaithful" to the wrong source documents.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>faithfulness_eval.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import os, json
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+FAITHFULNESS_PROMPT = """You are evaluating whether an AI assistant's answer is faithful
+to the provided source context. An answer is faithful if every claim it makes is
+directly supported by (or at least not contradicted by) the context.
+
+## Task
+Given the CONTEXT and the ANSWER, identify any claims in the answer that are:
+1. SUPPORTED — clearly backed by the context
+2. NOT_IN_CONTEXT — not mentioned in the context (the model may have used training knowledge)
+3. CONTRADICTED — the context says something different
+
+Output JSON only:
+{
+  "faithfulness_score": <0.0 to 1.0>,
+  "supported_claims": ["..."],
+  "not_in_context_claims": ["..."],
+  "contradicted_claims": ["..."],
+  "verdict": "FAITHFUL" | "PARTIALLY_FAITHFUL" | "UNFAITHFUL"
+}"""
+
+def check_faithfulness(context: str, answer: str) -> dict:
+    prompt = f"CONTEXT:\n{context}\n\nANSWER:\n{answer}"
+    result = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": FAITHFULNESS_PROMPT},
+            {"role": "user",   "content": prompt},
+        ],
+        response_format={"type": "json_object"},
+    )
+    return json.loads(result.choices[0].message.content)
+
+# Test case
+context = "Our refund policy allows returns within 30 days of purchase with a receipt."
+faithful_answer  = "You can return items within 30 days if you have a receipt."
+unfaithful_answer = "You can return items within 60 days, and no receipt is required."
+
+print("Faithful:  ", check_faithfulness(context, faithful_answer)["verdict"])
+print("Unfaithful:", check_faithfulness(context, unfaithful_answer)["verdict"])</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 5: Building an Eval Pipeline -->
+      <div class="concept-section" id="eval-pipeline">
+        <h2>Building an Eval Pipeline</h2>
+        <p>
+          An eval pipeline runs your golden dataset against your current prompt/model configuration and outputs scores for each test case. The key design principle: treat it like a unit test suite — run it on every change, track results over time, and fail the "deployment" if scores drop below a threshold.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>eval_runner.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import os, json, datetime
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+# --- Test cases: your golden dataset ---
+TEST_CASES = [
+    {
+        "id": "tc_001",
+        "question": "What is our refund policy?",
+        "expected_keywords": ["30 days", "receipt"],
+        "context": "Refund policy: 30-day returns with receipt required.",
+    },
+    {
+        "id": "tc_002",
+        "question": "Do you offer free shipping?",
+        "expected_keywords": ["free shipping", "$50"],
+        "context": "Free shipping on orders over $50 for premium members.",
+    },
+]
+
+SYSTEM_PROMPT_V1 = "You are a helpful support assistant. Answer based on the context."
+SYSTEM_PROMPT_V2 = """You are a helpful support assistant.
+Answer ONLY based on the context provided. Be concise (1-2 sentences).
+If the answer is not in the context, say 'I don't have that information.'"""
+
+def run_model(system: str, question: str, context: str) -> str:
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system + f"\n\nCONTEXT:\n{context}"},
+            {"role": "user",   "content": question},
+        ]
+    )
+    return resp.choices[0].message.content
+
+def keyword_score(response: str, keywords: list[str]) -> float:
+    """Simple keyword-presence score (0 to 1)."""
+    hits = sum(1 for kw in keywords if kw.lower() in response.lower())
+    return hits / len(keywords)
+
+def run_eval(prompt_name: str, system_prompt: str):
+    scores = []
+    for tc in TEST_CASES:
+        response = run_model(system_prompt, tc["question"], tc["context"])
+        score = keyword_score(response, tc["expected_keywords"])
+        scores.append(score)
+        print(f"  [{tc['id']}] score={score:.2f} | response: {response[:80]}...")
+
+    avg = sum(scores) / len(scores)
+    print(f"\n  {prompt_name} average score: {avg:.2f}\n")
+    return avg
+
+print("=== Eval Run:", datetime.datetime.now().isoformat(), "===\n")
+v1_score = run_eval("PROMPT_V1", SYSTEM_PROMPT_V1)
+v2_score = run_eval("PROMPT_V2", SYSTEM_PROMPT_V2)
+
+winner = "V2" if v2_score > v1_score else "V1"
+print(f"Winner: {winner} ({v2_score:.2f} vs {v1_score:.2f})")</code></pre>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Build an Eval Suite</div>
+              <div class="lab-subtitle">Create 10 test cases, run them against two prompt versions, and compare scores</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            You'll build a complete evaluation suite for a FAQ bot, testing two prompt versions against 10 golden test cases. By the end, you'll have a quantitative comparison and know which prompt version is objectively better.
+          </p>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Write 10 golden test cases</div>
+                <div class="lab-step-desc">Pick a topic (cooking, software support, travel booking). Write 10 question/context/expected-keywords tuples. Include 2-3 edge cases (out-of-scope questions, ambiguous queries).</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Design two prompt variants</div>
+                <div class="lab-step-desc">Write Prompt V1 (simple) and Prompt V2 (with explicit format instructions, context citation requirements, and a fallback instruction). Keep all other variables constant.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Run keyword-based eval</div>
+                <div class="lab-step-desc">Use the <code>eval_runner.py</code> pattern to score both prompts on all 10 test cases. Record per-case scores and averages.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Add LLM-as-judge scoring</div>
+                <div class="lab-step-desc">Use the <code>judge_response()</code> function to score each response on helpfulness and accuracy. Average these scores alongside keyword scores.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Write a summary report</div>
+                <div class="lab-step-desc">Print a table comparing V1 vs V2 on every test case across both metrics. Identify where V2 improved and where it didn't. Form a hypothesis about why.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

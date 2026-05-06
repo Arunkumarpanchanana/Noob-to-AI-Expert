@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 13: Advanced Prompting — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/expert.html">Expert</a><span class="sep">›</span><span>Session 13</span></div>
+      <h1 class="session-title">Advanced Prompting</h1>
+      <p class="session-tagline">Master prompt chains, system prompt engineering, tool instructions, and guardrails that keep production AI apps reliable.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 75 min</span>
+        <span><span class="badge badge-expert"><i class="fas fa-brain"></i> Expert</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="prompt-chains">Prompt Chains</h2>
+        <p>Instead of one giant prompt, break complex tasks into a sequence where the output of each step is the input to the next. Chains are more reliable, debuggable, and composable.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic()
+
+def call(prompt: str, system: str = "") -> str:
+    msg = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=1024,
+        system=system,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return msg.content[0].text
+
+# Chain: raw text → key facts → structured summary → action items
+def research_chain(raw_text: str) -> dict:
+    # Step 1: Extract key facts
+    facts = call(
+        f"Extract the 5 most important factual claims from this text. Return as a numbered list.\n\n{raw_text}"
+    )
+
+    # Step 2: Synthesize into structured summary
+    summary = call(
+        f"Given these facts:\n{facts}\n\nWrite a 3-sentence executive summary.",
+        system="You are a business analyst. Be concise and actionable."
+    )
+
+    # Step 3: Generate action items from the summary
+    actions = call(
+        f"Based on this summary:\n{summary}\n\nList 3 concrete next steps a manager should take.",
+        system="You produce short, specific action items. No fluff."
+    )
+
+    return {"facts": facts, "summary": summary, "actions": actions}
+
+result = research_chain("Q3 revenue grew 23% to $4.2M. Customer churn increased to 8%. Three key deals slipped into Q4. The new product line launched in September contributed $800K.")
+print(result["actions"])</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="system-prompts">System Prompt Engineering</h2>
+        <p>The system prompt is your single most powerful lever for controlling model behavior. It sets persona, constraints, output format, and guardrails that apply to every turn.</p>
+        <div class="callout callout-tip"><span class="callout-icon">✨</span><div class="callout-body"><h4>System Prompt Anatomy</h4><p>A complete system prompt has: (1) Persona — who the model is. (2) Task — what it does. (3) Constraints — what it must never do. (4) Format — how it structures output. (5) Examples — golden in/out pairs for tricky cases.</p></div></div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">SYSTEM_PROMPT = """You are a customer support agent for Acme SaaS, a project management platform.
+
+## Your role
+- Answer questions about Acme SaaS features, pricing, and troubleshooting
+- Escalate billing disputes and security issues to human agents
+- Stay friendly, concise, and factual
+
+## Constraints
+- NEVER discuss competitor products by name
+- NEVER make promises about future features ("coming soon" is okay)
+- NEVER access or reference user account data — you don't have it
+- If asked something outside your scope, say: "That's outside my area — let me connect you with the right team."
+
+## Output format
+- Use bullet points for step-by-step instructions
+- Keep responses under 200 words
+- End troubleshooting responses with: "Did that resolve your issue? [Yes] [No]"
+
+## Example
+User: "How do I export my project?"
+You: "To export your project:\n• Go to Settings → Export\n• Choose CSV or JSON\n• Click Download\n\nDid that resolve your issue? [Yes] [No]"
+"""
+
+response = client.messages.create(
+    model="claude-opus-4-7",
+    max_tokens=300,
+    system=SYSTEM_PROMPT,
+    messages=[{"role": "user", "content": "How do I add a new team member?"}]
+)
+print(response.content[0].text)</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="guardrails">Guardrails and Output Validation</h2>
+        <p>Production AI needs guardrails — post-processing checks that catch bad outputs before they reach users. Never trust raw LLM output in production.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import json
+import re
+
+def extract_json(text: str) -> dict | None:
+    """Robustly extract JSON from LLM output even if wrapped in markdown."""
+    # Try parsing directly
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # Try extracting from code block
+    match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            pass
+    return None
+
+def safe_classify(text: str) -> dict:
+    prompt = f"""Classify this customer message. Return ONLY valid JSON with keys:
+"intent" (one of: billing, technical, feature_request, other),
+"urgency" (1-5),
+"sentiment" (positive/neutral/negative)
+
+Message: {text}"""
+
+    response = call(prompt)
+    result = extract_json(response)
+
+    # Validate the output
+    if not result:
+        return {"intent": "other", "urgency": 1, "sentiment": "neutral", "error": "parse_failed"}
+
+    valid_intents = {"billing", "technical", "feature_request", "other"}
+    if result.get("intent") not in valid_intents:
+        result["intent"] = "other"
+
+    urgency = result.get("urgency", 1)
+    if not isinstance(urgency, int) or not 1 <= urgency <= 5:
+        result["urgency"] = 3
+
+    return result
+
+result = safe_classify("My card was charged twice this month and I'm furious!")
+print(result)  # {"intent": "billing", "urgency": 5, "sentiment": "negative"}</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="few-shot-advanced">Advanced Few-Shot Strategies</h2>
+        <p>Beyond simple examples: select examples dynamically, use negative examples, and structure examples for maximum signal.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">def build_dynamic_few_shot(query: str, example_bank: list[dict], top_k: int = 3) -> str:
+    """Select most-relevant examples for the current query using keyword overlap."""
+    query_words = set(query.lower().split())
+
+    scored = []
+    for ex in example_bank:
+        ex_words = set(ex["input"].lower().split())
+        overlap = len(query_words & ex_words)
+        scored.append((overlap, ex))
+
+    top_examples = [ex for _, ex in sorted(scored, reverse=True)[:top_k]]
+
+    examples_text = "\n\n".join([
+        f"Input: {e['input']}\nOutput: {e['output']}"
+        for e in top_examples
+    ])
+
+    return f"""Here are examples of how to handle similar requests:
+
+{examples_text}
+
+Now handle this:
+Input: {query}
+Output:"""
+
+example_bank = [
+    {"input": "Cancel my subscription", "output": "INTENT: cancellation | URGENCY: high | ROUTE: retention_team"},
+    {"input": "Invoice PDF download", "output": "INTENT: billing | URGENCY: low | ROUTE: self_serve"},
+    {"input": "App crashes on export", "output": "INTENT: bug_report | URGENCY: high | ROUTE: engineering"},
+    {"input": "How to add users", "output": "INTENT: how_to | URGENCY: low | ROUTE: docs_bot"},
+]
+
+prompt = build_dynamic_few_shot("I can't download my invoice", example_bank)
+print(call(prompt))</code></pre></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Build a Multi-Step Document Analysis Pipeline</h3>
+          <p>Estimated time: 45 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-13-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Build a 3-Step Analysis Chain</h4></div><p>Create a pipeline: extract → summarize → score. Given a product review, extract pros/cons, write a 1-sentence summary, then output a 1-10 score as JSON. Validate that JSON parses correctly.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Engineer a Tight System Prompt</h4></div><p>Build a customer support bot system prompt with persona, constraints, format, and 2 examples. Test it against 5 edge cases: off-topic questions, angry users, requests for discounts, competitor comparisons, and vague questions.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Add Output Guardrails</h4></div><p>Wrap your classification pipeline with validation: check JSON structure, validate enum values, handle parse failures gracefully. Intentionally break the output (low temperature + weird prompt) and confirm your guardrails catch it.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Dynamic Few-Shot Selection</h4></div><p>Build an example bank of 10 support tickets. Implement the keyword-overlap selector. Compare output quality between random example selection vs. semantic selection for 5 test cases.</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/intermediate/12-ai-app-development.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 12</span><span class="nav-title">AI App Development</span></div></a>
+      <a href="/sessions/expert/14-ai-agents.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 14</span><span class="nav-title">AI Agents</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 13, slug: '13-advanced-prompting', section: 'expert',
+  nextPath: '/sessions/expert/14-ai-agents.html',
+  quizData: [
+    {id:'s13q01',type:'mcq',points:1,question:'You need an LLM to extract structured data, summarize it, then generate action items. What is the best architectural approach?',options:[{id:'a',text:'Put all three instructions in one giant prompt'},{id:'b',text:'Use three separate LLM calls in a chain — each step\'s output feeds the next',correct:true},{id:'c',text:'Run three parallel prompts and merge outputs'},{id:'d',text:'Fine-tune the model on extraction + summarization + action item generation simultaneously'}],explanation:'Prompt chains — sequential LLM calls where each output becomes the next input — are more reliable, debuggable, and composable than one giant prompt. Each step can be tested independently. Giant prompts suffer from instruction conflicts and models trying to do too much at once.',hint:'Think about breaking a complex task into smaller, sequential steps.'},
+    {id:'s13q02',type:'mcq',points:1,question:'What is the single most effective component of a production system prompt for controlling model behavior?',options:[{id:'a',text:'Setting temperature=0 in the API call'},{id:'b',text:'Explicit constraints — what the model must NEVER do',correct:true},{id:'c',text:'Making the system prompt as long as possible'},{id:'d',text:'Using all capital letters for important instructions'}],explanation:'Explicit "NEVER do X" constraints are the highest-signal content in a system prompt. They set hard behavioral limits that override default model behavior. Length alone doesn\'t help — a focused, well-structured system prompt with clear persona, constraints, and format examples outperforms a long, unfocused one.',hint:'What directly sets hard limits on model behavior?'},
+    {id:'s13q03',type:'truefalse',points:1,question:'You can safely use raw LLM output directly in your production database without any validation.',correctAnswer:false,explanation:'FALSE. Always validate LLM output before using it in production. Common issues: (1) JSON that doesn\'t parse, (2) enum values not in the expected set, (3) numbers outside expected range, (4) missing required keys. Write validation + fallback logic for every structured output. Never trust raw LLM output in mission-critical code paths.'},
+    {id:'s13q04',type:'mcq',points:1,question:'Dynamic few-shot example selection selects examples based on which criterion?',options:[{id:'a',text:'The longest examples to maximize context'},{id:'b',text:'Random selection for diversity'},{id:'c',text:'Semantic or keyword similarity to the current query',correct:true},{id:'d',text:'The most recently added examples'}],explanation:'Dynamic few-shot selection picks examples most similar to the current query — by keyword overlap, cosine similarity of embeddings, or other relevance measures. This outperforms random selection because examples that are structurally or semantically similar to the query provide more relevant signal for how to handle it.',hint:'What makes an example most useful for a given query?'},
+    {id:'s13q05',type:'multi',points:2,question:'Which elements should a well-engineered system prompt include? Select all that apply.',options:[{id:'a',text:'Persona — who/what the model is',correct:true},{id:'b',text:'Constraints — what it must never do',correct:true},{id:'c',text:'Output format — structure of responses',correct:true},{id:'d',text:'The model\'s training data sources'},{id:'e',text:'Examples — golden input/output pairs for tricky cases',correct:true}],explanation:'A complete system prompt includes: persona (establishes role and tone), constraints (hard limits on behavior), output format (how to structure responses), and examples (few-shot demonstrations for edge cases). The model\'s training data sources are not accessible or useful to put in the system prompt.'}
+  ]
+};
+</script>
+</body>
+</html>

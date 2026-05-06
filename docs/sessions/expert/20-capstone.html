@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>Capstone Project — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 20,
+    slug: "20-capstone",
+    section: "expert",
+    title: "Capstone Project",
+    nextSlug: "",
+    quizData: [
+      {
+        type: "mcq",
+        question: "In a RAG-based Knowledge Bot, what's the most important factor for answer quality?",
+        options: [
+          "Number of documents indexed",
+          "Quality and relevance of retrieved chunks",
+          "Model parameter count",
+          "Response length"
+        ],
+        correct: 1,
+        explanation: "The bottleneck in RAG is usually retrieval quality — the model can only work with what it's given. Great chunking, embedding, and retrieval strategy matter more than indexing more documents."
+      },
+      {
+        type: "mcq",
+        question: "For a Meeting Assistant using Whisper + GPT, the recommended pipeline is:",
+        options: [
+          "Summarize first, then transcribe",
+          "Transcribe audio → chunk transcript → summarize + extract action items",
+          "Translate then summarize",
+          "Send raw audio to GPT-4"
+        ],
+        correct: 1,
+        explanation: "Whisper transcribes audio to text, then you chunk the transcript (meetings can be long), then use an LLM to summarize and extract action items. Raw audio can't be sent directly to text-only GPT models."
+      },
+      {
+        type: "truefalse",
+        question: "A 'minimum viable' AI product should have all planned features before being tested by real users.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "Build the simplest version that tests your core assumption first. Real user feedback on a working MVP is far more valuable than polishing features users may not want. Ship early, learn fast."
+      },
+      {
+        type: "multi",
+        question: "A production-ready AI app should include: (Select all that apply)",
+        options: [
+          "Working end-to-end demo",
+          "Evaluation metrics showing it actually works",
+          "README with setup instructions",
+          "At least 1 million users before deploying"
+        ],
+        correct: [0, 1, 2],
+        explanation: "A demo, eval metrics, and documentation are the marks of a production-ready project. 1 million users is a growth milestone, not a prerequisite for deployment."
+      },
+      {
+        type: "mcq",
+        question: "You've completed all 20 sessions. What's the best next step?",
+        options: [
+          "Wait for better AI tools before building",
+          "Start building something real with what you've learned",
+          "Re-read all sessions before starting",
+          "Only build if you have a large team"
+        ],
+        correct: 1,
+        explanation: "The best way to learn AI engineering is by building. You have the fundamentals — prompting, RAG, agents, evaluation, deployment. Start with a small project, ship it, learn from it, and iterate."
+      }
+    ]
+  };
+  </script>
+  <style>
+    /* Capstone-specific styles */
+    .track-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .track-card {
+      background: var(--surface-1, #fff);
+      border: 1.5px solid var(--border, #e5e7eb);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .track-card:hover {
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
+      border-color: var(--primary, #6366f1);
+    }
+    .track-card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .track-card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--text-primary, #111);
+    }
+    .track-card-tagline {
+      font-size: 0.82rem;
+      color: var(--primary, #6366f1);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .track-card-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary, #555);
+      line-height: 1.55;
+      margin-bottom: 0.75rem;
+    }
+    .track-card-techs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tech-tag {
+      background: var(--surface-2, #f0f4ff);
+      color: var(--primary, #6366f1);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.2rem 0.55rem;
+    }
+    .week-timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .week-card {
+      background: var(--surface-2, #f8f9ff);
+      border-left: 4px solid var(--primary, #6366f1);
+      border-radius: 0 10px 10px 0;
+      padding: 1rem 1.25rem;
+    }
+    .week-card-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary, #6366f1);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .week-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary, #111);
+    }
+    .week-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary, #555);
+    }
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.65rem;
+      margin: 1.5rem 0;
+    }
+    .journey-item {
+      background: var(--surface-2, #f8f9ff);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .journey-item .session-num {
+      background: var(--primary, #6366f1);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .reveal-block {
+      border: 1.5px dashed var(--border, #d1d5db);
+      border-radius: 10px;
+      margin: 1.25rem 0;
+    }
+    .reveal-block summary {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary, #6366f1);
+      user-select: none;
+    }
+    .reveal-block summary:hover { background: var(--surface-2, #f0f4ff); border-radius: 10px; }
+    .reveal-block .reveal-content {
+      padding: 0 1rem 1rem;
+      color: var(--text-secondary, #555);
+      font-size: 0.95rem;
+    }
+    .course-complete-banner {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      color: white;
+      margin: 2rem 0;
+    }
+    .course-complete-banner h2 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+      color: white;
+    }
+    .course-complete-banner p {
+      margin: 0;
+      opacity: 0.92;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/expert.html">Expert</a><span class="sep">›</span>
+          <span>Capstone Project</span>
+        </div>
+        <h1 class="session-title">Capstone Project</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-expert">Expert</span>
+          <span><i class="ri-time-line"></i> 90 min</span>
+          <span><i class="ri-number-0"></i> Session 20 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Capstone Overview -->
+      <div class="concept-section">
+        <h2 id="capstone-overview">Capstone Overview</h2>
+
+        <div class="course-complete-banner">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎓</div>
+          <h2>You've Made It.</h2>
+          <p>19 sessions. Prompting, RAG, agents, evals, fine-tuning, deployment, responsible AI. Now it's time to build something real.</p>
+        </div>
+
+        <p>
+          The capstone is the most important part of this course. Reading about AI is valuable. Building AI systems is transformative. The capstone exists to bridge the gap between understanding concepts and actually shipping something that works in the real world.
+        </p>
+        <p>
+          You have 5 project tracks to choose from — each designed to be achievable in 4 weeks of part-time effort while demonstrating the core skills you've built across the course. Choose the one that genuinely interests you. The best AI project is one you actually want to use.
+        </p>
+
+        <h3>What a Successful Capstone Looks Like</h3>
+        <ul>
+          <li><strong>Working demo:</strong> A deployed app or script that actually runs on real inputs, not just toy examples.</li>
+          <li><strong>Evaluation results:</strong> Evidence that it works — metrics, test cases, or user feedback.</li>
+          <li><strong>Clean README:</strong> Someone else could set it up from your documentation.</li>
+          <li><strong>Deployment link:</strong> If it's a web app, it runs somewhere other than localhost.</li>
+          <li><strong>Reflection:</strong> What did you learn? What would you do differently?</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><i class="ri-lightbulb-flash-line"></i></span>
+          <div class="callout-body">
+            <strong>Get Started Today</strong>
+            <p>The best learning happens when you build something you actually want to use. Don't wait until you feel "ready enough." Start with the simplest version, ship it, and iterate. Every expert started exactly where you are now.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Project Tracks -->
+      <div class="concept-section">
+        <h2 id="project-tracks">5 Project Tracks</h2>
+        <p>
+          Choose one track. Each is designed to be completable in 4 weeks of part-time work (5–10 hours/week) and demonstrates a distinct cluster of skills from the course.
+        </p>
+
+        <div class="track-grid">
+
+          <!-- Track 1: AI Tutor -->
+          <div class="track-card">
+            <div class="track-card-icon">🎓</div>
+            <div class="track-card-title">Track 1: AI Tutor</div>
+            <div class="track-card-tagline">Teach anything, step by step</div>
+            <div class="track-card-desc">
+              Build a subject-matter tutor with persistent memory and adaptive explanations. The tutor tracks what the student understands, adjusts complexity, asks Socratic questions, and retrieves relevant examples from a knowledge base.
+            </div>
+            <div class="track-card-techs">
+              <span class="tech-tag">RAG</span>
+              <span class="tech-tag">Conversation History</span>
+              <span class="tech-tag">Structured Prompting</span>
+              <span class="tech-tag">Memory</span>
+            </div>
+          </div>
+
+          <!-- Track 2: Resume Reviewer -->
+          <div class="track-card">
+            <div class="track-card-icon">📄</div>
+            <div class="track-card-title">Track 2: Resume Reviewer</div>
+            <div class="track-card-tagline">Actionable feedback, not vague advice</div>
+            <div class="track-card-desc">
+              Analyzes resumes against job descriptions and returns structured scores and specific improvement suggestions. Scores on criteria like relevance, specificity, impact language, and formatting. Outputs a prioritized action list.
+            </div>
+            <div class="track-card-techs">
+              <span class="tech-tag">Structured Outputs</span>
+              <span class="tech-tag">Document Parsing</span>
+              <span class="tech-tag">Prompt Chaining</span>
+              <span class="tech-tag">Evals</span>
+            </div>
+          </div>
+
+          <!-- Track 3: Knowledge Bot -->
+          <div class="track-card">
+            <div class="track-card-icon">📚</div>
+            <div class="track-card-title">Track 3: Knowledge Bot</div>
+            <div class="track-card-tagline">Chat with your documents</div>
+            <div class="track-card-desc">
+              Internal Q&amp;A bot over documents you care about — textbooks, technical docs, personal notes, company wikis. RAG over a custom corpus with accurate citations. The definitive project for mastering the RAG pipeline end-to-end.
+            </div>
+            <div class="track-card-techs">
+              <span class="tech-tag">RAG</span>
+              <span class="tech-tag">Vector Database</span>
+              <span class="tech-tag">Chunking Strategy</span>
+              <span class="tech-tag">Citation</span>
+            </div>
+          </div>
+
+          <!-- Track 4: Meeting Assistant -->
+          <div class="track-card">
+            <div class="track-card-icon">🎙️</div>
+            <div class="track-card-title">Track 4: Meeting Assistant</div>
+            <div class="track-card-tagline">1-hour meetings → 2-minute summaries</div>
+            <div class="track-card-desc">
+              Transcribe audio recordings with Whisper, chunk the transcript, summarize with an LLM, and extract structured action items with owners and deadlines. Handles meetings up to 2 hours. Outputs a formatted report and an email-ready summary.
+            </div>
+            <div class="track-card-techs">
+              <span class="tech-tag">Whisper (STT)</span>
+              <span class="tech-tag">Structured Extraction</span>
+              <span class="tech-tag">Long-Context Handling</span>
+              <span class="tech-tag">Multimodal</span>
+            </div>
+          </div>
+
+          <!-- Track 5: Coding Assistant -->
+          <div class="track-card">
+            <div class="track-card-icon">💻</div>
+            <div class="track-card-title">Track 5: Coding Assistant</div>
+            <div class="track-card-tagline">Your AI pair programmer with codebase context</div>
+            <div class="track-card-desc">
+              VS Code extension or CLI tool that understands your codebase. Explain any function, suggest refactors, generate tests, or ask questions about architecture. RAG over your own source files gives it context that generic tools lack.
+            </div>
+            <div class="track-card-techs">
+              <span class="tech-tag">Code RAG</span>
+              <span class="tech-tag">CLI / VS Code API</span>
+              <span class="tech-tag">Code Generation</span>
+              <span class="tech-tag">Streaming</span>
+            </div>
+          </div>
+
+        </div>
+
+        <h3>Not Sure Which to Pick?</h3>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>If you want to practice...</th>
+              <th>Choose this track</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>RAG + memory + evaluation</td><td>Track 1: AI Tutor or Track 3: Knowledge Bot</td></tr>
+            <tr><td>Structured outputs + prompt chaining</td><td>Track 2: Resume Reviewer</td></tr>
+            <tr><td>Multimodal + audio processing</td><td>Track 4: Meeting Assistant</td></tr>
+            <tr><td>Tool integration + developer tooling</td><td>Track 5: Coding Assistant</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 3: Project Structure -->
+      <div class="concept-section">
+        <h2 id="project-structure">Recommended Project Structure</h2>
+        <p>
+          Four weeks is enough to build something genuinely impressive if you scope it right and avoid perfection paralysis. The week-by-week structure below is proven: it ships something working by week 2 and spends the back half on quality, not catch-up.
+        </p>
+
+        <div class="week-timeline">
+          <div class="week-card">
+            <div class="week-card-label">Week 1</div>
+            <div class="week-card-title">Scope &amp; Design</div>
+            <ul>
+              <li>Write a one-paragraph project description</li>
+              <li>Define 3 core features (not 10)</li>
+              <li>Choose your tech stack</li>
+              <li>Set up repo and dev environment</li>
+              <li>Define success criteria and eval plan</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-card-label">Week 2</div>
+            <div class="week-card-title">Core Functionality</div>
+            <ul>
+              <li>Build the simplest end-to-end path</li>
+              <li>One feature, fully working</li>
+              <li>Basic UI or CLI that you can demo</li>
+              <li>Write your first eval tests</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-card-label">Week 3</div>
+            <div class="week-card-title">Evaluation &amp; Polish</div>
+            <ul>
+              <li>Add remaining core features</li>
+              <li>Run eval suite; fix failing cases</li>
+              <li>Handle edge cases and error states</li>
+              <li>Add logging and observability</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-card-label">Week 4</div>
+            <div class="week-card-title">Deploy &amp; Share</div>
+            <ul>
+              <li>Deploy to Railway / Vercel / Fly.io</li>
+              <li>Write README with setup guide</li>
+              <li>Record a 2-minute demo video</li>
+              <li>Share and get feedback</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Repository Structure</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot"></span>project-structure.txt</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">my-ai-capstone/
+├── README.md               # Setup, usage, eval results, architecture diagram
+├── .env.example            # Template for required environment variables
+├── requirements.txt        # Python dependencies (pinned versions)
+├── Dockerfile              # For containerized deployment
+│
+├── src/
+│   ├── __init__.py
+│   ├── main.py             # Entry point (FastAPI app or CLI)
+│   ├── llm.py              # LLM client wrapper (retry, logging, caching)
+│   ├── prompts.py          # All prompt templates as constants
+│   ├── pipeline.py         # Core application logic
+│   └── models.py           # Pydantic data models
+│
+├── evals/
+│   ├── test_cases.json     # Ground-truth eval dataset
+│   ├── run_evals.py        # Eval runner script
+│   └── results/            # Eval output history (track improvements)
+│
+├── notebooks/
+│   └── exploration.ipynb   # Prompt development and experimentation
+│
+└── tests/
+    └── test_pipeline.py    # Unit tests for non-LLM components</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: Technical Requirements -->
+      <div class="concept-section">
+        <h2 id="technical-requirements">Technical Requirements</h2>
+        <p>
+          Each track has a minimum viable version (MVP) that you should ship by end of week 2, and a full version that represents a polished, production-quality deliverable.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Track</th>
+              <th>MVP (Week 2)</th>
+              <th>Full Version (Week 4)</th>
+              <th>Key Technologies</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>AI Tutor</strong></td>
+              <td>Single-topic tutor with conversation history</td>
+              <td>RAG over topic notes, adaptive difficulty, student progress tracking</td>
+              <td>OpenAI API, ChromaDB, FastAPI</td>
+            </tr>
+            <tr>
+              <td><strong>Resume Reviewer</strong></td>
+              <td>Score a resume against a JD, return structured JSON</td>
+              <td>PDF parsing, multi-criteria scoring, prioritized action items, web UI</td>
+              <td>PyPDF2, Pydantic, Streamlit</td>
+            </tr>
+            <tr>
+              <td><strong>Knowledge Bot</strong></td>
+              <td>Answer questions from a small document set with citations</td>
+              <td>Multi-document RAG, hybrid search, confidence scoring, chat UI</td>
+              <td>LangChain / LlamaIndex, Pinecone/Chroma, Next.js</td>
+            </tr>
+            <tr>
+              <td><strong>Meeting Assistant</strong></td>
+              <td>Transcribe a 10-min recording, output summary + action items</td>
+              <td>Speaker diarization, long-form chunking, email-ready report, web upload UI</td>
+              <td>Whisper, pyannote.audio, FastAPI</td>
+            </tr>
+            <tr>
+              <td><strong>Coding Assistant</strong></td>
+              <td>CLI that answers questions about a codebase via RAG</td>
+              <td>VS Code extension, streaming responses, file-aware context, test generation</td>
+              <td>Tree-sitter, VSCode API, OpenAI streaming</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-info">
+          <span class="callout-icon"><i class="ri-information-line"></i></span>
+          <div class="callout-body">
+            <strong>Start Small, Ship Early</strong>
+            <p>Start with the simplest version that demonstrates the core idea. A working simple version beats a broken complex one every time. Get the end-to-end path working first — input → LLM → output — then add complexity layer by layer.</p>
+          </div>
+        </div>
+
+        <h3>Evaluation Requirements</h3>
+        <p>
+          Every capstone project must include an evaluation suite. This is non-negotiable — it's what separates a toy prototype from a system you'd trust in production. Your eval should:
+        </p>
+        <ul>
+          <li>Contain at least 20 test cases (input + expected output or quality criteria).</li>
+          <li>Run automatically with a single command (<code>python evals/run_evals.py</code>).</li>
+          <li>Report a clear score (e.g., "Passed 17/20 test cases, average quality score: 4.1/5.0").</li>
+          <li>Include at least 3 adversarial / edge case examples.</li>
+        </ul>
+
+        <h3>Deployment Requirements</h3>
+        <p>
+          Your project must be runnable by someone else. At minimum: a working <code>README.md</code> with setup instructions. Better: a deployed public URL. Best: a Docker container that anyone can run with <code>docker compose up</code>.
+        </p>
+        <p>Recommended free/cheap deployment platforms:</p>
+        <ul>
+          <li><strong>Railway</strong> — easiest for Python backends; free tier available; Redis and Postgres plugins.</li>
+          <li><strong>Fly.io</strong> — generous free tier; great for Docker containers.</li>
+          <li><strong>Vercel</strong> — ideal for Next.js frontends; serverless Python with limitations.</li>
+          <li><strong>Hugging Face Spaces</strong> — free for Gradio/Streamlit apps; great for ML demos.</li>
+          <li><strong>Render</strong> — free tier for web services; auto-deploys from GitHub.</li>
+        </ul>
+      </div>
+
+      <!-- Section 5: What You've Learned -->
+      <div class="concept-section">
+        <h2 id="what-youve-learned">What You've Learned</h2>
+        <p>
+          Look back at where you started. Twenty sessions ago, you might have barely known what a token was. Here is the full arc of what you've built:
+        </p>
+
+        <div class="journey-grid">
+          <div class="journey-item"><span class="session-num">01</span> How LLMs Work</div>
+          <div class="journey-item"><span class="session-num">02</span> Prompt Engineering</div>
+          <div class="journey-item"><span class="session-num">03</span> APIs &amp; SDKs</div>
+          <div class="journey-item"><span class="session-num">04</span> Building Chat Apps</div>
+          <div class="journey-item"><span class="session-num">05</span> Structured Outputs</div>
+          <div class="journey-item"><span class="session-num">06</span> ML Fundamentals</div>
+          <div class="journey-item"><span class="session-num">07</span> Fine-Tuning</div>
+          <div class="journey-item"><span class="session-num">08</span> Evaluation</div>
+          <div class="journey-item"><span class="session-num">09</span> Advanced Prompting</div>
+          <div class="journey-item"><span class="session-num">10</span> Embeddings &amp; Search</div>
+          <div class="journey-item"><span class="session-num">11</span> RAG</div>
+          <div class="journey-item"><span class="session-num">12</span> Advanced RAG</div>
+          <div class="journey-item"><span class="session-num">13</span> AI Agents</div>
+          <div class="journey-item"><span class="session-num">14</span> Agent Frameworks</div>
+          <div class="journey-item"><span class="session-num">15</span> Memory Systems</div>
+          <div class="journey-item"><span class="session-num">16</span> LLM Security</div>
+          <div class="journey-item"><span class="session-num">17</span> Responsible AI</div>
+          <div class="journey-item"><span class="session-num">18</span> Multimodal AI</div>
+          <div class="journey-item"><span class="session-num">19</span> Production Deployment</div>
+          <div class="journey-item"><span class="session-num">20</span> Capstone Project</div>
+        </div>
+
+        <h3>Skills You've Developed</h3>
+        <ul>
+          <li><strong>Prompting:</strong> You can write system prompts, few-shot examples, chain-of-thought prompts, and structured output prompts that reliably produce the outputs you need.</li>
+          <li><strong>RAG:</strong> You understand chunking, embedding, retrieval, re-ranking, and how to debug a RAG pipeline when it returns bad answers.</li>
+          <li><strong>Agents:</strong> You can build tool-using agents with multiple steps, handle errors gracefully, and understand when not to use an agent.</li>
+          <li><strong>Evaluation:</strong> You know how to build an eval dataset, run automated quality checks, and use LLM-as-judge for qualitative assessment.</li>
+          <li><strong>Production:</strong> You understand cost management, latency optimization, retry logic, observability, and security for shipped AI systems.</li>
+          <li><strong>Responsibility:</strong> You can identify bias, privacy risks, and security vulnerabilities in AI systems — and you know how to address them.</li>
+        </ul>
+
+        <h3>What's Next After the Capstone</h3>
+        <p>The field moves fast. Here are the highest-signal ways to stay current and keep growing:
+        </p>
+        <ul>
+          <li><strong>Build publicly:</strong> Share what you build on GitHub. Write a blog post. The act of explaining forces deeper understanding.</li>
+          <li><strong>Follow primary sources:</strong> Read arXiv papers (the Hugging Face daily papers newsletter is a good filter), provider changelogs, and benchmarks.</li>
+          <li><strong>Contribute to open source:</strong> LangChain, LlamaIndex, Instructor, DSPy — all welcome contributions and have active communities.</li>
+          <li><strong>Join communities:</strong> The AI Engineer Discord, Latent Space podcast community, and various Discord servers around specific tools are full of practitioners at your level and above.</li>
+          <li><strong>Stay skeptical:</strong> The field has extraordinary hype. Distinguish genuine capability advances from marketing. Run benchmarks yourself. Test the claims.</li>
+        </ul>
+
+        <div class="callout callout-concept">
+          <span class="callout-icon"><i class="ri-medal-line"></i></span>
+          <div class="callout-body">
+            <strong>You're an AI Engineer Now</strong>
+            <p>You now have the knowledge to build, evaluate, and ship production AI systems. The field is moving fast — keep building, keep experimenting. Every system you ship teaches you things no course can. The best is yet to come.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section">
+        <div class="lab-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="lab-header-left">
+            <i class="ri-flask-line"></i>
+            <div>
+              <div class="lab-title">Lab: Project Kickoff Template</div>
+              <div class="lab-subtitle">Structure your capstone project from day one</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            Use this structured kickoff to start your capstone project on solid footing. Completing this template before writing any code will save you days of rework. The most common reason AI projects fail is vague scope — not technical skill.
+          </p>
+          <ol class="lab-steps">
+            <li>
+              <strong>Write a 1-paragraph project description</strong> — In plain English: what does it do, for whom, and why does it matter? Start with the sentence: "My project is a [type of system] that helps [target user] to [accomplish goal] by [core mechanism]." Example: "My project is a Meeting Assistant that helps remote teams by transcribing and summarizing recorded meetings using Whisper and GPT-4o, extracting action items with owners and deadlines."
+            </li>
+            <li>
+              <strong>List your 3 core features</strong> — Not 10 nice-to-haves. The 3 features that, if working, would make someone want to use this. Write them as user stories: "As a [user], I can [action] so that [outcome]." If you have more than 3, move everything else to a "Future work" section.
+            </li>
+            <li>
+              <strong>Define your eval criteria</strong> — Before writing any code, decide: how will you know it's working? Write at least 5 specific test cases with inputs and expected outputs. Example for Meeting Assistant: "Given a 5-minute meeting about product priorities, the system should identify at least 3 action items and correctly attribute owners mentioned by name." Specific is better than general.
+            </li>
+            <li>
+              <strong>Set up your repo and dev environment</strong> — Create a GitHub repo. Add a <code>.env.example</code> file with all required environment variables listed. Set up a Python virtual environment and pin your initial dependencies in <code>requirements.txt</code>. Create the directory structure from the template in Section 3.
+            </li>
+            <li>
+              <strong>Build the simplest end-to-end prototype first</strong> — Before any UI, error handling, or polish: make the core pipeline work in a Jupyter notebook or a 50-line script. Input → LLM call → output. Show it to someone. Get feedback. Then add layers.
+            </li>
+          </ol>
+
+          <details class="reveal-block">
+            <summary>What makes a good capstone? (Click to reveal)</summary>
+            <div class="reveal-content">
+              <p>A good capstone has four ingredients:</p>
+              <ol>
+                <li><strong>A real user need</strong> — It solves a problem someone actually has. "I wanted this for myself" is perfectly valid evidence of a real need.</li>
+                <li><strong>A working demo</strong> — Not a screenshot of code. A live system you can hand to someone and watch them use it, even if it's rough around the edges.</li>
+                <li><strong>An evaluation that proves it works</strong> — Numbers. "It answers 18/20 test questions correctly" is evidence. "It seems to work pretty well" is not.</li>
+                <li><strong>A clean README</strong> — If a stranger can't set it up from your documentation in under 15 minutes, it's not done. Great documentation is a sign of a great engineer.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+  <script>
+  // Override the quiz result rendering for the final session
+  // so a passing score shows "Course Complete!" instead of the default message.
+  document.addEventListener("DOMContentLoaded", function () {
+    const originalRender = window.renderQuizResult;
+    if (typeof originalRender === "function") {
+      window.renderQuizResult = function (score, total, container) {
+        const passed = score >= Math.ceil(total * 0.8);
+        if (passed) {
+          container.innerHTML = `
+            <div class="quiz-result quiz-result-pass">
+              <div style="font-size:3rem;margin-bottom:0.5rem;">🎓</div>
+              <h2 class="quiz-result-title">Course Complete!</h2>
+              <p class="quiz-result-score">You scored ${score}/${total} — congratulations on finishing all 20 sessions.</p>
+              <p style="margin-top:0.75rem;color:var(--text-secondary,#555);">
+                You've built the foundation to create, evaluate, and ship real AI systems.
+                Now go build something remarkable.
+              </p>
+              <a href="/" class="btn btn-primary" style="margin-top:1.5rem;display:inline-block;">
+                Back to Home
+              </a>
+            </div>`;
+        } else {
+          originalRender(score, total, container);
+        }
+      };
+    }
+  });
+  </script>
+</body>
+</html>

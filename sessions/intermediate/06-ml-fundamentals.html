@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 06: Machine Learning Fundamentals — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 06</span></div>
+      <h1 class="session-title">Machine Learning Fundamentals</h1>
+      <p class="session-tagline">How do machines actually learn? We go deep on training, inference, regression, classification, and the math intuition behind it all.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="training-inference">Training vs Inference</h2>
+        <p>Every ML system has two distinct phases. Confusing them leads to fundamental design mistakes.</p>
+        <div class="compare-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="compare-card">
+            <div class="card-icon">🏋️</div><h4 style="color:#60a5fa">Training</h4>
+            <p>The model sees (features, label) pairs and adjusts its internal weights to minimize prediction errors. Happens once (or periodically). Can take hours to months. Uses massive compute.</p>
+            <p style="font-size:0.8rem;color:#3b82f6;margin-top:0.5rem;">Analogy: A student studying for an exam — reading, practicing, correcting mistakes.</p>
+          </div>
+          <div class="compare-card">
+            <div class="card-icon">⚡</div><h4 style="color:#4ade80">Inference</h4>
+            <p>The trained model receives new input and produces a prediction. No weight updates. Happens millions of times per day in production. Must be fast.</p>
+            <p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">Analogy: The same student taking the exam — applying what they learned to new questions.</p>
+          </div>
+        </div>
+        <div class="callout callout-info"><span class="callout-icon">💡</span><div class="callout-body"><h4>Why This Matters for Engineering</h4><p>Training infrastructure (GPUs, large datasets, long jobs) is completely different from inference infrastructure (low latency, high throughput, caching). Most of your production ML work is optimizing inference.</p></div></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="loss-gradient">Loss Functions and Gradient Descent</h2>
+        <p>Training is fundamentally an optimization problem: find the weights that minimize prediction error. The mechanism is <strong style="color:#e2e8f0">gradient descent</strong>.</p>
+        <ol class="step-list">
+          <li><strong style="color:#e2e8f0">Forward pass:</strong> Feed input through the model, get a prediction.</li>
+          <li><strong style="color:#e2e8f0">Calculate loss:</strong> Measure how wrong the prediction is (e.g., Mean Squared Error for regression).</li>
+          <li><strong style="color:#e2e8f0">Backward pass:</strong> Calculate gradients — how much each weight contributed to the error.</li>
+          <li><strong style="color:#e2e8f0">Update weights:</strong> Nudge each weight in the direction that reduces loss (learning rate × gradient).</li>
+          <li><strong style="color:#e2e8f0">Repeat</strong> over all training examples (one epoch). Repeat for many epochs.</li>
+        </ol>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import numpy as np
+
+# Simple gradient descent for linear regression: y = w*x + b
+# Goal: find w and b that minimize MSE on training data
+
+X = np.array([1, 2, 3, 4, 5])      # house size (hundreds of sqft)
+y = np.array([150, 200, 250, 300, 350])  # price (thousands)
+
+w, b = 0.0, 0.0  # Initialize weights randomly
+lr = 0.01        # Learning rate
+epochs = 1000
+
+for epoch in range(epochs):
+    y_pred = w * X + b          # Forward pass
+    loss = np.mean((y_pred - y) ** 2)   # MSE loss
+
+    # Gradients (calculus: partial derivatives of loss w.r.t. w and b)
+    dw = np.mean(2 * (y_pred - y) * X)
+    db = np.mean(2 * (y_pred - y))
+
+    w -= lr * dw   # Update weights
+    b -= lr * db
+
+    if epoch % 200 == 0:
+        print(f"Epoch {epoch}: loss={loss:.2f}, w={w:.2f}, b={b:.2f}")
+
+print(f"\nFinal: y = {w:.1f}x + {b:.1f}")
+# Predict: house with 3.5 (350 sqft) → price?
+print(f"Prediction for 350 sqft: ${w*3.5 + b:.0f}k")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="regression-classification">Regression vs Classification</h2>
+        <table class="def-table">
+          <thead><tr><th>Type</th><th>Output</th><th>Examples</th><th>Common Algorithms</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#60a5fa">Regression</strong></td><td>A continuous number</td><td>House price, temperature, stock price, customer lifetime value</td><td>Linear regression, Random Forest, XGBoost, Neural nets</td></tr>
+            <tr><td><strong style="color:#4ade80">Classification</strong></td><td>A category (class)</td><td>Spam/not spam, cat/dog, sentiment (pos/neg/neutral), disease diagnosis</td><td>Logistic regression, SVM, Random Forest, Neural nets</td></tr>
+          </tbody>
+        </table>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.datasets import make_regression, make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, accuracy_score
+
+# REGRESSION: predict house price
+X_reg, y_reg = make_regression(n_samples=200, n_features=5, noise=20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_reg, y_reg, test_size=0.2)
+
+reg_model = LinearRegression()
+reg_model.fit(X_train, y_train)
+y_pred = reg_model.predict(X_test)
+print(f"Regression MSE: {mean_squared_error(y_test, y_pred):.2f}")
+
+# CLASSIFICATION: spam detection (binary)
+X_clf, y_clf = make_classification(n_samples=200, n_features=10, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_clf, y_clf, test_size=0.2)
+
+clf_model = LogisticRegression()
+clf_model.fit(X_train, y_train)
+y_pred = clf_model.predict(X_test)
+print(f"Classification Accuracy: {accuracy_score(y_test, y_pred):.2%}")</code></pre></div>
+
+        <h3 id="overfitting">Overfitting vs Underfitting</h3>
+        <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="compare-card"><div class="card-icon">📉</div><h4 style="color:#f87171">Underfitting</h4><p>Model is too simple to capture the patterns. High training error AND high test error. Fix: more complex model, more features, less regularization.</p></div>
+          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#4ade80">Good Fit</h4><p>Low training error AND low test error. The model generalizes. This is the goal.</p></div>
+          <div class="compare-card"><div class="card-icon">📈</div><h4 style="color:#fbbf24">Overfitting</h4><p>Model memorized training data. Low training error, HIGH test error. Fix: more data, dropout, regularization, simpler model.</p></div>
+        </div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="quick-check">Quick Check</h2>
+        <div class="reveal-block"><div class="reveal-question"><span>❓ A model has 99% training accuracy but 60% test accuracy. What is happening?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Overfitting.</strong> The model memorized training examples instead of learning general patterns. The 39-point gap between train and test accuracy is the telltale sign.</div></div>
+        <div class="reveal-block"><div class="reveal-question"><span>❓ Predict whether a customer will churn (leave) vs predict how much they'll spend next month. Which task type is each?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Churn prediction = Classification</strong> (binary: churn / not churn). <strong style="color:#4ade80">Spend prediction = Regression</strong> (continuous dollar amount).</div></div>
+      </div>
+    </div>
+
+    <!-- LAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Predict House Prices and Student Pass/Fail</h3>
+          <p>Estimated time: 45 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-06-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Regression: House Price Prediction</h4></div>
+          <p>Load the Boston Housing dataset, train a Linear Regression model, and visualize predictions vs actuals. Experiment with adding/removing features to see how performance changes.</p>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Classification: Student Pass/Fail</h4></div>
+          <p>Load the Student Performance dataset (UCI), train a Logistic Regression classifier to predict pass/fail, and evaluate with accuracy + confusion matrix.</p>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Visualize Overfitting</h4></div>
+          <p>Train a Decision Tree with increasing max_depth from 1 to 20. Plot train vs test accuracy. Watch overfitting appear as depth increases.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/beginner/05-first-ai-app.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 05</span><span class="nav-title">Your First AI App</span></div></a>
+      <a href="/sessions/intermediate/07-model-evaluation.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 07</span><span class="nav-title">Model Evaluation</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 6, slug: '06-ml-fundamentals', section: 'intermediate',
+  nextPath: '/sessions/intermediate/07-model-evaluation.html',
+  quizData: [
+    {id:'s06q01',type:'mcq',points:1,question:'During ML training, what is the purpose of the loss function?',options:[{id:'a',text:'To speed up inference'},{id:'b',text:'To measure how wrong the model\'s predictions are, giving the optimizer a signal to improve',correct:true},{id:'c',text:'To filter bad training data'},{id:'d',text:'To determine the model architecture'}],explanation:'The loss function quantifies the error between predicted and actual values. Gradient descent then minimizes this loss by adjusting weights. Common losses: MSE for regression, cross-entropy for classification.',hint:'The optimizer needs to know how wrong the model is before it can improve it.'},
+    {id:'s06q02',type:'mcq',points:1,question:'A model predicts customer lifetime value (a dollar amount). Which type of problem is this?',options:[{id:'a',text:'Classification — it categorizes customers'},{id:'b',text:'Regression — it predicts a continuous numeric value',correct:true},{id:'c',text:'Clustering — it groups similar customers'},{id:'d',text:'Ranking — it orders customers by value'}],explanation:'Regression predicts continuous numeric outputs. CLV is a dollar amount (could be $47.23, $1,204.00, etc.) — a continuous value. Classification would predict discrete categories like "high/medium/low value customer".',hint:'Is the output a category or a number on a continuous scale?'},
+    {id:'s06q03',type:'truefalse',points:1,question:'A model with 98% accuracy on training data and 55% accuracy on test data is performing well and ready for production.',correctAnswer:false,explanation:'FALSE — this is a classic overfitting scenario. The 43-point gap between train (98%) and test (55%) means the model memorized training examples rather than learning generalizable patterns. It will perform poorly on real users. Fix: regularization, more data, simpler model, or dropout.'},
+    {id:'s06q04',type:'mcq',points:1,question:'What is the learning rate in gradient descent?',options:[{id:'a',text:'The number of training examples processed per second'},{id:'b',text:'How many epochs to train for'},{id:'c',text:'The step size for how much to update weights after each gradient calculation',correct:true},{id:'d',text:'The minimum loss required before stopping training'}],explanation:'The learning rate (lr) controls how large each weight update step is. Too high: overshoots the minimum, training diverges. Too low: training is very slow. Typical values: 0.001 to 0.1. This is one of the most important hyperparameters to tune.',hint:'Think of it as the size of each step you take when walking downhill.'},
+    {id:'s06q05',type:'multi',points:2,question:'Which of the following are valid techniques to prevent overfitting? Select all that apply.',options:[{id:'a',text:'Collect more training data',correct:true},{id:'b',text:'Use a simpler model (fewer parameters)',correct:true},{id:'c',text:'Add dropout layers (randomly zero out neurons during training)',correct:true},{id:'d',text:'Train for more epochs'},{id:'e',text:'Add L2 regularization (penalize large weights)',correct:true}],explanation:'More data, simpler models, dropout, and L2 regularization (weight decay) all reduce overfitting. Training for MORE epochs typically makes overfitting WORSE — the model has more time to memorize training data. Early stopping (stopping when validation loss starts rising) is actually an anti-overfitting technique.'}
+  ]
+};
+</script>
+</body>
+</html>

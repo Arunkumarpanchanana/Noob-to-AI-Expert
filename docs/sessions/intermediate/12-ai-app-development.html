@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>AI App Development — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 12,
+    slug: "12-ai-app-development",
+    section: "intermediate",
+    title: "AI App Development",
+    nextSlug: "/sessions/expert/13-advanced-prompting.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "In a streaming API response, the technique used to send chunks progressively is:",
+        options: [
+          "WebSockets",
+          "Server-Sent Events (SSE)",
+          "GraphQL subscriptions",
+          "Long polling"
+        ],
+        correct: 1,
+        explanation: "Most LLM APIs use Server-Sent Events (SSE) for streaming. The server sends 'data: ...' chunks and the client processes them as they arrive, enabling typewriter-effect responses."
+      },
+      {
+        type: "mcq",
+        question: "For a stateless REST API handling conversations, the client must:",
+        options: [
+          "Store messages in the server's memory",
+          "Send the full conversation history with each request",
+          "Use WebSocket connections",
+          "Use session cookies only"
+        ],
+        correct: 1,
+        explanation: "REST APIs are stateless — the server stores no conversation memory between requests. The client must send the full message history (or a conversation ID with server-side storage) with every request."
+      },
+      {
+        type: "truefalse",
+        question: "FastAPI automatically generates OpenAPI documentation at /docs.",
+        options: ["True", "False"],
+        correct: 0,
+        explanation: "FastAPI auto-generates interactive Swagger UI at /docs and ReDoc at /redoc based on your Python type annotations and docstrings. This is a major DX advantage for API development."
+      },
+      {
+        type: "mcq",
+        question: "Which deployment is best for a static AI course website with no backend?",
+        options: [
+          "AWS EC2",
+          "GitHub Pages or Vercel",
+          "Kubernetes",
+          "Docker Swarm"
+        ],
+        correct: 1,
+        explanation: "For purely static sites (HTML/CSS/JS), GitHub Pages and Vercel are free, auto-deploy from git, and handle CDN distribution. No server management needed."
+      },
+      {
+        type: "multi",
+        question: "Which are security best practices for AI apps? (Select all that apply)",
+        options: [
+          "Rate limiting API endpoints",
+          "Sanitizing user input before including in prompts",
+          "Storing API keys in environment variables",
+          "Logging all user messages in plain text forever"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Rate limiting, input sanitization (prevent prompt injection), and env vars for secrets are all essential. Logging all messages forever creates privacy/compliance risks — implement log retention policies."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>AI App Development</span>
+        </div>
+        <h1 class="session-title">AI App Development</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 70 min</span>
+          <span><i class="ri-number-1"></i> Session 12 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: AI App Architecture Patterns -->
+      <div class="concept-section" id="architecture-patterns">
+        <h2>AI App Architecture Patterns</h2>
+        <p>
+          Before writing a single line of code, the most important question is: <em>which pattern fits your problem?</em> The right choice determines your latency, cost, complexity, and maintenance burden. Here are the four main patterns and when to use each.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Complexity</th>
+              <th>When to Use</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Simple LLM Call</strong></td>
+              <td>Low</td>
+              <td>Single-turn tasks; the model's training knowledge is sufficient</td>
+              <td>Writing assistant, code explainer, grammar checker</td>
+            </tr>
+            <tr>
+              <td><strong>RAG</strong></td>
+              <td>Medium</td>
+              <td>Private or up-to-date knowledge required; facts must be verifiable</td>
+              <td>Internal docs chatbot, support bot over your knowledge base</td>
+            </tr>
+            <tr>
+              <td><strong>Agent</strong></td>
+              <td>High</td>
+              <td>Multi-step tasks; model needs to use tools, make decisions, iterate</td>
+              <td>Research assistant, code execution bot, autonomous workflow</td>
+            </tr>
+            <tr>
+              <td><strong>Fine-tuned Model</strong></td>
+              <td>Very High</td>
+              <td>Consistent style/format needed; task is very domain-specific; prompt alone insufficient</td>
+              <td>Legal doc drafting in your firm's style, specialized classifier</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>Start Simple</strong>
+            <p>Always start with the simplest pattern that could work. A well-engineered system prompt + simple LLM call solves 80% of use cases. Only add RAG, agents, or fine-tuning when you've validated that the simpler approach isn't sufficient.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Building a Backend API -->
+      <div class="concept-section" id="backend-api">
+        <h2>Building a Backend API</h2>
+        <p>
+          A FastAPI backend is the standard pattern for exposing an LLM to a frontend. FastAPI is chosen for AI apps because it's async-native (critical for streaming), has automatic OpenAPI docs, and its type annotations make prompt engineering more structured.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>main.py</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from openai import AsyncOpenAI
+from fastapi.responses import StreamingResponse
+import json
+
+app = FastAPI(title="AI FAQ Bot API")
+
+# Allow your frontend origin (adjust in production)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://yourdomain.com"],
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
+
+client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+class ChatRequest(BaseModel):
+    question: str
+    history: list[dict] = []   # [{"role": "user"/"assistant", "content": "..."}]
+
+SYSTEM_PROMPT = """You are a helpful AI assistant. Be concise and accurate.
+If you don't know something, say so rather than guessing."""
+
+@app.post("/chat")
+async def chat(req: ChatRequest):
+    """Answer a question, with optional conversation history."""
+    if not req.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(req.history[-10:])   # keep last 10 turns for context
+    messages.append({"role": "user", "content": req.question})
+
+    response = await client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+    )
+    return {"answer": response.choices[0].message.content}
+
+@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest):
+    """Streaming version — returns Server-Sent Events."""
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(req.history[-10:])
+    messages.append({"role": "user", "content": req.question})
+
+    async def event_generator():
+        async with client.chat.completions.stream(
+            model="gpt-4o-mini",
+            messages=messages,
+        ) as stream:
+            async for chunk in stream:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    yield f"data: {json.dumps({'token': delta})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+# Run with: uvicorn main:app --reload</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 3: Frontend Integration -->
+      <div class="concept-section" id="frontend-integration">
+        <h2>Frontend Integration</h2>
+        <p>
+          A minimal chat UI only needs vanilla JavaScript — no React required. For streaming, the browser's <code>EventSource</code> API (for GET) or a manual <code>fetch</code> with ReadableStream (for POST) handles SSE from your FastAPI backend.
+        </p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-filename"><span class="lang-dot python"></span>index.html</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python"><!-- Minimal streaming chat UI — pure HTML + JS, no framework needed -->
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;AI Chat&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+    #messages { border: 1px solid #ddd; border-radius: 8px; height: 400px;
+                overflow-y: auto; padding: 1rem; margin-bottom: 1rem; }
+    .user   { text-align: right; color: #333; margin: 0.5rem 0; }
+    .bot    { text-align: left;  color: #6c63ff; margin: 0.5rem 0; }
+    #form   { display: flex; gap: 0.5rem; }
+    #input  { flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; }
+    button  { padding: 0.5rem 1rem; background: #6c63ff; color: #fff;
+              border: none; border-radius: 6px; cursor: pointer; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h2&gt;AI Chat&lt;/h2&gt;
+  &lt;div id="messages"&gt;&lt;/div&gt;
+  &lt;form id="form"&gt;
+    &lt;input id="input" placeholder="Ask something..." autocomplete="off"&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+
+  &lt;script&gt;
+    const API = "http://localhost:8000";
+    const history = [];
+
+    document.getElementById("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = document.getElementById("input").value.trim();
+      if (!question) return;
+      document.getElementById("input").value = "";
+
+      appendMessage("user", question);
+      history.push({ role: "user", content: question });
+
+      // Streaming fetch via ReadableStream
+      const botDiv = appendMessage("bot", "");
+      const res = await fetch(`${API}/chat/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, history: history.slice(0, -1) }),
+      });
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullReply = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split("\n");
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const payload = line.slice(6);
+          if (payload === "[DONE]") break;
+          const { token } = JSON.parse(payload);
+          fullReply += token;
+          botDiv.textContent = fullReply;
+        }
+      }
+      history.push({ role: "assistant", content: fullReply });
+    });
+
+    function appendMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = role;
+      div.textContent = text;
+      document.getElementById("messages").appendChild(div);
+      div.scrollIntoView({ behavior: "smooth" });
+      return div;
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: State Management -->
+      <div class="concept-section" id="state-management">
+        <h2>State Management</h2>
+        <p>
+          Conversation state — the history of messages — must be preserved across requests. There are two main approaches depending on your scale:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Approach</th>
+              <th>Storage</th>
+              <th>Pros</th>
+              <th>Cons</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Client-side</strong></td>
+              <td>Browser memory / localStorage</td>
+              <td>Simple, no server state, works for single-user</td>
+              <td>Lost on page refresh (unless stored in localStorage); client sends full history every request</td>
+            </tr>
+            <tr>
+              <td><strong>Server-side (dict)</strong></td>
+              <td>In-memory Python dict, keyed by session_id</td>
+              <td>Fast, no DB dependency</td>
+              <td>Lost on server restart; doesn't scale horizontally</td>
+            </tr>
+            <tr>
+              <td><strong>Server-side (DB)</strong></td>
+              <td>Redis, PostgreSQL, DynamoDB</td>
+              <td>Persistent, scalable, multi-server</td>
+              <td>More complex setup; latency per request</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+          <span class="callout-icon"><i class="ri-error-warning-line"></i></span>
+          <div class="callout-body">
+            <strong>Stateless APIs</strong>
+            <p>Stateless APIs need the client to send conversation history every time. If the client forgets a message or the history grows unboundedly, you'll hit context window limits. Always cap how much history you send — the last 10 turns is usually sufficient.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Deployment Basics -->
+      <div class="concept-section" id="deployment">
+        <h2>Deployment Basics</h2>
+        <p>
+          Getting your AI app into production doesn't require a DevOps team. Modern PaaS (Platform-as-a-Service) platforms handle servers, SSL, and deployments automatically.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Best For</th>
+              <th>Cost</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Railway</strong></td>
+              <td>FastAPI backends</td>
+              <td>Free tier + usage-based</td>
+              <td>Deploy from GitHub in 2 clicks; supports env vars</td>
+            </tr>
+            <tr>
+              <td><strong>Render</strong></td>
+              <td>FastAPI / Docker</td>
+              <td>Free tier; $7/mo for always-on</td>
+              <td>Spins down on free tier after inactivity</td>
+            </tr>
+            <tr>
+              <td><strong>Vercel</strong></td>
+              <td>Frontend + serverless functions</td>
+              <td>Free for hobby</td>
+              <td>Excellent for Next.js; not ideal for long-running streams</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub Pages</strong></td>
+              <td>Static frontends only</td>
+              <td>Free</td>
+              <td>No server code; perfect for this course's site</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>Environment variables in production:</strong> Never hardcode API keys. Every platform above provides a secrets/env vars UI. In Python, read them with <code>os.environ["OPENAI_API_KEY"]</code>. Use a <code>.env</code> file locally with <code>python-dotenv</code> — but never commit it.</p>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><i class="ri-lightbulb-line"></i></span>
+          <div class="callout-body">
+            <strong>Static Frontend Strategy</strong>
+            <p>For a static frontend with LLM API calls, deploy to GitHub Pages and use the LLM API directly from the browser — but keep your API key server-side in any production app. For hobbyist/demo projects, a lightweight serverless function (e.g., Vercel Edge Function) that forwards requests to the LLM API is the cleanest approach.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Section -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Build and Deploy a FAQ Bot</div>
+              <div class="lab-subtitle">Create a FastAPI backend, HTML frontend, test locally, and deploy</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            You'll build a complete AI FAQ bot from scratch — backend, frontend, and a live deployment. By the end you'll have a public URL you can share.
+          </p>
+
+          <ol class="lab-steps">
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Set up the project</div>
+                <div class="lab-step-desc">Create a new directory with <code>requirements.txt</code> containing <code>fastapi uvicorn openai python-dotenv</code>. Create a <code>.env</code> file with your OpenAI API key.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Build the FastAPI backend</div>
+                <div class="lab-step-desc">Copy the <code>main.py</code> from this session. Add a custom <code>SYSTEM_PROMPT</code> for a topic of your choice (e.g., "You are a cooking expert assistant").</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Build the frontend</div>
+                <div class="lab-step-desc">Create an <code>index.html</code> using the streaming chat UI from this session. Style it to match your bot's theme.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Test locally</div>
+                <div class="lab-step-desc">Run <code>uvicorn main:app --reload</code>. Open <code>index.html</code> in a browser (use Live Server or similar). Test 5 questions. Check that conversation history is maintained.</div>
+              </div>
+            </li>
+            <li class="lab-step">
+              <div class="lab-step-content">
+                <div class="lab-step-title">Deploy to Railway</div>
+                <div class="lab-step-desc">Push to a GitHub repo. Connect Railway to the repo. Add the <code>OPENAI_API_KEY</code> environment variable in Railway's settings. Deploy and get your public URL.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

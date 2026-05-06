@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 03: Python for AI — Noob to AI Expert</title>
+  <meta name="description" content="Learn the Python you actually need for AI: variables, lists, dicts, functions, files, and API calls. No fluff." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/beginner.html">Beginner</a><span class="sep">›</span><span>Session 03</span></div>
+      <h1 class="session-title">Python for AI</h1>
+      <p class="session-tagline">You don't need to be a Python expert. You need the 20% that does 80% of AI work. Let's learn exactly that.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-beginner"><i class="fas fa-seedling"></i> Beginner</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="why-python">Why Python? Why Not JavaScript or Java?</h2>
+        <p>Python became the language of AI because of three things: readable syntax, an unbeatable ecosystem (NumPy, Pandas, PyTorch, scikit-learn), and a massive community. When you need to use a new ML library, the docs, tutorials, and Stack Overflow answers are all in Python.</p>
+        <div class="callout callout-info"><span class="callout-icon">🎯</span><div class="callout-body"><h4>What We'll Cover</h4><p>Variables, data types, lists, dictionaries, functions, loops, file I/O, and API calls. Skip everything else — we'll add more as we need it later in the course.</p></div></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="variables">Variables and Data Types</h2>
+        <p>Python is dynamically typed — no need to declare types explicitly.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># Basic types used constantly in AI code
+name = "GPT-4"              # str  — text
+temperature = 0.7           # float — numbers with decimals
+max_tokens = 2048           # int   — whole numbers
+is_streaming = True         # bool  — True or False
+
+# Check the type
+print(type(temperature))    # <class 'float'>
+
+# F-strings: the cleanest way to format text
+model = "claude-3-5-sonnet"
+version = 2
+print(f"Using model: {model} (version {version})")
+# Output: Using model: claude-3-5-sonnet (version 2)
+
+# None: represents "no value" — you'll see this everywhere in APIs
+response = None
+if response is None:
+    print("No response yet")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="lists">Lists and Loops</h2>
+        <p>Lists are ordered, mutable collections. In AI, you'll use lists for datasets, batches of text, token sequences, and API message history.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># Create and access lists
+messages = ["Hello!", "What is AI?", "Explain transformers"]
+print(messages[0])          # "Hello!"    (0-indexed)
+print(messages[-1])         # "Explain transformers"  (last item)
+print(len(messages))        # 3
+
+# Append, extend, remove
+messages.append("Thanks!")
+messages.extend(["Bye", "See you"])
+messages.remove("Thanks!")
+
+# List comprehensions — used EVERYWHERE in data processing
+texts = ["  hello  ", "  world  ", "  ai  "]
+cleaned = [t.strip() for t in texts]
+# cleaned = ["hello", "world", "ai"]
+
+# Filter with comprehension
+long_texts = [t for t in texts if len(t.strip()) > 3]
+
+# Looping
+for i, msg in enumerate(messages):
+    print(f"[{i}] {msg}")
+
+# Slicing — critical for working with context windows
+recent = messages[-3:]      # last 3 messages
+first_half = messages[:len(messages)//2]</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="dicts">Dictionaries</h2>
+        <p>Dictionaries are key-value stores. LLM API messages, model configs, and JSON data all come back as Python dicts.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># The structure of an OpenAI API message
+message = {
+    "role": "user",
+    "content": "Explain neural networks in 2 sentences"
+}
+
+# Access values
+print(message["role"])      # "user"
+print(message.get("model", "gpt-4o"))  # safe access with default
+
+# Nested dicts — common in API responses
+api_response = {
+    "id": "chatcmpl-abc123",
+    "model": "gpt-4o",
+    "usage": {
+        "prompt_tokens": 15,
+        "completion_tokens": 48,
+        "total_tokens": 63
+    },
+    "choices": [
+        {"message": {"role": "assistant", "content": "Neural networks are..."}}
+    ]
+}
+
+# Navigate nested structure
+content = api_response["choices"][0]["message"]["content"]
+tokens_used = api_response["usage"]["total_tokens"]
+print(f"Response: {content[:50]}...")
+print(f"Tokens used: {tokens_used}")
+
+# Dict comprehension
+token_counts = {"input": 15, "output": 48, "total": 63}
+doubled = {k: v * 2 for k, v in token_counts.items()}</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="functions">Functions</h2>
+        <p>Functions let you package reusable logic. Almost every AI utility you write will be a function.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import openai
+
+def ask_llm(prompt: str, model: str = "gpt-4o", max_tokens: int = 500) -> str:
+    """Send a prompt to OpenAI and return the text response."""
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=max_tokens
+    )
+    return response.choices[0].message.content
+
+def build_messages(system_prompt: str, history: list, user_input: str) -> list:
+    """Build the messages array for a chat completion."""
+    messages = [{"role": "system", "content": system_prompt}]
+    messages.extend(history)
+    messages.append({"role": "user", "content": user_input})
+    return messages
+
+# Usage
+answer = ask_llm("What is the capital of France?")
+print(answer)
+
+# With custom params
+summary = ask_llm(
+    prompt="Summarize this: [article text]",
+    model="gpt-4o-mini",
+    max_tokens=200
+)</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="files">Working with Files</h2>
+        <p>AI workflows constantly read data files and write results. Here are the patterns you'll use most.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import json
+import csv
+
+# Read a text file
+with open("document.txt", "r", encoding="utf-8") as f:
+    text = f.read()
+
+# Read CSV data (the most common data format)
+rows = []
+with open("customers.csv", "r") as f:
+    reader = csv.DictReader(f)  # Each row becomes a dict
+    for row in reader:
+        rows.append(row)
+
+# rows[0] might look like: {"name": "Alice", "age": "32", "city": "NYC"}
+
+# Read JSON (API configs, embeddings, results)
+with open("config.json", "r") as f:
+    config = json.load(f)
+
+# Write JSON results
+results = [{"text": "Hello", "sentiment": "positive", "score": 0.98}]
+with open("results.json", "w") as f:
+    json.dump(results, f, indent=2)
+
+# Append to a log file
+with open("errors.log", "a") as f:
+    f.write(f"ERROR: API timeout at {timestamp}\n")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="apis">Calling AI APIs</h2>
+        <p>The pattern for calling LLM APIs is the same everywhere — install the SDK, create a client, send messages, parse the response.</p>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import anthropic  # pip install anthropic
+
+client = anthropic.Anthropic(api_key="your-key-here")
+# Or set env variable: export ANTHROPIC_API_KEY="your-key"
+
+# Simple call
+message = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Explain backpropagation simply."}
+    ]
+)
+print(message.content[0].text)
+
+# With system prompt
+message = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=1024,
+    system="You are a Python tutor. Use code examples in every answer.",
+    messages=[
+        {"role": "user", "content": "How do list comprehensions work?"}
+    ]
+)
+
+# Error handling — always wrap API calls
+import time
+
+def safe_llm_call(prompt: str, retries: int = 3) -> str:
+    for attempt in range(retries):
+        try:
+            return ask_llm(prompt)
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(2 ** attempt)  # exponential backoff
+            else:
+                raise e</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="quick-check">Quick Check</h2>
+        <div class="reveal-block">
+          <div class="reveal-question"><span>❓ What does <code>messages[-1]</code> return?</span><span class="reveal-icon">▼</span></div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The last item in the list.</strong> Python negative indexing counts from the end. <code>[-1]</code> = last, <code>[-2]</code> = second to last, etc. This is extremely useful for getting the most recent message in a chat history.</div>
+        </div>
+        <div class="reveal-block">
+          <div class="reveal-question"><span>❓ How do you safely access a dict key that might not exist?</span><span class="reveal-icon">▼</span></div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Use <code>.get(key, default)</code></strong> — e.g., <code>response.get("error", None)</code>. If the key doesn't exist, it returns the default instead of raising a <code>KeyError</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB -->
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Read a CSV and Summarize Data with AI</h3>
+          <p>Estimated time: 45 minutes · Google Colab (free GPU included)</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-03-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <p style="color:#94a3b8;margin-bottom:1.5rem;">You'll write Python code to: load a CSV dataset of student grades, compute statistics, then use an LLM to generate a natural-language summary for a teacher.</p>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Load and Explore the Dataset</h4></div>
+          <div style="position:relative;"><button class="copy-btn">Copy</button>
+          <pre><code class="language-python">import csv
+import json
+
+# Load the student dataset
+students = []
+with open("students.csv", "r") as f:
+    for row in csv.DictReader(f):
+        students.append({
+            "name": row["name"],
+            "grade": int(row["grade"]),
+            "subject": row["subject"]
+        })
+
+print(f"Loaded {len(students)} student records")
+print("First record:", students[0])</code></pre></div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Compute Statistics</h4></div>
+          <div style="position:relative;"><button class="copy-btn">Copy</button>
+          <pre><code class="language-python"># Calculate summary statistics
+grades = [s["grade"] for s in students]
+avg_grade = sum(grades) / len(grades)
+passing = [g for g in grades if g >= 60]
+pass_rate = len(passing) / len(grades) * 100
+
+# Group by subject
+from collections import defaultdict
+by_subject = defaultdict(list)
+for s in students:
+    by_subject[s["subject"]].append(s["grade"])
+
+subject_avgs = {subj: sum(gs)/len(gs) for subj, gs in by_subject.items()}
+
+print(f"Average grade: {avg_grade:.1f}")
+print(f"Pass rate: {pass_rate:.1f}%")
+print(f"Subject averages: {subject_avgs}")</code></pre></div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Generate AI Summary</h4></div>
+          <div style="position:relative;"><button class="copy-btn">Copy</button>
+          <pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic(api_key="YOUR_KEY")
+
+stats_text = f"""
+Student Dataset Summary:
+- Total students: {len(students)}
+- Average grade: {avg_grade:.1f}/100
+- Pass rate: {pass_rate:.1f}%
+- Subject averages: {json.dumps(subject_avgs, indent=2)}
+- Lowest grade: {min(grades)}
+- Highest grade: {max(grades)}
+"""
+
+prompt = f"""
+You are a school data analyst.
+Write a 3-paragraph summary of these student performance statistics for a teacher:
+{stats_text}
+
+Include: overall performance, subject insights, and 2 specific recommendations.
+"""
+
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=500,
+    messages=[{"role": "user", "content": prompt}]
+)
+
+print(response.content[0].text)</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/beginner/02-prompt-engineering.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 02</span><span class="nav-title">Prompt Engineering Foundations</span></div></a>
+      <a href="/sessions/beginner/04-data-basics.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 04</span><span class="nav-title">Data Basics for AI</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 3, slug: '03-python-for-ai', section: 'beginner',
+  nextPath: '/sessions/beginner/04-data-basics.html',
+  quizData: [
+    {id:'s03q01',type:'mcq',points:1,question:'You have a list `tokens = ["the","cat","sat"]`. What does `tokens[-1]` return?',options:[{id:'a',text:'"the"'},{id:'b',text:'"cat"'},{id:'c',text:'"sat"',correct:true},{id:'d',text:'IndexError'}],explanation:'Negative indexing in Python counts from the end. -1 is the last element, -2 is second to last, etc. tokens[-1] = "sat".',hint:'Negative indices count from the end of the list.'},
+    {id:'s03q02',type:'mcq',points:1,question:'What is the output of: `[x*2 for x in [1,2,3] if x > 1]`?',options:[{id:'a',text:'[2, 4, 6]'},{id:'b',text:'[4, 6]',correct:true},{id:'c',text:'[2, 4]'},{id:'d',text:'[1, 2, 3]'}],explanation:'List comprehension with filter: iterate [1,2,3], keep only x > 1 (so 2 and 3), then multiply each by 2. Result: [4, 6]. The number 1 is filtered out.',hint:'Apply the filter FIRST, then the transformation.'},
+    {id:'s03q03',type:'mcq',points:1,question:'You\'re calling an API and the response dict might not have an "error" key. Which code safely gets the error without crashing?',options:[{id:'a',text:'response["error"]'},{id:'b',text:'response.error'},{id:'c',text:'response.get("error", None)',correct:true},{id:'d',text:'getattr(response, "error")'}],explanation:'dict.get(key, default) is the safe way to access a key that might not exist. If "error" is not in the dict, it returns None instead of raising a KeyError. response["error"] crashes if the key is missing.',hint:'Which method returns a default value when the key is missing?'},
+    {id:'s03q04',type:'truefalse',points:1,question:'The `with open(filename) as f:` pattern in Python automatically closes the file even if an error occurs inside the block.',correctAnswer:true,explanation:'Correct! The `with` statement (context manager) guarantees that __exit__ is called, which closes the file. This happens even if an exception is raised inside the block. Always use `with open()` instead of manual open/close.'},
+    {id:'s03q05',type:'mcq',points:1,question:'In the OpenAI chat API, what is the correct structure of a single message object?',options:[{id:'a',text:'{"text": "Hello", "sender": "user"}'},{id:'b',text:'{"role": "user", "content": "Hello"}',correct:true},{id:'c',text:'{"from": "user", "message": "Hello"}'},{id:'d',text:'{"type": "human", "input": "Hello"}'}],explanation:'OpenAI\'s (and most LLM APIs\') chat format uses {"role": ..., "content": ...}. Valid roles are "system", "user", and "assistant". This structure is used in the messages array passed to chat.completions.create().'}
+  ]
+};
+</script>
+</body>
+</html>

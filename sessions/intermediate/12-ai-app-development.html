@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 12: AI App Development — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 12</span></div>
+      <h1 class="session-title">AI App Development</h1>
+      <p class="session-tagline">Ship it. Build a real AI web app with a FastAPI backend, Streamlit frontend, and deploy it to the world — for free.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Deploy Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="architecture">AI App Architecture</h2>
+        <p>A production AI app has three tiers. Understanding this architecture lets you build, debug, and scale any AI product.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🖥️</div><h4 style="color:#38bdf8">Frontend</h4><p>What users see. Streamlit for rapid prototypes. React/Next.js for production. Handles input, displays output.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">⚙️</div><h4 style="color:#4ade80">Backend API</h4><p>FastAPI or Flask. Receives requests, calls LLM API, applies business logic, returns structured responses.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🤖</div><h4 style="color:#c084fc">AI Layer</h4><p>LLM API calls, vector DB queries, embeddings. The intelligence. Sits behind the backend, never exposed directly to users.</p></div>
+        </div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="fastapi-backend">FastAPI Backend</h2>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># pip install fastapi uvicorn anthropic python-dotenv
+# Run: uvicorn main:app --reload
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import anthropic
+import os
+
+app = FastAPI(title="AI FAQ Bot API")
+client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+SYSTEM_PROMPT = """You are a helpful FAQ assistant. Answer concisely.
+If you don't know the answer, say so clearly."""
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[dict] = []
+
+class ChatResponse(BaseModel):
+    reply: str
+    tokens_used: int
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    if not request.message.strip():
+        raise HTTPException(status_code=400, detail="Empty message")
+
+    messages = request.history + [{"role": "user", "content": request.message}]
+
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=512,
+        system=SYSTEM_PROMPT,
+        messages=messages
+    )
+
+    return ChatResponse(
+        reply=response.content[0].text,
+        tokens_used=response.usage.input_tokens + response.usage.output_tokens
+    )
+
+@app.get("/health")
+async def health(): return {"status": "ok"}</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="streamlit-frontend">Streamlit Frontend</h2>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python"># pip install streamlit requests
+# Run: streamlit run app.py
+
+import streamlit as st
+import requests
+
+st.set_page_config(page_title="AI FAQ Bot", page_icon="🤖", layout="centered")
+st.title("🤖 AI FAQ Bot")
+st.caption("Ask me anything!")
+
+# Initialize session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display conversation history
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
+
+# Chat input
+if prompt := st.chat_input("Type your question..."):
+    # Display user message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.write(prompt)
+
+    # Get AI response
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            try:
+                response = requests.post(
+                    "http://localhost:8000/chat",
+                    json={"message": prompt, "history": st.session_state.messages[:-1]},
+                    timeout=30
+                )
+                reply = response.json()["reply"]
+                tokens = response.json()["tokens_used"]
+            except Exception as e:
+                reply = f"Error: {e}"
+                tokens = 0
+
+        st.write(reply)
+        st.caption(f"Tokens used: {tokens}")
+
+    st.session_state.messages.append({"role": "assistant", "content": reply})</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="deployment">Deployment Options</h2>
+        <table class="def-table">
+          <thead><tr><th>Platform</th><th>Cost</th><th>Best For</th><th>Setup Time</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#4ade80">Streamlit Community Cloud</strong></td><td>Free</td><td>Streamlit apps, quick demos</td><td>5 min — connect GitHub repo</td></tr>
+            <tr><td><strong style="color:#60a5fa">Render</strong></td><td>Free tier</td><td>FastAPI backends, full-stack apps</td><td>15 min — connect GitHub, add env vars</td></tr>
+            <tr><td><strong style="color:#c084fc">Railway</strong></td><td>$5/mo</td><td>Full-stack apps with databases</td><td>10 min — deploy from GitHub</td></tr>
+            <tr><td><strong style="color:#fb923c">GitHub Pages</strong></td><td>Free</td><td>Static HTML/JS frontends</td><td>2 min — enable in repo settings</td></tr>
+            <tr><td><strong>Vercel / Netlify</strong></td><td>Free tier</td><td>Next.js / React frontends</td><td>5 min — connect GitHub</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-tip"><span class="callout-icon">🚀</span><div class="callout-body"><h4>Fastest Path to Deployed</h4><p>For a Streamlit app: push to GitHub → go to share.streamlit.io → select repo → add ANTHROPIC_API_KEY as secret → deploy. Live in under 5 minutes. No servers, no DevOps.</p></div></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Deploy an AI FAQ Bot to the Internet</h3>
+          <p>Estimated time: 60 minutes · Your local machine + Streamlit Cloud</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-12-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Colab for Code</a>
+            <a href="https://share.streamlit.io" target="_blank" class="btn-secondary"><i class="fas fa-globe"></i> Streamlit Cloud</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Build the Streamlit App Locally</h4></div><p>Copy the Streamlit code from the Learn tab. Run it locally with <code>streamlit run app.py</code>. Chat with it. It should work against your local backend or directly with the API.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Add Your Domain Knowledge</h4></div><p>Customize the system prompt to make it an expert on something you know: a game, a technology, a subject area. Add 5 "FAQ" items hardcoded in the system prompt.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Push to GitHub and Deploy</h4></div><p>Create a new GitHub repo. Push your app.py and requirements.txt. Go to share.streamlit.io, connect the repo, add your API key as a secret, and deploy.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Share the Link</h4></div><p>You now have a live AI app on the internet. Share the URL. This is your first shipped AI product!</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/intermediate/11-rag.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 11</span><span class="nav-title">RAG</span></div></a>
+      <a href="/sessions/expert/13-advanced-prompting.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 13</span><span class="nav-title">Advanced Prompting</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 12, slug: '12-ai-app-development', section: 'intermediate',
+  nextPath: '/sessions/expert/13-advanced-prompting.html',
+  quizData: [
+    {id:'s12q01',type:'mcq',points:1,question:'Why should you NEVER expose your LLM API key directly in frontend JavaScript code (client-side)?',options:[{id:'a',text:'JavaScript can\'t make HTTP requests to LLM APIs'},{id:'b',text:'Anyone who views your page source can steal the key, use your credits, and generate unlimited API calls at your expense',correct:true},{id:'c',text:'LLM APIs don\'t support CORS from browsers'},{id:'d',text:'The API key wouldn\'t work in a browser environment'}],explanation:'API keys in client-side JS are visible to anyone who opens browser dev tools → Network tab, or views page source. They can copy your key and run billions of API calls on your bill. Always proxy through a backend: frontend → your server → LLM API. The key lives only on your server as an environment variable.',hint:'Who can see JavaScript code that runs in a browser?'},
+    {id:'s12q02',type:'truefalse',points:1,question:'Streamlit automatically handles session state across browser refreshes without any additional code.',correctAnswer:false,explanation:'FALSE. By default, browser refresh resets Streamlit\'s session state. st.session_state persists within a browser session but is lost on refresh. For persistence across refreshes, you need: cookies, localStorage (via JavaScript), a database, or file storage. This is why adding "save/load conversation history" is a common Streamlit AI app enhancement.'},
+    {id:'s12q03',type:'mcq',points:1,question:'In a FastAPI backend for an AI chat app, why use Pydantic BaseModel for request/response types?',options:[{id:'a',text:'Pydantic is required by FastAPI — there\'s no alternative'},{id:'b',text:'Automatic validation, type checking, and OpenAPI docs generation at zero extra cost',correct:true},{id:'c',text:'Pydantic makes API calls to LLMs faster'},{id:'d',text:'Required for CORS support'}],explanation:'Pydantic models give you: (1) automatic request validation — bad input returns a 422 error, not a crash; (2) type coercion — "123" string auto-converts to int where needed; (3) automatic OpenAPI/Swagger docs at /docs with no extra work; (4) IDE autocomplete for your data. It\'s a massive productivity win for zero runtime cost.',hint:'What benefits do typed schemas provide in web APIs?'},
+    {id:'s12q04',type:'mcq',points:1,question:'You want to deploy a Python FastAPI backend with a database for free. Which platform is most appropriate?',options:[{id:'a',text:'GitHub Pages — free static hosting'},{id:'b',text:'Render or Railway — support Python backends with databases on free/low-cost tiers',correct:true},{id:'c',text:'Streamlit Community Cloud — supports any Python app'},{id:'d',text:'Vercel — best for Python APIs'}],explanation:'GitHub Pages serves only static files (HTML/CSS/JS) — no Python execution. Streamlit Cloud only runs Streamlit apps. Vercel primarily targets Node.js/Next.js (Python support is limited). Render and Railway both support arbitrary Python apps (FastAPI, Flask, Django) with database connections, and have free or $5/mo tiers. Perfect for hobby projects.',hint:'Which platforms can actually run a Python server process?'},
+    {id:'s12q05',type:'multi',points:2,question:'What should go into a requirements.txt file for a Streamlit AI app? Select all that apply.',options:[{id:'a',text:'streamlit',correct:true},{id:'b',text:'anthropic or openai (your LLM SDK)',correct:true},{id:'c',text:'python (the Python version itself)'},{id:'d',text:'requests (if making HTTP calls)',correct:true},{id:'e',text:'python-dotenv (for .env file loading in development)',correct:true}],explanation:'requirements.txt lists pip-installable packages: streamlit, your LLM SDK, requests, and any utilities like python-dotenv. Python itself is NOT listed there — deployment platforms install a Python version separately (often via runtime.txt or pyproject.toml). Adding "python" to requirements.txt would cause an installation error.'}
+  ]
+};
+</script>
+</body>
+</html>

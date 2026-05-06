@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="base-path" content="">
+  <title>LLMs &amp; Transformers — Noob to AI Expert</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/session.css">
+  <link rel="stylesheet" href="/assets/css/quiz.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
+  <script src="/assets/js/progress.js"></script>
+  <script>
+  window.SESSION_META = {
+    id: 9,
+    slug: "09-llms-transformers",
+    section: "intermediate",
+    title: "LLMs & Transformers",
+    nextSlug: "/sessions/intermediate/10-embeddings-search.html",
+    quizData: [
+      {
+        type: "mcq",
+        question: "Approximately how many tokens is one page of text?",
+        options: ["50", "250", "500", "2000"],
+        correct: 1,
+        explanation: "One page (~500 words) is approximately 750 tokens in English. Rule of thumb: 1 token is approximately three-quarters of a word, or about 4 characters."
+      },
+      {
+        type: "mcq",
+        question: "In transformer attention, Q, K, V stand for:",
+        options: ["Query, Kernel, Value", "Quick, Key, Volume", "Query, Key, Value", "Queue, Key, Vector"],
+        correct: 2,
+        explanation: "Q (Query), K (Key), V (Value). The model computes attention weights by matching queries against keys, then uses those weights to aggregate values. It's like a soft dictionary lookup."
+      },
+      {
+        type: "truefalse",
+        question: "LLMs hallucinate because they have internet access and sometimes retrieve false information.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: "LLMs don't have internet access during inference (unless given tools). They hallucinate because they generate the most statistically likely next token — they don't 'know' facts, they predict plausible text."
+      },
+      {
+        type: "mcq",
+        question: "GPT (Generative Pre-trained Transformer) uses which architecture?",
+        options: ["Encoder-only (like BERT)", "Decoder-only", "Encoder-decoder (like T5)", "Convolutional"],
+        correct: 1,
+        explanation: "GPT models use a decoder-only transformer architecture, which is autoregressive — it generates tokens one at a time, conditioning each on all previous tokens."
+      },
+      {
+        type: "multi",
+        question: "Which of these are true about transformer context windows? (Select all that apply)",
+        options: ["Longer context = higher compute cost", "Information near the start may be 'forgotten' in very long contexts", "Context windows are measured in tokens, not words", "Larger context always improves output quality"],
+        correct: [0, 1, 2],
+        explanation: "Context cost scales quadratically with length. Long contexts can exhibit 'lost in the middle' effects. Context is tokens. But more context doesn't always help — irrelevant context can confuse the model."
+      }
+    ]
+  };
+  </script>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="session-layout">
+    <aside class="session-sidebar" id="session-sidebar"></aside>
+    <main class="session-main" id="main">
+
+      <div class="session-header">
+        <div class="session-breadcrumb">
+          <a href="/">Home</a><span class="sep">›</span>
+          <a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span>
+          <span>LLMs &amp; Transformers</span>
+        </div>
+        <h1 class="session-title">LLMs &amp; Transformers</h1>
+        <div class="session-meta-bar">
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span><i class="ri-time-line"></i> 60 min</span>
+          <span><i class="ri-number-1"></i> Session 9 of 20</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Tokens -->
+      <div class="concept-section" id="tokens">
+        <h2>Tokens: The Language of LLMs</h2>
+        <p>
+          LLMs don't read words or characters — they process <strong>tokens</strong>. A tokenizer splits text into chunks (tokens) and converts each chunk to an integer ID. The model sees a sequence of these IDs, processes them, and predicts the next one.
+        </p>
+        <p>
+          Tokens are not words. In English, most common words are one token, but longer or less common words split into multiple tokens. Spaces, punctuation, and special characters each get their own tokens.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Text</th>
+              <th>Tokens (approximate)</th>
+              <th>Token Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"Hello, world!"</td>
+              <td>["Hello", ",", " world", "!"]</td>
+              <td>4 tokens</td>
+            </tr>
+            <tr>
+              <td>"Backpropagation"</td>
+              <td>["Back", "prop", "agation"]</td>
+              <td>3 tokens</td>
+            </tr>
+            <tr>
+              <td>"I am happy"</td>
+              <td>["I", " am", " happy"]</td>
+              <td>3 tokens</td>
+            </tr>
+            <tr>
+              <td>One page (~500 words)</td>
+              <td>—</td>
+              <td>~750 tokens</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">tokenization.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import tiktoken
+
+# tiktoken is OpenAI's tokenizer library
+enc = tiktoken.encoding_for_model("gpt-4o")
+
+text = "Backpropagation is just the chain rule applied repeatedly."
+tokens = enc.encode(text)
+token_count = len(tokens)
+
+print(f"Text: {text}")
+print(f"Token IDs: {tokens}")
+print(f"Token count: {token_count}")
+
+# Decode back to see what each token represents
+for token_id in tokens:
+    print(f"  {token_id:6d} → '{enc.decode([token_id])}'")
+
+# Count tokens for a long document
+with open("document.txt") as f:
+    doc = f.read()
+print(f"\nDocument tokens: {len(enc.encode(doc)):,}")
+print(f"Estimated pages: {len(enc.encode(doc)) / 750:.1f}")</code></pre>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="ri-information-line"></i></div>
+          <div class="callout-body">
+            <strong>Context Window:</strong> GPT-4 Turbo has a 128,000 token context window — roughly 100,000 words or about 200 pages of a novel. Claude 3.5 has a 200K token context. This is the maximum amount of text the model can "see" in one conversation.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Word Embeddings -->
+      <div class="concept-section" id="embeddings">
+        <h2>Word Embeddings</h2>
+        <p>
+          Before a transformer processes tokens, each token ID is converted to a <strong>dense vector</strong> — a list of hundreds of floating-point numbers. This is an <em>embedding</em>. Similar words end up with similar vectors because they appear in similar contexts during training.
+        </p>
+        <p>
+          The classic demonstration of this geometry: if you take the vector for "king", subtract "man", and add "woman", you land very close to the vector for "queen". The model has implicitly learned gender as a direction in embedding space.
+        </p>
+        <p>
+          Word2Vec (2013) first demonstrated this. Modern LLMs learn vastly richer embeddings — not just word-level, but embeddings that encode syntactic roles, semantic relationships, and even factual associations.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Embedding Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Synonyms (happy, joyful)</td>
+              <td>Similar vectors — close together in embedding space</td>
+            </tr>
+            <tr>
+              <td>Antonyms (hot, cold)</td>
+              <td>Related but opposite — nearby in some dimensions, opposite in others</td>
+            </tr>
+            <tr>
+              <td>Analogies (Paris:France :: Berlin:?)</td>
+              <td>Vector(Paris) - Vector(France) + Vector(Germany) ≈ Vector(Berlin)</td>
+            </tr>
+            <tr>
+              <td>Polysemy (bank: river vs. financial)</td>
+              <td>Context-dependent embeddings (transformers handle this; Word2Vec cannot)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 3: Attention Mechanism -->
+      <div class="concept-section" id="attention">
+        <h2>The Attention Mechanism</h2>
+        <p>
+          Attention is the core innovation of the transformer. At each layer, every token can attend to — look at and be influenced by — every other token in the context. This is fundamentally different from RNNs, which processed tokens one at a time and struggled to remember context from far away.
+        </p>
+        <p>
+          For each token, the attention mechanism computes three vectors:
+        </p>
+        <ul>
+          <li><strong>Query (Q):</strong> "What am I looking for?" — this token's question about context.</li>
+          <li><strong>Key (K):</strong> "What information do I have?" — what this token offers to others.</li>
+          <li><strong>Value (V):</strong> "What I actually contain." — the content to contribute if attended to.</li>
+        </ul>
+        <p>
+          Attention weights are computed by comparing queries against keys (dot product, then softmax). These weights determine how much of each token's value to include in the output. Tokens with high matching scores between their key and another token's query get attended to heavily.
+        </p>
+
+        <div class="callout callout-concept">
+          <div class="callout-icon"><i class="ri-lightbulb-line"></i></div>
+          <div class="callout-body">
+            <strong>Why Attention Works:</strong> Attention allows the model to understand context-dependent meaning. The word "bank" attends to "river" in one sentence and "account" in another, producing different representations each time — something impossible with static word vectors.
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-filename">attention_intuition.py</span>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <pre><code class="language-python">import torch
+import torch.nn.functional as F
+
+# Minimal self-attention implementation (single head, for intuition)
+def self_attention(Q, K, V):
+    """
+    Q, K, V: tensors of shape (seq_len, d_k)
+    Returns: attended values, attention weights
+    """
+    d_k = Q.shape[-1]
+
+    # Compute attention scores: how much does each query match each key?
+    scores = Q @ K.T / (d_k ** 0.5)   # scale to prevent vanishing gradients
+
+    # Softmax to get a probability distribution over tokens
+    weights = F.softmax(scores, dim=-1)
+
+    # Weighted sum of values
+    output = weights @ V
+    return output, weights
+
+# Example: 4 tokens, each embedded as 8-dim vector
+seq_len, d_k = 4, 8
+Q = torch.randn(seq_len, d_k)
+K = torch.randn(seq_len, d_k)
+V = torch.randn(seq_len, d_k)
+
+output, attn_weights = self_attention(Q, K, V)
+print("Attention weights (each row sums to 1):")
+print(attn_weights.round(decimals=2))</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 4: Transformer Architecture -->
+      <div class="concept-section" id="transformer">
+        <h2>The Transformer Architecture</h2>
+        <p>
+          The original transformer (Vaswani et al., "Attention Is All You Need", 2017) had an encoder and decoder. Modern LLMs use variations of this.
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Architecture</th>
+              <th>Components</th>
+              <th>Training Objective</th>
+              <th>Best For</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Encoder-only</strong></td>
+              <td>Encoder stack</td>
+              <td>Masked language modeling (fill in blanks)</td>
+              <td>Understanding, classification, embeddings</td>
+              <td>BERT, RoBERTa, DistilBERT</td>
+            </tr>
+            <tr>
+              <td><strong>Decoder-only</strong></td>
+              <td>Decoder stack with causal masking</td>
+              <td>Next-token prediction (autoregressive)</td>
+              <td>Text generation, chat, code</td>
+              <td>GPT-4, Claude, LLaMA, Mistral</td>
+            </tr>
+            <tr>
+              <td><strong>Encoder-Decoder</strong></td>
+              <td>Both encoder and decoder</td>
+              <td>Sequence-to-sequence (translate, summarize)</td>
+              <td>Translation, summarization</td>
+              <td>T5, BART, mT5</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <strong>Pre-training</strong> trains the model on massive text datasets (essentially the internet) to learn general language patterns. This is done once and is extremely expensive (millions of dollars in compute).
+        </p>
+        <p>
+          <strong>Fine-tuning</strong> takes a pre-trained model and continues training on a smaller, task-specific dataset. This is far cheaper and is how companies adapt base models for specific use cases.
+        </p>
+        <p>
+          <strong>RLHF (Reinforcement Learning from Human Feedback)</strong> is the additional step that makes a language model into a helpful assistant — humans rate model outputs and the model is trained to produce higher-rated responses.
+        </p>
+      </div>
+
+      <!-- Section 5: Hallucinations & Context Windows -->
+      <div class="concept-section" id="hallucinations">
+        <h2>Hallucinations &amp; Context Windows</h2>
+        <p>
+          LLMs don't "know" facts the way a database does. They predict the most statistically likely continuation of a sequence of tokens, based on patterns in their training data. This creates a critical limitation: the model may generate text that sounds authoritative but is factually wrong.
+        </p>
+        <p>This is called <strong>hallucination</strong>, and it has a clear cause:</p>
+        <ul>
+          <li>The training objective is to predict the next token — not to verify factual accuracy.</li>
+          <li>The model has no uncertainty detector — it produces confident-sounding text regardless of whether the facts are real.</li>
+          <li>For low-frequency facts (obscure events, specific numbers, citations), the model often generates plausible-sounding but fabricated details.</li>
+        </ul>
+
+        <p>Context window limitations also affect reliability:</p>
+        <ul>
+          <li>Compute cost scales roughly quadratically with context length.</li>
+          <li>Research shows the "lost in the middle" effect: models attend strongly to the beginning and end of long contexts but may underweight information in the middle.</li>
+          <li>For most tasks, shorter, focused context outperforms dumping everything in.</li>
+        </ul>
+
+        <p>
+          <strong>RAG (Retrieval-Augmented Generation)</strong> directly addresses the knowledge gap: instead of relying on the model's parametric memory, you retrieve relevant documents at query time and inject them into the context. The model then reasons over fresh, accurate information you provide. We cover RAG in depth in Sessions 10–11.
+        </p>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon"><i class="ri-alert-line"></i></div>
+          <div class="callout-body">
+            <strong>Practical Implication:</strong> Never rely on an LLM for specific facts, dates, statistics, or citations without verification. Use RAG or tool use to ground the model in a reliable knowledge source when factual accuracy matters.
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Section: Token Counter (browser-runnable, no API key) -->
+      <div class="lab-section" id="lab">
+        <div class="lab-header" onclick="this.closest('.lab-section').classList.toggle('open')">
+          <div class="lab-header-left">
+            <div class="lab-icon"><i class="ri-flask-line"></i></div>
+            <div>
+              <div class="lab-title">Lab: Token Counting &amp; Context Windows</div>
+              <div class="lab-subtitle">Understand tokenization and context costs — no API key needed</div>
+            </div>
+          </div>
+          <i class="ri-arrow-down-s-line lab-chevron"></i>
+        </div>
+        <div class="lab-body">
+          <p>
+            This interactive demo runs entirely in your browser using a JavaScript tokenizer. Type text to see it split into tokens in real time. No API key or server required.
+          </p>
+
+          <!-- Inline JS tokenization demo -->
+          <div style="background:var(--color-surface-2,#f8f9fc); border:1.5px solid var(--color-border,#e5e7eb); border-radius:10px; padding:1.25rem; margin:1rem 0;">
+            <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Enter text to tokenize:</label>
+            <textarea id="token-demo-input" rows="4" style="width:100%; font-family:monospace; font-size:0.9rem; padding:0.6rem; border:1px solid var(--color-border,#ddd); border-radius:6px; resize:vertical;"
+              placeholder="Type or paste text here...">The attention mechanism is the key innovation in transformer models.</textarea>
+            <div style="margin-top:0.75rem; display:flex; gap:1rem; flex-wrap:wrap; font-size:0.9rem;">
+              <span>Token count: <strong id="token-count">—</strong></span>
+              <span>Approx. cost at $0.01/1K tokens: <strong id="token-cost">—</strong></span>
+              <span>% of GPT-4o 128K window: <strong id="token-pct">—</strong></span>
+            </div>
+            <div style="margin-top:0.75rem; font-size:0.85rem; color:var(--color-muted,#666)">
+              <strong>Tokens (approximation, space-split for demo):</strong><br>
+              <div id="token-display" style="margin-top:0.4rem; display:flex; flex-wrap:wrap; gap:4px;"></div>
+            </div>
+          </div>
+
+          <script>
+            // Simple whitespace tokenizer for demo purposes (not GPT's actual BPE)
+            function demoTokenize(text) {
+              // Rough approximation: split on spaces and punctuation
+              return text.match(/\w+|[^\w\s]/g) || [];
+            }
+            function updateTokenDemo() {
+              const text = document.getElementById('token-demo-input').value;
+              const tokens = demoTokenize(text);
+              const count = tokens.length;
+              document.getElementById('token-count').textContent = count;
+              document.getElementById('token-cost').textContent = '$' + (count / 1000 * 0.01).toFixed(5);
+              document.getElementById('token-pct').textContent = (count / 128000 * 100).toFixed(2) + '%';
+              const colors = ['#dbeafe','#ede9fe','#dcfce7','#fef9c3','#ffe4e6'];
+              const display = document.getElementById('token-display');
+              display.innerHTML = tokens.slice(0, 100).map((t, i) =>
+                `<span style="background:${colors[i%5]};padding:1px 5px;border-radius:4px;font-family:monospace">${t}</span>`
+              ).join('') + (tokens.length > 100 ? ` <em>...and ${tokens.length-100} more</em>` : '');
+            }
+            document.getElementById('token-demo-input').addEventListener('input', updateTokenDemo);
+            updateTokenDemo();
+          </script>
+
+          <p style="margin-top:1rem;">For accurate GPT tokenization, use the <code>tiktoken</code> Python library (code shown in Section 1) or the <a href="https://platform.openai.com/tokenizer" target="_blank" rel="noopener">OpenAI Tokenizer playground</a>.</p>
+
+          <ol class="lab-steps" style="margin-top:1.5rem;">
+            <li class="lab-step">
+              <strong>Count tokens in the demo</strong>
+              <p>Try pasting a paragraph of text. Note how the count relates to word count. Paste a poem vs a technical document — does the token/word ratio differ?</p>
+            </li>
+            <li class="lab-step">
+              <strong>Install tiktoken and count precisely</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">terminal</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">!pip install tiktoken --quiet</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Simulate context window filling</strong>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-filename">context_window_sim.py</span>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').innerText)"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+                <pre><code class="language-python">import tiktoken
+
+enc = tiktoken.encoding_for_model("gpt-4o")
+CONTEXT_LIMIT = 128_000   # gpt-4o context window
+
+system_prompt = "You are a helpful AI tutor."
+user_question = "Explain the transformer architecture in detail."
+
+# Simulate adding document chunks to context
+documents = [
+    "The transformer architecture was introduced in 2017...",
+    "Self-attention computes relationships between all tokens...",
+    # ... imagine loading many documents here
+]
+
+total_tokens = len(enc.encode(system_prompt)) + len(enc.encode(user_question))
+print(f"Overhead (system + question): {total_tokens} tokens")
+print(f"Remaining capacity: {CONTEXT_LIMIT - total_tokens:,} tokens")
+print(f"Approximate pages of documents that fit: {(CONTEXT_LIMIT - total_tokens) / 750:.0f}")</code></pre>
+              </div>
+            </li>
+            <li class="lab-step">
+              <strong>Calculate API costs</strong>
+              <p>Look up GPT-4o pricing at <a href="https://openai.com/pricing" target="_blank" rel="noopener">openai.com/pricing</a>. Calculate how much it would cost to send a 10-page document in every message of a 20-turn conversation.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="quiz-container"></div>
+      <div id="session-nav"></div>
+    </main>
+    <aside class="session-toc" id="session-toc"></aside>
+  </div>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/lab.js"></script>
+  <script src="/assets/js/quiz.js"></script>
+  <script src="/assets/js/session.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 08: Neural Networks — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 08</span></div>
+      <h1 class="session-title">Neural Networks</h1>
+      <p class="session-tagline">Demystify the "black box". Understand neurons, layers, activation functions, loss, and backpropagation — and build one from scratch.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 90 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="the-neuron">The Building Block: A Single Neuron</h2>
+        <p>A neuron takes multiple inputs, multiplies each by a weight, adds a bias, then applies an activation function. That's it. Everything in deep learning is billions of these stacked together.</p>
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;font-family:var(--font-mono);font-size:0.9rem;color:#e2e8f0;">
+          <div style="text-align:center;margin-bottom:1rem;color:#94a3b8;font-size:0.8rem;">Single Neuron Computation</div>
+          <div style="text-align:center;font-size:1.1rem;">
+            <span style="color:#60a5fa">z</span> = <span style="color:#4ade80">w₁</span>x₁ + <span style="color:#4ade80">w₂</span>x₂ + <span style="color:#4ade80">w₃</span>x₃ + <span style="color:#fbbf24">b</span>
+          </div>
+          <div style="text-align:center;font-size:1.1rem;margin-top:0.5rem;">
+            <span style="color:#c084fc">output</span> = activation(<span style="color:#60a5fa">z</span>)
+          </div>
+          <div style="margin-top:1rem;font-size:0.75rem;color:#64748b;text-align:center;">
+            <span style="color:#4ade80">w</span> = learned weights · <span style="color:#fbbf24">b</span> = bias · activation = non-linearity
+          </div>
+        </div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import numpy as np
+
+def relu(x):
+    return np.maximum(0, x)  # Most common activation function
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))  # Squashes to 0-1 (for probabilities)
+
+# A single neuron with 3 inputs
+inputs = np.array([0.5, -0.3, 0.8])
+weights = np.array([0.4, 0.7, -0.2])  # learned during training
+bias = 0.1
+
+z = np.dot(weights, inputs) + bias  # weighted sum
+output = relu(z)
+print(f"z = {z:.3f}")
+print(f"ReLU output = {output:.3f}")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="layers">Layers and Deep Networks</h2>
+        <p>Stack neurons in layers. Each layer transforms its input into a new representation. Deep networks learn hierarchical features — from simple to complex.</p>
+        <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📥</div><h4 style="color:#38bdf8">Input Layer</h4><p>Raw features enter here. One neuron per feature. No computation — just passes values forward.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🔒</div><h4 style="color:#4ade80">Hidden Layers</h4><p>The "thinking" layers. Learn increasingly abstract representations. More layers = deeper network = "deep learning".</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📤</div><h4 style="color:#c084fc">Output Layer</h4><p>Produces the final prediction. Regression: 1 neuron (continuous). Classification: N neurons (one per class) with softmax.</p></div>
+        </div>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import torch
+import torch.nn as nn
+
+# A simple feedforward neural network for digit classification
+class DigitClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.network = nn.Sequential(
+            nn.Linear(784, 256),   # Input: 28×28 pixels flattened
+            nn.ReLU(),
+            nn.Dropout(0.2),       # Prevents overfitting
+            nn.Linear(256, 128),   # Hidden layer
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(128, 10)     # Output: 10 classes (digits 0-9)
+        )
+    def forward(self, x):
+        return self.network(x)
+
+model = DigitClassifier()
+print(model)
+# Count parameters
+total = sum(p.numel() for p in model.parameters())
+print(f"Total trainable parameters: {total:,}")</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="activation-functions">Activation Functions: Why They Matter</h2>
+        <p>Without activation functions, stacking layers does nothing — the result is still just a linear function. Non-linear activations let networks learn complex patterns.</p>
+        <table class="def-table">
+          <thead><tr><th>Function</th><th>Formula</th><th>Range</th><th>Best Used For</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:#4ade80">ReLU</strong></td><td>max(0, x)</td><td>[0, ∞)</td><td>Hidden layers in most networks. Fast, simple, avoids vanishing gradients.</td></tr>
+            <tr><td><strong style="color:#60a5fa">Sigmoid</strong></td><td>1/(1+e⁻ˣ)</td><td>(0, 1)</td><td>Binary classification output layer. Squashes to probability.</td></tr>
+            <tr><td><strong style="color:#c084fc">Softmax</strong></td><td>eˣⁱ/Σeˣʲ</td><td>(0, 1), sums to 1</td><td>Multi-class output layer. Probability distribution over classes.</td></tr>
+            <tr><td><strong style="color:#fbbf24">Tanh</strong></td><td>(eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)</td><td>(-1, 1)</td><td>Hidden layers when negative outputs matter (RNNs). Zero-centered.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="backpropagation">Backpropagation: How Networks Learn</h2>
+        <p>Backprop is the algorithm that makes neural networks trainable. It efficiently computes gradients using the chain rule of calculus — flowing error signals backward through the network.</p>
+        <ol class="step-list">
+          <li><strong style="color:#e2e8f0">Forward pass:</strong> Input flows through all layers → prediction produced.</li>
+          <li><strong style="color:#e2e8f0">Compute loss:</strong> Compare prediction to true label (e.g., cross-entropy loss).</li>
+          <li><strong style="color:#e2e8f0">Backward pass:</strong> Compute gradient of loss with respect to each weight using chain rule.</li>
+          <li><strong style="color:#e2e8f0">Update weights:</strong> optimizer.step() nudges each weight to reduce loss.</li>
+        </ol>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">import torch
+import torch.nn as nn
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# Training loop — the same pattern for ANY neural network
+model = DigitClassifier()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+loss_fn = nn.CrossEntropyLoss()  # For multi-class classification
+
+for epoch in range(10):
+    for batch_images, batch_labels in train_loader:
+        # 1. Forward pass
+        predictions = model(batch_images.view(-1, 784))
+
+        # 2. Compute loss
+        loss = loss_fn(predictions, batch_labels)
+
+        # 3. Backward pass (compute gradients)
+        optimizer.zero_grad()  # Clear previous gradients!
+        loss.backward()
+
+        # 4. Update weights
+        optimizer.step()
+
+    print(f"Epoch {epoch+1}: Loss = {loss.item():.4f}")</code></pre></div>
+        <div class="callout callout-warn"><span class="callout-icon">💡</span><div class="callout-body"><h4>Common Mistake: Forgetting optimizer.zero_grad()</h4><p>PyTorch accumulates gradients by default. Without zero_grad() before each backward pass, gradients from the previous step are added to the current step — completely corrupting training. Always call zero_grad() before backward().</p></div></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Handwritten Digit Classifier</h3>
+          <p>Estimated time: 60 minutes · Google Colab (GPU recommended)</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-08-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Load MNIST Dataset</h4></div><p>Use torchvision to load the 60,000 training images and 10,000 test images of handwritten digits 0-9.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Build and Train the Network</h4></div><p>Build the DigitClassifier from the lesson. Train for 10 epochs. Target: >97% test accuracy.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Visualize What It Gets Wrong</h4></div><p>Find examples from the test set that the model misclassified. What patterns do you notice in the mistakes?</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Draw Your Own Digits</h4></div><p>Use a 28×28 canvas widget in Colab to draw digits. Feed them through your trained model. How well does it generalize to handwriting it's never seen?</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/intermediate/07-model-evaluation.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 07</span><span class="nav-title">Model Evaluation</span></div></a>
+      <a href="/sessions/intermediate/09-llms-transformers.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 09</span><span class="nav-title">LLMs and Transformers</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 8, slug: '08-neural-networks', section: 'intermediate',
+  nextPath: '/sessions/intermediate/09-llms-transformers.html',
+  quizData: [
+    {id:'s08q01',type:'mcq',points:1,question:'Without activation functions between layers, what is a multi-layer neural network mathematically equivalent to?',options:[{id:'a',text:'A recurrent neural network'},{id:'b',text:'A single linear transformation (one layer)',correct:true},{id:'c',text:'A convolutional neural network'},{id:'d',text:'A decision tree'}],explanation:'Multiple linear layers without activations collapse into a single linear transformation: L2(L1(x)) = (W2·W1)x + c, which is just Wx + b. Activation functions (ReLU, etc.) introduce non-linearity, allowing networks to learn complex, non-linear patterns. This is why activation functions are essential.',hint:'What is the composition of linear functions?'},
+    {id:'s08q02',type:'mcq',points:1,question:'Which activation function is most commonly used in hidden layers of modern deep networks?',options:[{id:'a',text:'Sigmoid'},{id:'b',text:'Tanh'},{id:'c',text:'ReLU (Rectified Linear Unit)',correct:true},{id:'d',text:'Softmax'}],explanation:'ReLU (max(0,x)) dominates hidden layers because: (1) it\'s computationally cheap, (2) it doesn\'t suffer from vanishing gradients for positive values, (3) it creates sparse activations (dead neurons for negative inputs help regularization). Sigmoid is used for binary output layers. Softmax for multi-class output.',hint:'Which activation function is the simplest computationally and avoids vanishing gradients?'},
+    {id:'s08q03',type:'truefalse',points:1,question:'In PyTorch, calling optimizer.zero_grad() before loss.backward() is optional — PyTorch automatically resets gradients after each step.',correctAnswer:false,explanation:'FALSE — this is a very common bug! PyTorch ACCUMULATES gradients by default. If you don\'t call zero_grad(), the gradients from the previous batch are added to the current batch\'s gradients, corrupting training. Always: 1) zero_grad() → 2) forward pass → 3) loss.backward() → 4) optimizer.step()'},
+    {id:'s08q04',type:'mcq',points:1,question:'A neural network for classifying handwritten digits (0-9) needs how many output neurons, and what activation function?',options:[{id:'a',text:'1 neuron with sigmoid'},{id:'b',text:'10 neurons with softmax',correct:true},{id:'c',text:'10 neurons with ReLU'},{id:'d',text:'784 neurons with sigmoid'}],explanation:'Multi-class classification with 10 classes needs 10 output neurons — one per class. Softmax converts the raw scores (logits) into a probability distribution that sums to 1. The class with the highest probability is the prediction. ReLU would give non-normalized positive values, not valid probabilities.',hint:'For 10 classes, how many output neurons? And which activation gives a probability distribution?'},
+    {id:'s08q05',type:'mcq',points:1,question:'Backpropagation is described as using the "chain rule" of calculus. What does this mean in practice?',options:[{id:'a',text:'We multiply the loss by the learning rate to get weight updates'},{id:'b',text:'We compute the gradient of the loss with respect to each weight by chaining gradients backward through each layer',correct:true},{id:'c',text:'We chain multiple loss functions together to improve accuracy'},{id:'d',text:'We update layers one at a time from output to input'}],explanation:'The chain rule: d(loss)/d(w₁) = d(loss)/d(output) × d(output)/d(hidden) × d(hidden)/d(w₁). This lets us compute gradients for weights deep in the network efficiently by chaining local gradients backward. Without backprop, training deep networks would be computationally infeasible.'}
+  ]
+};
+</script>
+</body>
+</html>

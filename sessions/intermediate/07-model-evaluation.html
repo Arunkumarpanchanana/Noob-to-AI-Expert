@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 07: Model Evaluation — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/assets/css/main.css" /><link rel="stylesheet" href="/assets/css/session.css" /><link rel="stylesheet" href="/assets/css/quiz.css" />
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="session-page-wrapper">
+  <aside id="session-sidebar"></aside>
+  <main>
+    <header class="session-header">
+      <div class="session-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/sections/intermediate.html">Intermediate</a><span class="sep">›</span><span>Session 07</span></div>
+      <h1 class="session-title">Model Evaluation</h1>
+      <p class="session-tagline">Accuracy lies. Learn why, and master precision, recall, F1, AUC-ROC, and confusion matrices — the metrics that tell you the truth.</p>
+      <div class="session-meta">
+        <span><i class="fas fa-clock"></i> 60 min</span>
+        <span><span class="badge badge-intermediate"><i class="fas fa-code"></i> Intermediate</span></span>
+        <span><i class="fas fa-flask"></i> Colab Lab</span>
+        <span><i class="fas fa-check-circle"></i> 5 Quiz Questions</span>
+      </div>
+    </header>
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="learn"><i class="fas fa-book-open"></i> Learn</button>
+      <button class="tab-btn" data-tab="lab"><i class="fas fa-flask"></i> Lab</button>
+      <button class="tab-btn" data-tab="quiz"><i class="fas fa-check-circle"></i> Quiz</button>
+    </div>
+
+    <div class="tab-panel learn-content" data-panel="learn">
+      <div class="concept-section">
+        <h2 id="why-accuracy-lies">Why Accuracy Can Lie</h2>
+        <p>Imagine a cancer detection model. Your test set has 99 healthy patients and 1 cancer patient. A model that always predicts "healthy" achieves <strong style="color:#f87171">99% accuracy</strong> while being completely useless — it will miss every actual cancer case.</p>
+        <p>This is the <strong style="color:#e2e8f0">class imbalance problem</strong>. Any time your classes are unequal in size, accuracy is misleading. You need better metrics.</p>
+        <div class="callout callout-danger"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>When Accuracy Is Dangerous</h4><p>Fraud detection (0.1% fraud), cancer diagnosis (rare disease), defect detection in manufacturing — all have severe class imbalance. Always report precision, recall, and F1 alongside accuracy for these problems.</p></div></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="confusion-matrix">The Confusion Matrix</h2>
+        <p>A confusion matrix shows you exactly what your model gets right and wrong for each class. Everything else flows from it.</p>
+        <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;">
+          <div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;max-width:500px;margin:0 auto;">
+            <div style="padding:1rem;"></div>
+            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#60a5fa;border-bottom:2px solid #334155;">Predicted: Positive</div>
+            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#60a5fa;border-bottom:2px solid #334155;">Predicted: Negative</div>
+            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#4ade80;border-right:2px solid #334155;">Actual: Positive</div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#4ade80;">TP</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Positive</div></div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#f87171;">FN</div><div style="font-size:0.75rem;color:#fca5a5;margin-top:0.25rem;">False Negative</div></div>
+            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#4ade80;border-right:2px solid #334155;">Actual: Negative</div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#f87171;">FP</div><div style="font-size:0.75rem;color:#fca5a5;margin-top:0.25rem;">False Positive</div></div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#4ade80;">TN</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Negative</div></div>
+          </div>
+        </div>
+        <table class="def-table">
+          <thead><tr><th>Metric</th><th>Formula</th><th>Meaning</th><th>When to Prioritize</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Accuracy</strong></td><td>(TP+TN) / Total</td><td>Overall % correct</td><td>Balanced classes, equal error costs</td></tr>
+            <tr><td><strong style="color:#60a5fa">Precision</strong></td><td>TP / (TP+FP)</td><td>Of predicted positives, what % are actually positive?</td><td>False alarms are costly (spam filter, ad targeting)</td></tr>
+            <tr><td><strong style="color:#4ade80">Recall</strong></td><td>TP / (TP+FN)</td><td>Of actual positives, what % did we catch?</td><td>Missing a case is costly (cancer detection, fraud)</td></tr>
+            <tr><td><strong style="color:#c084fc">F1 Score</strong></td><td>2×(P×R)/(P+R)</td><td>Harmonic mean of precision and recall</td><td>Imbalanced classes, balance both concerns</td></tr>
+          </tbody>
+        </table>
+        <div style="position:relative;"><button class="copy-btn">Copy</button>
+        <pre><code class="language-python">from sklearn.metrics import (classification_report, confusion_matrix,
+                              precision_score, recall_score, f1_score)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Evaluate a spam classifier
+y_true = [1,1,0,1,0,0,1,0,1,0]  # 1=spam, 0=not spam
+y_pred = [1,0,0,1,0,1,1,0,1,0]  # model predictions
+
+# Full report
+print(classification_report(y_true, y_pred, target_names=["Not Spam","Spam"]))
+
+# Individual metrics
+precision = precision_score(y_true, y_pred)
+recall    = recall_score(y_true, y_pred)
+f1        = f1_score(y_true, y_pred)
+print(f"Precision: {precision:.2%} — of emails we flagged, {precision:.0%} were actually spam")
+print(f"Recall:    {recall:.2%}    — of all spam, we caught {recall:.0%}")
+print(f"F1 Score:  {f1:.2%}")
+
+# Confusion matrix heatmap
+cm = confusion_matrix(y_true, y_pred)
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=["Not Spam","Spam"],
+            yticklabels=["Not Spam","Spam"])
+plt.title("Confusion Matrix"); plt.show()</code></pre></div>
+      </div>
+
+      <div class="concept-section">
+        <h2 id="choosing-metric">Choosing the Right Metric</h2>
+        <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+          <div class="compare-card"><div class="card-icon">📧</div><h4>Spam Filter</h4><p>Prioritize <strong style="color:#60a5fa">Precision</strong>. A false positive (blocking a real email) is worse than a false negative (letting spam through).</p></div>
+          <div class="compare-card"><div class="card-icon">🏥</div><h4>Cancer Detection</h4><p>Prioritize <strong style="color:#4ade80">Recall</strong>. Missing a cancer case is far worse than a false alarm that leads to extra testing.</p></div>
+          <div class="compare-card"><div class="card-icon">💳</div><h4>Fraud Detection</h4><p>Balance both with <strong style="color:#c084fc">F1</strong> or use a business metric: cost of fraud vs. cost of declined legitimate transactions.</p></div>
+          <div class="compare-card"><div class="card-icon">🔍</div><h4>Search Ranking</h4><p>Use <strong style="color:#fb923c">NDCG or MAP</strong> — ranking metrics that care about the order of results, not just binary correct/wrong.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="lab" style="display:none">
+      <div class="lab-container">
+        <div class="lab-header">
+          <h3><i class="fas fa-flask" style="color:#0ea5e9;margin-right:0.5rem;"></i>Lab: Evaluate a Spam Classifier</h3>
+          <p>Estimated time: 30 minutes · Google Colab</p>
+          <div class="lab-launch-btns">
+            <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-07-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
+          </div>
+        </div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Train a Naive Bayes Spam Classifier</h4></div><p>Use the SMS Spam Collection dataset. Vectorize the text with TF-IDF, train a Naive Bayes classifier, and compute all metrics.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">2</span><h4>Examine the Confusion Matrix</h4></div><p>Plot the confusion matrix. How many legitimate emails did it block? How many spam emails slipped through?</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">3</span><h4>Adjust the Decision Threshold</h4></div><p>Change the probability threshold from 0.5 to 0.3 and 0.7. Observe how precision and recall trade off against each other.</p></div>
+        <div class="lab-step"><div class="lab-step-header"><span class="step-num">4</span><h4>Business Case Analysis</h4></div><p>If blocking a real email costs $5 (productivity loss) and letting spam through costs $0.10, what threshold minimizes total cost?</p></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="quiz" style="display:none">
+      <div class="quiz-container" id="quiz-container"></div>
+    </div>
+
+    <div class="session-nav-bottom">
+      <a href="/sessions/intermediate/06-ml-fundamentals.html" class="session-nav-btn" id="prev-session"><i class="fas fa-arrow-left"></i><div><span class="nav-label">Session 06</span><span class="nav-title">ML Fundamentals</span></div></a>
+      <a href="/sessions/intermediate/08-neural-networks.html" class="session-nav-btn next" id="next-session"><div><span class="nav-label">Session 08</span><span class="nav-title">Neural Networks</span></div><i class="fas fa-arrow-right"></i></a>
+    </div>
+  </main>
+  <aside id="toc-sidebar"><p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:0.75rem;font-weight:600;">On This Page</p><nav id="toc"></nav></aside>
+</div>
+<div id="footer-placeholder"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="/assets/js/progress.js"></script><script src="/assets/js/quiz.js"></script><script src="/assets/js/lab.js"></script><script src="/assets/js/session.js"></script><script src="/assets/js/main.js"></script>
+<script>
+window.SESSION_META = {
+  id: 7, slug: '07-model-evaluation', section: 'intermediate',
+  nextPath: '/sessions/intermediate/08-neural-networks.html',
+  quizData: [
+    {id:'s07q01',type:'mcq',points:1,question:'A fraud detection model says it has 99.5% accuracy. However, only 0.5% of transactions are fraudulent. What is the most important concern?',options:[{id:'a',text:'The accuracy is too high — something must be wrong'},{id:'b',text:'A model that predicts "not fraud" for every transaction would also get 99.5% accuracy, making this metric meaningless',correct:true},{id:'c',text:'99.5% is not high enough for fraud detection'},{id:'d',text:'The model needs more training data'}],explanation:'With 99.5% non-fraud, a dumb model that always says "not fraud" also gets 99.5% accuracy. It catches 0% of fraud. You must evaluate precision/recall for the fraud class specifically. The baseline accuracy equals the majority class percentage.',hint:'What does a model that always predicts the majority class achieve?'},
+    {id:'s07q02',type:'mcq',points:1,question:'For a cancer screening test, which metric should you prioritize?',options:[{id:'a',text:'Precision — avoid false positives (unnecessary biopsies)'},{id:'b',text:'Accuracy — overall correctness across all patients'},{id:'c',text:'Recall — detect as many real cancer cases as possible, even at the cost of false alarms',correct:true},{id:'d',text:'Specificity — correctly identify healthy patients'}],explanation:'In cancer screening, a False Negative (missing cancer) is catastrophic — the patient goes untreated. A False Positive (flagging a healthy patient for follow-up) is costly but manageable. Therefore maximize Recall. In law enforcement or spam filtering, you might prioritize Precision to avoid wrongly accusing innocent parties.',hint:'Which error is more dangerous: missing cancer (false negative) or flagging healthy patients (false positive)?'},
+    {id:'s07q03',type:'mcq',points:1,question:'F1 Score is defined as the harmonic mean of Precision and Recall. Why harmonic mean instead of arithmetic mean?',options:[{id:'a',text:'Harmonic mean is easier to compute'},{id:'b',text:'Harmonic mean is always higher than arithmetic mean'},{id:'c',text:'Harmonic mean penalizes extreme imbalances — a model with 100% precision but 1% recall gets a near-zero F1',correct:true},{id:'d',text:'It\'s an arbitrary convention with no mathematical reason'}],explanation:'Harmonic mean: 2×(P×R)/(P+R). If Precision=1.0 and Recall=0.01, arithmetic mean = 0.505 (misleadingly high). Harmonic mean = 0.02 (correctly penalizes the terrible recall). Harmonic mean approaches the minimum of the two values when they are very different, discouraging the optimization of just one metric.',hint:'What happens to the harmonic mean when one value is very low?'},
+    {id:'s07q04',type:'truefalse',points:1,question:'If your model has Precision=0.90 and Recall=0.60, increasing the classification threshold (e.g., from 0.5 to 0.8) will increase Precision and decrease Recall.',correctAnswer:true,explanation:'Correct! A higher threshold means you only predict "positive" when the model is very confident. This reduces false positives (higher Precision) but also causes the model to miss more real positives (lower Recall). Lowering the threshold has the opposite effect. This precision-recall tradeoff is fundamental and is visualized with the PR curve.'},
+    {id:'s07q05',type:'mcq',points:1,question:'You\'re building a recommendation system. Which metric is most appropriate?',options:[{id:'a',text:'Accuracy — did the model recommend the right item?'},{id:'b',text:'NDCG or MAP — ranking metrics that measure the quality of the ordered recommendation list',correct:true},{id:'c',text:'MSE — the distance between recommended and actual items'},{id:'d',text:'Recall@10 only — what fraction of liked items appear in the top 10'}],explanation:'Recommendation systems produce ranked lists. NDCG (Normalized Discounted Cumulative Gain) and MAP (Mean Average Precision) both measure ranking quality — they give more credit for relevant items appearing higher in the list. Accuracy ignores order, MSE doesn\'t apply to rankings, and Recall@10 alone misses precision.',hint:'What\'s unique about recommendation systems that ordinary classification metrics don\'t capture?'}
+  ]
+};
+</script>
+</body>
+</html>
