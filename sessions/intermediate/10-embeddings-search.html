@@ -196,7 +196,7 @@ for doc, distance in zip(results["documents"][0], results["distances"][0]):
 <script>
 window.SESSION_META = {
   id: 10, slug: '10-embeddings-search', section: 'intermediate',
-  nextPath: '/sessions/intermediate/11-rag.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/intermediate/11-rag.html',
   quizData: [
     {id:'s10q01',type:'mcq',points:1,question:'Two text passages produce embeddings with cosine similarity of 0.95. What does this indicate?',options:[{id:'a',text:'They share 95% of the same words'},{id:'b',text:'They are 95% likely to be from the same author'},{id:'c',text:'They are semantically very similar — convey related or equivalent meaning',correct:true},{id:'d',text:'One is a 95% summary of the other'}],explanation:'Cosine similarity measures the angle between two vectors. 0.95 means the vectors point in nearly the same direction → very similar semantic meaning. 1.0 = identical, 0.0 = unrelated, -1.0 = opposite meaning. It\'s not about word overlap — "automobile repair" and "car fixing" would score ~0.95 despite no shared words.',hint:'Cosine similarity measures how similar the meaning (direction in vector space) is.'},
     {id:'s10q02',type:'truefalse',points:1,question:'Semantic search can find a document about "vehicle maintenance" when the query is "car repair", even though none of those exact words appear in the document.',correctAnswer:true,explanation:'Correct! This is semantic search\'s core advantage over keyword search. The embedding model maps semantically equivalent phrases (vehicle/car, maintenance/repair) to nearby vectors. Cosine similarity identifies the high-similarity document even without shared vocabulary. Keyword search (BM25, Elasticsearch default) would fail completely here.'},

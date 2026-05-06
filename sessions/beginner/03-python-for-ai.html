@@ -364,7 +364,7 @@ print(response.content[0].text)</code></pre></div>
 <script>
 window.SESSION_META = {
   id: 3, slug: '03-python-for-ai', section: 'beginner',
-  nextPath: '/sessions/beginner/04-data-basics.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/beginner/04-data-basics.html',
   quizData: [
     {id:'s03q01',type:'mcq',points:1,question:'You have a list `tokens = ["the","cat","sat"]`. What does `tokens[-1]` return?',options:[{id:'a',text:'"the"'},{id:'b',text:'"cat"'},{id:'c',text:'"sat"',correct:true},{id:'d',text:'IndexError'}],explanation:'Negative indexing in Python counts from the end. -1 is the last element, -2 is second to last, etc. tokens[-1] = "sat".',hint:'Negative indices count from the end of the list.'},
     {id:'s03q02',type:'mcq',points:1,question:'What is the output of: `[x*2 for x in [1,2,3] if x > 1]`?',options:[{id:'a',text:'[2, 4, 6]'},{id:'b',text:'[4, 6]',correct:true},{id:'c',text:'[2, 4]'},{id:'d',text:'[1, 2, 3]'}],explanation:'List comprehension with filter: iterate [1,2,3], keep only x > 1 (so 2 and 3), then multiply each by 2. Result: [4, 6]. The number 1 is filtered out.',hint:'Apply the filter FIRST, then the transformation.'},

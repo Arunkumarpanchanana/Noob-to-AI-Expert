@@ -190,7 +190,7 @@ for epoch in range(10):
 <script>
 window.SESSION_META = {
   id: 8, slug: '08-neural-networks', section: 'intermediate',
-  nextPath: '/sessions/intermediate/09-llms-transformers.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/intermediate/09-llms-transformers.html',
   quizData: [
     {id:'s08q01',type:'mcq',points:1,question:'Without activation functions between layers, what is a multi-layer neural network mathematically equivalent to?',options:[{id:'a',text:'A recurrent neural network'},{id:'b',text:'A single linear transformation (one layer)',correct:true},{id:'c',text:'A convolutional neural network'},{id:'d',text:'A decision tree'}],explanation:'Multiple linear layers without activations collapse into a single linear transformation: L2(L1(x)) = (W2·W1)x + c, which is just Wx + b. Activation functions (ReLU, etc.) introduce non-linearity, allowing networks to learn complex, non-linear patterns. This is why activation functions are essential.',hint:'What is the composition of linear functions?'},
     {id:'s08q02',type:'mcq',points:1,question:'Which activation function is most commonly used in hidden layers of modern deep networks?',options:[{id:'a',text:'Sigmoid'},{id:'b',text:'Tanh'},{id:'c',text:'ReLU (Rectified Linear Unit)',correct:true},{id:'d',text:'Softmax'}],explanation:'ReLU (max(0,x)) dominates hidden layers because: (1) it\'s computationally cheap, (2) it doesn\'t suffer from vanishing gradients for positive values, (3) it creates sparse activations (dead neurons for negative inputs help regularization). Sigmoid is used for binary output layers. Softmax for multi-class output.',hint:'Which activation function is the simplest computationally and avoids vanishing gradients?'},

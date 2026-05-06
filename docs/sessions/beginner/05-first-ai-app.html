@@ -222,7 +222,7 @@ export ANTHROPIC_API_KEY="sk-ant-your-key-here"</code></pre></div>
 <script>
 window.SESSION_META = {
   id: 5, slug: '05-first-ai-app', section: 'beginner',
-  nextPath: '/sessions/intermediate/06-ml-fundamentals.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/intermediate/06-ml-fundamentals.html',
   quizData: [
     {id:'s05q01',type:'mcq',points:1,question:'In a chatbot, why must you append the assistant\'s response to conversation_history before the next turn?',options:[{id:'a',text:'To save memory on your computer'},{id:'b',text:'So the model can reference its own previous answers in future turns — without it, it loses context',correct:true},{id:'c',text:'The API requires it to avoid rate limiting'},{id:'d',text:'To reduce the number of tokens sent to the API'}],explanation:'LLMs are stateless — they have no memory between API calls. The only "memory" they have is what you include in the messages array. If you don\'t append the assistant\'s response, the next call won\'t include it, so the model can\'t say "as I mentioned" or build on previous answers.',hint:'The LLM has no memory between calls — how does it "remember" what it said before?'},
     {id:'s05q02',type:'truefalse',points:1,question:'The system prompt in a chatbot affects every user message in the conversation — you don\'t need to repeat it with each API call.',correctAnswer:true,explanation:'Correct! You pass the system prompt once in the "system" parameter (or as the first message with role "system"). It applies to all subsequent messages without needing to be repeated. This is how you give the model its persistent persona, rules, and constraints for the entire conversation.'},

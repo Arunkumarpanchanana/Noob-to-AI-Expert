@@ -242,7 +242,7 @@ print(result)</code></pre></div>
 <script>
 window.SESSION_META = {
   id: 14, slug: '14-ai-agents', section: 'expert',
-  nextPath: '/sessions/expert/15-llm-evaluation.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/expert/15-llm-evaluation.html',
   quizData: [
     {id:'s14q01',type:'mcq',points:1,question:'What is the key difference between a chatbot and an AI agent?',options:[{id:'a',text:'Chatbots use GPT-4, agents use Claude'},{id:'b',text:'Agents have tools, can take actions in a loop, and continue until a goal is achieved',correct:true},{id:'c',text:'Agents are always multi-model while chatbots are single-model'},{id:'d',text:'Chatbots are free, agents require paid APIs'}],explanation:'An agent = LLM + tools + loop + goal. The loop is critical: an agent can call tools, observe results, update its plan, and repeat until done. A chatbot simply responds to each message and stops. The loop + tools = agency.',hint:'What can an agent do that a basic chatbot cannot?'},
     {id:'s14q02',type:'mcq',points:1,question:'In the Anthropic tool-calling API, what does a stop_reason of "tool_use" indicate?',options:[{id:'a',text:'The model hit its token limit'},{id:'b',text:'The model wants to call one or more tools before continuing',correct:true},{id:'c',text:'An error occurred during processing'},{id:'d',text:'The model has finished its response'}],explanation:'"tool_use" stop_reason means the model decided it needs external information or action — it\'s pausing to call a tool. Your code must execute the tool(s), return the results as a "tool_result" message, then call the API again. "end_turn" means the model has finished and is done with its current turn.',hint:'What happens when the model "pauses" to call a tool?'},

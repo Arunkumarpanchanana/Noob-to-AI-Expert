@@ -191,7 +191,7 @@ if prompt := st.chat_input("Type your question..."):
 <script>
 window.SESSION_META = {
   id: 12, slug: '12-ai-app-development', section: 'intermediate',
-  nextPath: '/sessions/expert/13-advanced-prompting.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/expert/13-advanced-prompting.html',
   quizData: [
     {id:'s12q01',type:'mcq',points:1,question:'Why should you NEVER expose your LLM API key directly in frontend JavaScript code (client-side)?',options:[{id:'a',text:'JavaScript can\'t make HTTP requests to LLM APIs'},{id:'b',text:'Anyone who views your page source can steal the key, use your credits, and generate unlimited API calls at your expense',correct:true},{id:'c',text:'LLM APIs don\'t support CORS from browsers'},{id:'d',text:'The API key wouldn\'t work in a browser environment'}],explanation:'API keys in client-side JS are visible to anyone who opens browser dev tools → Network tab, or views page source. They can copy your key and run billions of API calls on your bill. Always proxy through a backend: frontend → your server → LLM API. The key lives only on your server as an environment variable.',hint:'Who can see JavaScript code that runs in a browser?'},
     {id:'s12q02',type:'truefalse',points:1,question:'Streamlit automatically handles session state across browser refreshes without any additional code.',correctAnswer:false,explanation:'FALSE. By default, browser refresh resets Streamlit\'s session state. st.session_state persists within a browser session but is lost on refresh. For persistence across refreshes, you need: cookies, localStorage (via JavaScript), a database, or file storage. This is why adding "save/load conversation history" is a common Streamlit AI app enhancement.'},

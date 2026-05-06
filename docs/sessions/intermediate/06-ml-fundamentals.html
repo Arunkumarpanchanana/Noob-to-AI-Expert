@@ -180,7 +180,7 @@ print(f"Classification Accuracy: {accuracy_score(y_test, y_pred):.2%}")</code></
 <script>
 window.SESSION_META = {
   id: 6, slug: '06-ml-fundamentals', section: 'intermediate',
-  nextPath: '/sessions/intermediate/07-model-evaluation.html',
+  nextPath: '/Noob-to-AI-Expert/sessions/intermediate/07-model-evaluation.html',
   quizData: [
     {id:'s06q01',type:'mcq',points:1,question:'During ML training, what is the purpose of the loss function?',options:[{id:'a',text:'To speed up inference'},{id:'b',text:'To measure how wrong the model\'s predictions are, giving the optimizer a signal to improve',correct:true},{id:'c',text:'To filter bad training data'},{id:'d',text:'To determine the model architecture'}],explanation:'The loss function quantifies the error between predicted and actual values. Gradient descent then minimizes this loss by adjusting weights. Common losses: MSE for regression, cross-entropy for classification.',hint:'The optimizer needs to know how wrong the model is before it can improve it.'},
     {id:'s06q02',type:'mcq',points:1,question:'A model predicts customer lifetime value (a dollar amount). Which type of problem is this?',options:[{id:'a',text:'Classification — it categorizes customers'},{id:'b',text:'Regression — it predicts a continuous numeric value',correct:true},{id:'c',text:'Clustering — it groups similar customers'},{id:'d',text:'Ranking — it orders customers by value'}],explanation:'Regression predicts continuous numeric outputs. CLV is a dollar amount (could be $47.23, $1,204.00, etc.) — a continuous value. Classification would predict discrete categories like "high/medium/low value customer".',hint:'Is the output a category or a number on a continuous scale?'},
