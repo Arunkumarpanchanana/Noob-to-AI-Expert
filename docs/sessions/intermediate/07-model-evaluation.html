@@ -35,33 +35,33 @@
       <div class="concept-section">
         <h2 id="why-accuracy-lies">Why Accuracy Can Lie</h2>
         <p>Imagine a cancer detection model. Your test set has 99 healthy patients and 1 cancer patient. A model that always predicts "healthy" achieves <strong style="color:#f87171">99% accuracy</strong> while being completely useless — it will miss every actual cancer case.</p>
-        <p>This is the <strong style="color:#e2e8f0">class imbalance problem</strong>. Any time your classes are unequal in size, accuracy is misleading. You need better metrics.</p>
+        <p>This is the <strong style="color:#0f172a">class imbalance problem</strong>. Any time your classes are unequal in size, accuracy is misleading. You need better metrics.</p>
         <div class="callout callout-danger"><span class="callout-icon">⚠️</span><div class="callout-body"><h4>When Accuracy Is Dangerous</h4><p>Fraud detection (0.1% fraud), cancer diagnosis (rare disease), defect detection in manufacturing — all have severe class imbalance. Always report precision, recall, and F1 alongside accuracy for these problems.</p></div></div>
       </div>
 
       <div class="concept-section">
         <h2 id="confusion-matrix">The Confusion Matrix</h2>
         <p>A confusion matrix shows you exactly what your model gets right and wrong for each class. Everything else flows from it.</p>
-        <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;">
+        <div style="background:#f1f5f9;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;">
           <div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;max-width:500px;margin:0 auto;">
             <div style="padding:1rem;"></div>
-            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#60a5fa;border-bottom:2px solid #334155;">Predicted: Positive</div>
-            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#60a5fa;border-bottom:2px solid #334155;">Predicted: Negative</div>
-            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#4ade80;border-right:2px solid #334155;">Actual: Positive</div>
-            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#4ade80;">TP</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Positive</div></div>
+            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#1d4ed8;border-bottom:2px solid #334155;">Predicted: Positive</div>
+            <div style="padding:1rem;text-align:center;font-size:0.8rem;font-weight:700;color:#1d4ed8;border-bottom:2px solid #334155;">Predicted: Negative</div>
+            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#16a34a;border-right:2px solid #334155;">Actual: Positive</div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#16a34a;">TP</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Positive</div></div>
             <div style="padding:1.5rem;text-align:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#f87171;">FN</div><div style="font-size:0.75rem;color:#fca5a5;margin-top:0.25rem;">False Negative</div></div>
-            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#4ade80;border-right:2px solid #334155;">Actual: Negative</div>
+            <div style="padding:1rem;font-size:0.8rem;font-weight:700;color:#16a34a;border-right:2px solid #334155;">Actual: Negative</div>
             <div style="padding:1.5rem;text-align:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#f87171;">FP</div><div style="font-size:0.75rem;color:#fca5a5;margin-top:0.25rem;">False Positive</div></div>
-            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#4ade80;">TN</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Negative</div></div>
+            <div style="padding:1.5rem;text-align:center;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;margin:0.25rem;"><div style="font-size:1.5rem;font-weight:800;color:#16a34a;">TN</div><div style="font-size:0.75rem;color:#86efac;margin-top:0.25rem;">True Negative</div></div>
           </div>
         </div>
         <table class="def-table">
           <thead><tr><th>Metric</th><th>Formula</th><th>Meaning</th><th>When to Prioritize</th></tr></thead>
           <tbody>
             <tr><td><strong>Accuracy</strong></td><td>(TP+TN) / Total</td><td>Overall % correct</td><td>Balanced classes, equal error costs</td></tr>
-            <tr><td><strong style="color:#60a5fa">Precision</strong></td><td>TP / (TP+FP)</td><td>Of predicted positives, what % are actually positive?</td><td>False alarms are costly (spam filter, ad targeting)</td></tr>
-            <tr><td><strong style="color:#4ade80">Recall</strong></td><td>TP / (TP+FN)</td><td>Of actual positives, what % did we catch?</td><td>Missing a case is costly (cancer detection, fraud)</td></tr>
-            <tr><td><strong style="color:#c084fc">F1 Score</strong></td><td>2×(P×R)/(P+R)</td><td>Harmonic mean of precision and recall</td><td>Imbalanced classes, balance both concerns</td></tr>
+            <tr><td><strong style="color:#1d4ed8">Precision</strong></td><td>TP / (TP+FP)</td><td>Of predicted positives, what % are actually positive?</td><td>False alarms are costly (spam filter, ad targeting)</td></tr>
+            <tr><td><strong style="color:#16a34a">Recall</strong></td><td>TP / (TP+FN)</td><td>Of actual positives, what % did we catch?</td><td>Missing a case is costly (cancer detection, fraud)</td></tr>
+            <tr><td><strong style="color:#7c3aed">F1 Score</strong></td><td>2×(P×R)/(P+R)</td><td>Harmonic mean of precision and recall</td><td>Imbalanced classes, balance both concerns</td></tr>
           </tbody>
         </table>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
@@ -96,10 +96,10 @@ plt.title("Confusion Matrix"); plt.show()</code></pre></div>
       <div class="concept-section">
         <h2 id="choosing-metric">Choosing the Right Metric</h2>
         <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
-          <div class="compare-card"><div class="card-icon">📧</div><h4>Spam Filter</h4><p>Prioritize <strong style="color:#60a5fa">Precision</strong>. A false positive (blocking a real email) is worse than a false negative (letting spam through).</p></div>
-          <div class="compare-card"><div class="card-icon">🏥</div><h4>Cancer Detection</h4><p>Prioritize <strong style="color:#4ade80">Recall</strong>. Missing a cancer case is far worse than a false alarm that leads to extra testing.</p></div>
-          <div class="compare-card"><div class="card-icon">💳</div><h4>Fraud Detection</h4><p>Balance both with <strong style="color:#c084fc">F1</strong> or use a business metric: cost of fraud vs. cost of declined legitimate transactions.</p></div>
-          <div class="compare-card"><div class="card-icon">🔍</div><h4>Search Ranking</h4><p>Use <strong style="color:#fb923c">NDCG or MAP</strong> — ranking metrics that care about the order of results, not just binary correct/wrong.</p></div>
+          <div class="compare-card"><div class="card-icon">📧</div><h4>Spam Filter</h4><p>Prioritize <strong style="color:#1d4ed8">Precision</strong>. A false positive (blocking a real email) is worse than a false negative (letting spam through).</p></div>
+          <div class="compare-card"><div class="card-icon">🏥</div><h4>Cancer Detection</h4><p>Prioritize <strong style="color:#16a34a">Recall</strong>. Missing a cancer case is far worse than a false alarm that leads to extra testing.</p></div>
+          <div class="compare-card"><div class="card-icon">💳</div><h4>Fraud Detection</h4><p>Balance both with <strong style="color:#7c3aed">F1</strong> or use a business metric: cost of fraud vs. cost of declined legitimate transactions.</p></div>
+          <div class="compare-card"><div class="card-icon">🔍</div><h4>Search Ranking</h4><p>Use <strong style="color:#c2410c">NDCG or MAP</strong> — ranking metrics that care about the order of results, not just binary correct/wrong.</p></div>
         </div>
       </div>
     </div>

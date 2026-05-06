@@ -51,10 +51,10 @@
         <p>Every effective prompt has up to five components. You don't always need all five — but knowing them lets you diagnose why a prompt fails.</p>
 
         <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
-          <div class="compare-card"><div class="card-icon">🎭</div><h4 style="color:#38bdf8">1. Role</h4><p>Tell the model who it is. Sets the persona, expertise level, and tone for the response.</p><p style="font-size:0.8rem;color:#0ea5e9;margin-top:0.5rem;">"You are a senior data scientist..."</p></div>
-          <div class="compare-card"><div class="card-icon">📋</div><h4 style="color:#4ade80">2. Instruction</h4><p>What you want the model to DO. Be specific about the task, action, and desired format.</p><p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">"Summarize the following in 3 bullet points..."</p></div>
-          <div class="compare-card"><div class="card-icon">📄</div><h4 style="color:#c084fc">3. Context</h4><p>Background information the model needs. Your audience, the document, the goal, the constraints.</p><p style="font-size:0.8rem;color:#a855f7;margin-top:0.5rem;">"The audience is non-technical executives..."</p></div>
-          <div class="compare-card"><div class="card-icon">✏️</div><h4 style="color:#fb923c">4. Examples</h4><p>Show the model what good output looks like. One example often beats 100 words of description.</p><p style="font-size:0.8rem;color:#f97316;margin-top:0.5rem;">"Example output: [your sample here]"</p></div>
+          <div class="compare-card"><div class="card-icon">🎭</div><h4 style="color:#0284c7">1. Role</h4><p>Tell the model who it is. Sets the persona, expertise level, and tone for the response.</p><p style="font-size:0.8rem;color:#0ea5e9;margin-top:0.5rem;">"You are a senior data scientist..."</p></div>
+          <div class="compare-card"><div class="card-icon">📋</div><h4 style="color:#16a34a">2. Instruction</h4><p>What you want the model to DO. Be specific about the task, action, and desired format.</p><p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">"Summarize the following in 3 bullet points..."</p></div>
+          <div class="compare-card"><div class="card-icon">📄</div><h4 style="color:#7c3aed">3. Context</h4><p>Background information the model needs. Your audience, the document, the goal, the constraints.</p><p style="font-size:0.8rem;color:#a855f7;margin-top:0.5rem;">"The audience is non-technical executives..."</p></div>
+          <div class="compare-card"><div class="card-icon">✏️</div><h4 style="color:#c2410c">4. Examples</h4><p>Show the model what good output looks like. One example often beats 100 words of description.</p><p style="font-size:0.8rem;color:#f97316;margin-top:0.5rem;">"Example output: [your sample here]"</p></div>
           <div class="compare-card"><div class="card-icon">🚧</div><h4 style="color:#f87171">5. Constraints</h4><p>What the model should NOT do. Length limits, forbidden topics, required formats.</p><p style="font-size:0.8rem;color:#ef4444;margin-top:0.5rem;">"Do not include jargon. Max 200 words."</p></div>
         </div>
 
@@ -64,16 +64,16 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0;">
           <div>
             <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px 8px 0 0;padding:0.6rem 1rem;font-size:0.8rem;font-weight:600;color:#f87171;">❌ Bad Prompt</div>
-            <div style="background:#1e293b;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#94a3b8;font-family:var(--font-mono);line-height:1.7;">
+            <div style="background:#f1f5f9;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#475569;font-family:var(--font-mono);line-height:1.7;">
               Write an email about the meeting.
             </div>
           </div>
           <div>
-            <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px 8px 0 0;padding:0.6rem 1rem;font-size:0.8rem;font-weight:600;color:#4ade80;">✅ Good Prompt</div>
-            <div style="background:#1e293b;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#94a3b8;font-family:var(--font-mono);line-height:1.7;">
-              <span style="color:#38bdf8">You are an executive assistant</span> at a SaaS company.<br><br>
-              <span style="color:#4ade80">Write a concise meeting follow-up email</span> to the product team.<br><br>
-              <span style="color:#c084fc">Context: We met today to discuss Q3 roadmap priorities. Three items were agreed: (1) launch mobile app by Sep 1, (2) deprecate legacy API, (3) hire 2 ML engineers.</span><br><br>
+            <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px 8px 0 0;padding:0.6rem 1rem;font-size:0.8rem;font-weight:600;color:#16a34a;">✅ Good Prompt</div>
+            <div style="background:#f1f5f9;border:1px solid #334155;border-radius:0 0 8px 8px;padding:1rem;font-size:0.85rem;color:#475569;font-family:var(--font-mono);line-height:1.7;">
+              <span style="color:#0284c7">You are an executive assistant</span> at a SaaS company.<br><br>
+              <span style="color:#16a34a">Write a concise meeting follow-up email</span> to the product team.<br><br>
+              <span style="color:#7c3aed">Context: We met today to discuss Q3 roadmap priorities. Three items were agreed: (1) launch mobile app by Sep 1, (2) deprecate legacy API, (3) hire 2 ML engineers.</span><br><br>
               <span style="color:#f87171">Keep it under 150 words. Professional but warm tone. No jargon.</span>
             </div>
           </div>
@@ -175,11 +175,11 @@ print(response.choices[0].message.content)</code></pre>
         <h2 id="quick-check">Quick Check</h2>
         <div class="reveal-block">
           <div class="reveal-question"><span>❓ A prompt says: "Summarize this article." What's the most important missing element?</span><span class="reveal-icon">▼</span></div>
-          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The article itself (context)</strong> — and also: who is the summary for? How long? What format? Without these, the model will produce a generic paragraph-length summary with no particular audience in mind.</div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#16a34a">The article itself (context)</strong> — and also: who is the summary for? How long? What format? Without these, the model will produce a generic paragraph-length summary with no particular audience in mind.</div>
         </div>
         <div class="reveal-block">
           <div class="reveal-question"><span>❓ You want an LLM to always respond in Spanish. Where should you put that instruction?</span><span class="reveal-icon">▼</span></div>
-          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The System Prompt</strong> — System prompts persist across all messages in a conversation. Putting it in the user message means you'd have to repeat it every turn.</div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#16a34a">The System Prompt</strong> — System prompts persist across all messages in a conversation. Putting it in the user message means you'd have to repeat it every turn.</div>
         </div>
       </div>
     </div>
@@ -196,7 +196,7 @@ print(response.choices[0].message.content)</code></pre>
           </div>
         </div>
 
-        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 1: Email Writing</h3>
+        <h3 style="color:#0f172a;margin:1.5rem 0 1rem;">Task 1: Email Writing</h3>
         <div class="lab-step">
           <div class="lab-step-header"><span class="step-num">1</span><h4>Write a Bad Prompt First</h4></div>
           <p>Start with: <code>Write a professional email about a project delay.</code> Copy the output. Notice how vague it is.</p>
@@ -223,7 +223,7 @@ Tone: Professional but warm. Max 200 words. No bullet points in the email itself
           <p style="margin-top:0.75rem;">Run this and compare the output to the bad prompt. Notice the difference in specificity, tone, and usefulness.</p>
         </div>
 
-        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 2: Data Extraction</h3>
+        <h3 style="color:#0f172a;margin:1.5rem 0 1rem;">Task 2: Data Extraction</h3>
         <div class="lab-step">
           <div class="lab-step-header"><span class="step-num">3</span><h4>Extract Structured Data from Free Text</h4></div>
           <div style="position:relative;">
@@ -246,7 +246,7 @@ important Zoom call tomorrow morning. Could someone please call me?"</code></pre
           </div>
         </div>
 
-        <h3 style="color:#e2e8f0;margin:1.5rem 0 1rem;">Task 3: Summarization with Constraints</h3>
+        <h3 style="color:#0f172a;margin:1.5rem 0 1rem;">Task 3: Summarization with Constraints</h3>
         <div class="lab-step">
           <div class="lab-step-header"><span class="step-num">4</span><h4>Summarize for Different Audiences</h4></div>
           <p>Take any long article you find online. Write two different prompts that produce: (a) a 3-sentence summary for a 10-year-old, and (b) a technical bullet-point summary for an expert. Compare the outputs.</p>

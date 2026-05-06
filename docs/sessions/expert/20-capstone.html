@@ -37,8 +37,8 @@
         <p>A capstone project demonstrates mastery across the full stack: you understand the problem, design the architecture, implement it cleanly, evaluate it systematically, and deploy it to production. It becomes a portfolio piece.</p>
         <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
           <div class="compare-card" style="text-align:center;"><div class="card-icon">🎯</div><h4 style="color:#f59e0b">Focused Scope</h4><p>One problem, solved well. Better to build a polished FAQ bot than a half-finished "AI everything" platform.</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">📏</div><h4 style="color:#4ade80">Evaluatable</h4><p>You must have metrics. What does "good" mean for your app? Implement an eval suite before you call it done.</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">🚀</div><h4 style="color:#60a5fa">Deployed</h4><p>It must be live. A working URL is worth more than beautiful code that runs only on your laptop.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📏</div><h4 style="color:#16a34a">Evaluatable</h4><p>You must have metrics. What does "good" mean for your app? Implement an eval suite before you call it done.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🚀</div><h4 style="color:#1d4ed8">Deployed</h4><p>It must be live. A working URL is worth more than beautiful code that runs only on your laptop.</p></div>
         </div>
       </div>
 
@@ -48,13 +48,13 @@
         <table class="def-table">
           <thead><tr><th>Requirement</th><th>Session(s)</th><th>What to Show</th></tr></thead>
           <tbody>
-            <tr><td><strong style="color:#4ade80">LLM Integration</strong></td><td>S02, S05</td><td>Calls Claude or another LLM API with a well-engineered system prompt</td></tr>
-            <tr><td><strong style="color:#60a5fa">Backend API</strong></td><td>S12</td><td>FastAPI or Flask backend that proxies LLM calls</td></tr>
-            <tr><td><strong style="color:#c084fc">Frontend UI</strong></td><td>S12</td><td>Streamlit, React, or equivalent — users can actually interact with it</td></tr>
+            <tr><td><strong style="color:#16a34a">LLM Integration</strong></td><td>S02, S05</td><td>Calls Claude or another LLM API with a well-engineered system prompt</td></tr>
+            <tr><td><strong style="color:#1d4ed8">Backend API</strong></td><td>S12</td><td>FastAPI or Flask backend that proxies LLM calls</td></tr>
+            <tr><td><strong style="color:#7c3aed">Frontend UI</strong></td><td>S12</td><td>Streamlit, React, or equivalent — users can actually interact with it</td></tr>
             <tr><td><strong style="color:#f59e0b">RAG or Tool Use</strong></td><td>S11, S14</td><td>Either retrieves from a document store OR uses tool calling</td></tr>
             <tr><td><strong style="color:#f87171">Eval Suite</strong></td><td>S15</td><td>Golden dataset + automated eval + pass rate metric</td></tr>
-            <tr><td><strong style="color:#38bdf8">Production Hardening</strong></td><td>S19</td><td>Caching, retry logic, rate limiting, logging</td></tr>
-            <tr><td><strong style="color:#e2e8f0">Deployed Live</strong></td><td>S12</td><td>Public URL on Streamlit Cloud, Render, Railway, or Vercel</td></tr>
+            <tr><td><strong style="color:#0284c7">Production Hardening</strong></td><td>S19</td><td>Caching, retry logic, rate limiting, logging</td></tr>
+            <tr><td><strong style="color:#0f172a">Deployed Live</strong></td><td>S12</td><td>Public URL on Streamlit Cloud, Render, Railway, or Vercel</td></tr>
           </tbody>
         </table>
       </div>
@@ -62,7 +62,7 @@
       <div class="concept-section">
         <h2 id="checklist">Submission Checklist</h2>
         <div class="reveal-block"><div class="reveal-question"><span>✅ Pre-launch checklist — click to expand</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none">
-          <ul style="color:#94a3b8;line-height:2.2;margin:0.5rem 0 0 1rem;">
+          <ul style="color:#475569;line-height:2.2;margin:0.5rem 0 0 1rem;">
             <li>GitHub repo is public with clear README</li>
             <li>API key is stored as an environment variable, never in code</li>
             <li>System prompt is well-crafted with persona, constraints, and format</li>
@@ -87,49 +87,49 @@
         </div>
 
         <div style="display:grid;gap:1rem;margin-bottom:1.5rem;">
-          <div style="padding:1.5rem;background:#1e293b;border:2px solid rgba(59,130,246,0.3);border-radius:14px;">
+          <div style="padding:1.5rem;background:#f1f5f9;border:2px solid rgba(59,130,246,0.3);border-radius:14px;">
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
               <span style="font-size:1.5rem;">🎓</span>
-              <h4 style="margin:0;color:#60a5fa;font-size:1.1rem;">Track A: AI Tutor</h4>
+              <h4 style="margin:0;color:#1d4ed8;font-size:1.1rem;">Track A: AI Tutor</h4>
             </div>
-            <p style="color:#94a3b8;margin:0 0 0.75rem;">A subject-matter expert chatbot with a RAG backend over uploaded study materials. Explains concepts, quizzes the user, tracks what they've learned.</p>
-            <p style="color:#64748b;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Pedagogy-aware system prompt · Knowledge graph for topic dependencies · Quiz generation from retrieved content</p>
+            <p style="color:#475569;margin:0 0 0.75rem;">A subject-matter expert chatbot with a RAG backend over uploaded study materials. Explains concepts, quizzes the user, tracks what they've learned.</p>
+            <p style="color:#334155;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Pedagogy-aware system prompt · Knowledge graph for topic dependencies · Quiz generation from retrieved content</p>
           </div>
 
-          <div style="padding:1.5rem;background:#1e293b;border:2px solid rgba(168,85,247,0.3);border-radius:14px;">
+          <div style="padding:1.5rem;background:#f1f5f9;border:2px solid rgba(168,85,247,0.3);border-radius:14px;">
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
               <span style="font-size:1.5rem;">📄</span>
-              <h4 style="margin:0;color:#c084fc;font-size:1.1rem;">Track B: Resume Reviewer</h4>
+              <h4 style="margin:0;color:#7c3aed;font-size:1.1rem;">Track B: Resume Reviewer</h4>
             </div>
-            <p style="color:#94a3b8;margin:0 0 0.75rem;">Users upload a resume and paste a job description. The app returns: match score, missing keywords, rewrite suggestions for each bullet point, and a one-click improved version.</p>
-            <p style="color:#64748b;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> PDF parsing · Structured JSON output · Diff view of original vs. improved · PII handling</p>
+            <p style="color:#475569;margin:0 0 0.75rem;">Users upload a resume and paste a job description. The app returns: match score, missing keywords, rewrite suggestions for each bullet point, and a one-click improved version.</p>
+            <p style="color:#334155;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> PDF parsing · Structured JSON output · Diff view of original vs. improved · PII handling</p>
           </div>
 
-          <div style="padding:1.5rem;background:#1e293b;border:2px solid rgba(34,197,94,0.3);border-radius:14px;">
+          <div style="padding:1.5rem;background:#f1f5f9;border:2px solid rgba(34,197,94,0.3);border-radius:14px;">
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
               <span style="font-size:1.5rem;">📚</span>
-              <h4 style="margin:0;color:#4ade80;font-size:1.1rem;">Track C: Knowledge Base Bot</h4>
+              <h4 style="margin:0;color:#16a34a;font-size:1.1rem;">Track C: Knowledge Base Bot</h4>
             </div>
-            <p style="color:#94a3b8;margin:0 0 0.75rem;">Ingest a set of documents (company wiki, product docs, textbook). Users ask natural-language questions and get cited answers. Shows source snippets. Never hallucinates beyond the provided docs.</p>
-            <p style="color:#64748b;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Chunking strategy · Citation tracking · "I don't know" detection · Hybrid search</p>
+            <p style="color:#475569;margin:0 0 0.75rem;">Ingest a set of documents (company wiki, product docs, textbook). Users ask natural-language questions and get cited answers. Shows source snippets. Never hallucinates beyond the provided docs.</p>
+            <p style="color:#334155;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Chunking strategy · Citation tracking · "I don't know" detection · Hybrid search</p>
           </div>
 
-          <div style="padding:1.5rem;background:#1e293b;border:2px solid rgba(251,191,36,0.3);border-radius:14px;">
+          <div style="padding:1.5rem;background:#f1f5f9;border:2px solid rgba(251,191,36,0.3);border-radius:14px;">
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
               <span style="font-size:1.5rem;">🎤</span>
               <h4 style="margin:0;color:#fbbf24;font-size:1.1rem;">Track D: Meeting Assistant</h4>
             </div>
-            <p style="color:#94a3b8;margin:0 0 0.75rem;">User uploads a meeting recording or transcript. App produces: structured summary, action items with owners, decisions made, follow-up questions, and a shareable HTML report.</p>
-            <p style="color:#64748b;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Whisper transcription · Multi-speaker diarization · Action item extraction · HTML report generation</p>
+            <p style="color:#475569;margin:0 0 0.75rem;">User uploads a meeting recording or transcript. App produces: structured summary, action items with owners, decisions made, follow-up questions, and a shareable HTML report.</p>
+            <p style="color:#334155;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Whisper transcription · Multi-speaker diarization · Action item extraction · HTML report generation</p>
           </div>
 
-          <div style="padding:1.5rem;background:#1e293b;border:2px solid rgba(248,113,113,0.3);border-radius:14px;">
+          <div style="padding:1.5rem;background:#f1f5f9;border:2px solid rgba(248,113,113,0.3);border-radius:14px;">
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
               <span style="font-size:1.5rem;">💻</span>
               <h4 style="margin:0;color:#f87171;font-size:1.1rem;">Track E: AI Coding Assistant</h4>
             </div>
-            <p style="color:#94a3b8;margin:0 0 0.75rem;">A code review + generation tool. User pastes code or describes a function. App explains it, finds bugs, generates tests, and suggests improvements. Uses tool calling to run code in a sandbox.</p>
-            <p style="color:#64748b;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Code execution sandbox · Test generation · Diff display · Language detection</p>
+            <p style="color:#475569;margin:0 0 0.75rem;">A code review + generation tool. User pastes code or describes a function. App explains it, finds bugs, generates tests, and suggests improvements. Uses tool calling to run code in a sandbox.</p>
+            <p style="color:#334155;font-size:0.85rem;margin:0;"><strong style="color:#475569;">Key challenges:</strong> Code execution sandbox · Test generation · Diff display · Language detection</p>
           </div>
         </div>
 

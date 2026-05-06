@@ -36,9 +36,9 @@
         <h2 id="architecture">AI App Architecture</h2>
         <p>A production AI app has three tiers. Understanding this architecture lets you build, debug, and scale any AI product.</p>
         <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">🖥️</div><h4 style="color:#38bdf8">Frontend</h4><p>What users see. Streamlit for rapid prototypes. React/Next.js for production. Handles input, displays output.</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">⚙️</div><h4 style="color:#4ade80">Backend API</h4><p>FastAPI or Flask. Receives requests, calls LLM API, applies business logic, returns structured responses.</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">🤖</div><h4 style="color:#c084fc">AI Layer</h4><p>LLM API calls, vector DB queries, embeddings. The intelligence. Sits behind the backend, never exposed directly to users.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🖥️</div><h4 style="color:#0284c7">Frontend</h4><p>What users see. Streamlit for rapid prototypes. React/Next.js for production. Handles input, displays output.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">⚙️</div><h4 style="color:#16a34a">Backend API</h4><p>FastAPI or Flask. Receives requests, calls LLM API, applies business logic, returns structured responses.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🤖</div><h4 style="color:#7c3aed">AI Layer</h4><p>LLM API calls, vector DB queries, embeddings. The intelligence. Sits behind the backend, never exposed directly to users.</p></div>
         </div>
       </div>
 
@@ -145,10 +145,10 @@ if prompt := st.chat_input("Type your question..."):
         <table class="def-table">
           <thead><tr><th>Platform</th><th>Cost</th><th>Best For</th><th>Setup Time</th></tr></thead>
           <tbody>
-            <tr><td><strong style="color:#4ade80">Streamlit Community Cloud</strong></td><td>Free</td><td>Streamlit apps, quick demos</td><td>5 min — connect GitHub repo</td></tr>
-            <tr><td><strong style="color:#60a5fa">Render</strong></td><td>Free tier</td><td>FastAPI backends, full-stack apps</td><td>15 min — connect GitHub, add env vars</td></tr>
-            <tr><td><strong style="color:#c084fc">Railway</strong></td><td>$5/mo</td><td>Full-stack apps with databases</td><td>10 min — deploy from GitHub</td></tr>
-            <tr><td><strong style="color:#fb923c">GitHub Pages</strong></td><td>Free</td><td>Static HTML/JS frontends</td><td>2 min — enable in repo settings</td></tr>
+            <tr><td><strong style="color:#16a34a">Streamlit Community Cloud</strong></td><td>Free</td><td>Streamlit apps, quick demos</td><td>5 min — connect GitHub repo</td></tr>
+            <tr><td><strong style="color:#1d4ed8">Render</strong></td><td>Free tier</td><td>FastAPI backends, full-stack apps</td><td>15 min — connect GitHub, add env vars</td></tr>
+            <tr><td><strong style="color:#7c3aed">Railway</strong></td><td>$5/mo</td><td>Full-stack apps with databases</td><td>10 min — deploy from GitHub</td></tr>
+            <tr><td><strong style="color:#c2410c">GitHub Pages</strong></td><td>Free</td><td>Static HTML/JS frontends</td><td>2 min — enable in repo settings</td></tr>
             <tr><td><strong>Vercel / Netlify</strong></td><td>Free tier</td><td>Next.js / React frontends</td><td>5 min — connect GitHub</td></tr>
           </tbody>
         </table>

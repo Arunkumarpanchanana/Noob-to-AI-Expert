@@ -35,16 +35,16 @@
       <div class="concept-section">
         <h2 id="the-neuron">The Building Block: A Single Neuron</h2>
         <p>A neuron takes multiple inputs, multiplies each by a weight, adds a bias, then applies an activation function. That's it. Everything in deep learning is billions of these stacked together.</p>
-        <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;font-family:var(--font-mono);font-size:0.9rem;color:#e2e8f0;">
-          <div style="text-align:center;margin-bottom:1rem;color:#94a3b8;font-size:0.8rem;">Single Neuron Computation</div>
+        <div style="background:#f1f5f9;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin:1.5rem 0;font-family:var(--font-mono);font-size:0.9rem;color:#0f172a;">
+          <div style="text-align:center;margin-bottom:1rem;color:#475569;font-size:0.8rem;">Single Neuron Computation</div>
           <div style="text-align:center;font-size:1.1rem;">
-            <span style="color:#60a5fa">z</span> = <span style="color:#4ade80">w₁</span>x₁ + <span style="color:#4ade80">w₂</span>x₂ + <span style="color:#4ade80">w₃</span>x₃ + <span style="color:#fbbf24">b</span>
+            <span style="color:#1d4ed8">z</span> = <span style="color:#16a34a">w₁</span>x₁ + <span style="color:#16a34a">w₂</span>x₂ + <span style="color:#16a34a">w₃</span>x₃ + <span style="color:#fbbf24">b</span>
           </div>
           <div style="text-align:center;font-size:1.1rem;margin-top:0.5rem;">
-            <span style="color:#c084fc">output</span> = activation(<span style="color:#60a5fa">z</span>)
+            <span style="color:#7c3aed">output</span> = activation(<span style="color:#1d4ed8">z</span>)
           </div>
-          <div style="margin-top:1rem;font-size:0.75rem;color:#64748b;text-align:center;">
-            <span style="color:#4ade80">w</span> = learned weights · <span style="color:#fbbf24">b</span> = bias · activation = non-linearity
+          <div style="margin-top:1rem;font-size:0.75rem;color:#334155;text-align:center;">
+            <span style="color:#16a34a">w</span> = learned weights · <span style="color:#fbbf24">b</span> = bias · activation = non-linearity
           </div>
         </div>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
@@ -71,9 +71,9 @@ print(f"ReLU output = {output:.3f}")</code></pre></div>
         <h2 id="layers">Layers and Deep Networks</h2>
         <p>Stack neurons in layers. Each layer transforms its input into a new representation. Deep networks learn hierarchical features — from simple to complex.</p>
         <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">📥</div><h4 style="color:#38bdf8">Input Layer</h4><p>Raw features enter here. One neuron per feature. No computation — just passes values forward.</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">🔒</div><h4 style="color:#4ade80">Hidden Layers</h4><p>The "thinking" layers. Learn increasingly abstract representations. More layers = deeper network = "deep learning".</p></div>
-          <div class="compare-card" style="text-align:center;"><div class="card-icon">📤</div><h4 style="color:#c084fc">Output Layer</h4><p>Produces the final prediction. Regression: 1 neuron (continuous). Classification: N neurons (one per class) with softmax.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📥</div><h4 style="color:#0284c7">Input Layer</h4><p>Raw features enter here. One neuron per feature. No computation — just passes values forward.</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">🔒</div><h4 style="color:#16a34a">Hidden Layers</h4><p>The "thinking" layers. Learn increasingly abstract representations. More layers = deeper network = "deep learning".</p></div>
+          <div class="compare-card" style="text-align:center;"><div class="card-icon">📤</div><h4 style="color:#7c3aed">Output Layer</h4><p>Produces the final prediction. Regression: 1 neuron (continuous). Classification: N neurons (one per class) with softmax.</p></div>
         </div>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
         <pre><code class="language-python">import torch
@@ -108,9 +108,9 @@ print(f"Total trainable parameters: {total:,}")</code></pre></div>
         <table class="def-table">
           <thead><tr><th>Function</th><th>Formula</th><th>Range</th><th>Best Used For</th></tr></thead>
           <tbody>
-            <tr><td><strong style="color:#4ade80">ReLU</strong></td><td>max(0, x)</td><td>[0, ∞)</td><td>Hidden layers in most networks. Fast, simple, avoids vanishing gradients.</td></tr>
-            <tr><td><strong style="color:#60a5fa">Sigmoid</strong></td><td>1/(1+e⁻ˣ)</td><td>(0, 1)</td><td>Binary classification output layer. Squashes to probability.</td></tr>
-            <tr><td><strong style="color:#c084fc">Softmax</strong></td><td>eˣⁱ/Σeˣʲ</td><td>(0, 1), sums to 1</td><td>Multi-class output layer. Probability distribution over classes.</td></tr>
+            <tr><td><strong style="color:#16a34a">ReLU</strong></td><td>max(0, x)</td><td>[0, ∞)</td><td>Hidden layers in most networks. Fast, simple, avoids vanishing gradients.</td></tr>
+            <tr><td><strong style="color:#1d4ed8">Sigmoid</strong></td><td>1/(1+e⁻ˣ)</td><td>(0, 1)</td><td>Binary classification output layer. Squashes to probability.</td></tr>
+            <tr><td><strong style="color:#7c3aed">Softmax</strong></td><td>eˣⁱ/Σeˣʲ</td><td>(0, 1), sums to 1</td><td>Multi-class output layer. Probability distribution over classes.</td></tr>
             <tr><td><strong style="color:#fbbf24">Tanh</strong></td><td>(eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)</td><td>(-1, 1)</td><td>Hidden layers when negative outputs matter (RNNs). Zero-centered.</td></tr>
           </tbody>
         </table>
@@ -120,10 +120,10 @@ print(f"Total trainable parameters: {total:,}")</code></pre></div>
         <h2 id="backpropagation">Backpropagation: How Networks Learn</h2>
         <p>Backprop is the algorithm that makes neural networks trainable. It efficiently computes gradients using the chain rule of calculus — flowing error signals backward through the network.</p>
         <ol class="step-list">
-          <li><strong style="color:#e2e8f0">Forward pass:</strong> Input flows through all layers → prediction produced.</li>
-          <li><strong style="color:#e2e8f0">Compute loss:</strong> Compare prediction to true label (e.g., cross-entropy loss).</li>
-          <li><strong style="color:#e2e8f0">Backward pass:</strong> Compute gradient of loss with respect to each weight using chain rule.</li>
-          <li><strong style="color:#e2e8f0">Update weights:</strong> optimizer.step() nudges each weight to reduce loss.</li>
+          <li><strong style="color:#0f172a">Forward pass:</strong> Input flows through all layers → prediction produced.</li>
+          <li><strong style="color:#0f172a">Compute loss:</strong> Compare prediction to true label (e.g., cross-entropy loss).</li>
+          <li><strong style="color:#0f172a">Backward pass:</strong> Compute gradient of loss with respect to each weight using chain rule.</li>
+          <li><strong style="color:#0f172a">Update weights:</strong> optimizer.step() nudges each weight to reduce loss.</li>
         </ol>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
         <pre><code class="language-python">import torch

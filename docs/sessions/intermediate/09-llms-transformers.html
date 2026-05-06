@@ -34,7 +34,7 @@
     <div class="tab-panel learn-content" data-panel="learn">
       <div class="concept-section">
         <h2 id="tokens">Tokens: The Currency of LLMs</h2>
-        <p>LLMs don't process words — they process <strong style="color:#e2e8f0">tokens</strong>. A token is roughly a word or word-piece (subword). The model converts text into token IDs, processes them, then converts token IDs back to text.</p>
+        <p>LLMs don't process words — they process <strong style="color:#0f172a">tokens</strong>. A token is roughly a word or word-piece (subword). The model converts text into token IDs, processes them, then converts token IDs back to text.</p>
         <div class="callout callout-info"><span class="callout-icon">💡</span><div class="callout-body"><h4>Token Rules of Thumb</h4><p>~1 token per 4 characters of English text. "Hello world" ≈ 2 tokens. A 5-page essay ≈ ~2,000 tokens. GPT-4's 128k context window = ~96,000 words. Why tokens matter: you pay per token and your prompt + response must fit in the context window.</p></div></div>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
         <pre><code class="language-python">import tiktoken  # pip install tiktoken
@@ -64,13 +64,13 @@ for token_id in tokens:
       <div class="concept-section">
         <h2 id="attention">Attention: The Core of Transformers</h2>
         <p>The key innovation in the 2017 "Attention Is All You Need" paper. Attention lets each token look at every other token in the sequence to decide what to focus on.</p>
-        <p><strong style="color:#e2e8f0">Analogy:</strong> Reading the sentence "The animal didn't cross the street because it was too tired." What does "it" refer to? "Animal" or "street"? Your brain uses attention — looking back at context to resolve the ambiguity. Transformers do the same thing mathematically.</p>
-        <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.25rem;margin:1.5rem 0;font-size:0.85rem;color:#94a3b8;line-height:1.8;">
-          <strong style="color:#e2e8f0;display:block;margin-bottom:0.5rem;">Self-Attention Intuition</strong>
+        <p><strong style="color:#0f172a">Analogy:</strong> Reading the sentence "The animal didn't cross the street because it was too tired." What does "it" refer to? "Animal" or "street"? Your brain uses attention — looking back at context to resolve the ambiguity. Transformers do the same thing mathematically.</p>
+        <div style="background:#f1f5f9;border:1px solid #334155;border-radius:12px;padding:1.25rem;margin:1.5rem 0;font-size:0.85rem;color:#475569;line-height:1.8;">
+          <strong style="color:#0f172a;display:block;margin-bottom:0.5rem;">Self-Attention Intuition</strong>
           For each token, attention computes:<br>
-          <span style="color:#60a5fa">Query (Q)</span>: "What am I looking for?"<br>
-          <span style="color:#4ade80">Key (K)</span>: "What do I advertise about myself?"<br>
-          <span style="color:#c084fc">Value (V)</span>: "What information do I carry?"<br><br>
+          <span style="color:#1d4ed8">Query (Q)</span>: "What am I looking for?"<br>
+          <span style="color:#16a34a">Key (K)</span>: "What do I advertise about myself?"<br>
+          <span style="color:#7c3aed">Value (V)</span>: "What information do I carry?"<br><br>
           Each token's query is matched against all other tokens' keys. High match → high attention weight → more of that token's value is incorporated into the current token's representation.
         </div>
       </div>
@@ -81,8 +81,8 @@ for token_id in tokens:
         <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
           <div class="compare-card"><div class="card-icon">🎲</div><h4 style="color:#f87171">Statistical Generation</h4><p>The model picks the next token based on probability distributions — not factual lookup. Plausible ≠ true.</p></div>
           <div class="compare-card"><div class="card-icon">📚</div><h4 style="color:#fbbf24">Training Data Gaps</h4><p>If a fact wasn't well-represented in training data, the model learned a wrong or uncertain distribution for it.</p></div>
-          <div class="compare-card"><div class="card-icon">📏</div><h4 style="color:#60a5fa">Context Window Limit</h4><p>The model forgets information beyond its context window — it can't reference documents it hasn't been given.</p></div>
-          <div class="compare-card"><div class="card-icon">🔇</div><h4 style="color:#4ade80">Fix: RAG</h4><p>Retrieval-Augmented Generation (Session 11) grounds the model in actual documents, dramatically reducing hallucination.</p></div>
+          <div class="compare-card"><div class="card-icon">📏</div><h4 style="color:#1d4ed8">Context Window Limit</h4><p>The model forgets information beyond its context window — it can't reference documents it hasn't been given.</p></div>
+          <div class="compare-card"><div class="card-icon">🔇</div><h4 style="color:#16a34a">Fix: RAG</h4><p>Retrieval-Augmented Generation (Session 11) grounds the model in actual documents, dramatically reducing hallucination.</p></div>
         </div>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
         <pre><code class="language-python"># Experiment: See tokens and context limits in action

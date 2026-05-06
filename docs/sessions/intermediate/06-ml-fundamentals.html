@@ -37,12 +37,12 @@
         <p>Every ML system has two distinct phases. Confusing them leads to fundamental design mistakes.</p>
         <div class="compare-grid" style="grid-template-columns:1fr 1fr;">
           <div class="compare-card">
-            <div class="card-icon">🏋️</div><h4 style="color:#60a5fa">Training</h4>
+            <div class="card-icon">🏋️</div><h4 style="color:#1d4ed8">Training</h4>
             <p>The model sees (features, label) pairs and adjusts its internal weights to minimize prediction errors. Happens once (or periodically). Can take hours to months. Uses massive compute.</p>
             <p style="font-size:0.8rem;color:#3b82f6;margin-top:0.5rem;">Analogy: A student studying for an exam — reading, practicing, correcting mistakes.</p>
           </div>
           <div class="compare-card">
-            <div class="card-icon">⚡</div><h4 style="color:#4ade80">Inference</h4>
+            <div class="card-icon">⚡</div><h4 style="color:#16a34a">Inference</h4>
             <p>The trained model receives new input and produces a prediction. No weight updates. Happens millions of times per day in production. Must be fast.</p>
             <p style="font-size:0.8rem;color:#22c55e;margin-top:0.5rem;">Analogy: The same student taking the exam — applying what they learned to new questions.</p>
           </div>
@@ -52,13 +52,13 @@
 
       <div class="concept-section">
         <h2 id="loss-gradient">Loss Functions and Gradient Descent</h2>
-        <p>Training is fundamentally an optimization problem: find the weights that minimize prediction error. The mechanism is <strong style="color:#e2e8f0">gradient descent</strong>.</p>
+        <p>Training is fundamentally an optimization problem: find the weights that minimize prediction error. The mechanism is <strong style="color:#0f172a">gradient descent</strong>.</p>
         <ol class="step-list">
-          <li><strong style="color:#e2e8f0">Forward pass:</strong> Feed input through the model, get a prediction.</li>
-          <li><strong style="color:#e2e8f0">Calculate loss:</strong> Measure how wrong the prediction is (e.g., Mean Squared Error for regression).</li>
-          <li><strong style="color:#e2e8f0">Backward pass:</strong> Calculate gradients — how much each weight contributed to the error.</li>
-          <li><strong style="color:#e2e8f0">Update weights:</strong> Nudge each weight in the direction that reduces loss (learning rate × gradient).</li>
-          <li><strong style="color:#e2e8f0">Repeat</strong> over all training examples (one epoch). Repeat for many epochs.</li>
+          <li><strong style="color:#0f172a">Forward pass:</strong> Feed input through the model, get a prediction.</li>
+          <li><strong style="color:#0f172a">Calculate loss:</strong> Measure how wrong the prediction is (e.g., Mean Squared Error for regression).</li>
+          <li><strong style="color:#0f172a">Backward pass:</strong> Calculate gradients — how much each weight contributed to the error.</li>
+          <li><strong style="color:#0f172a">Update weights:</strong> Nudge each weight in the direction that reduces loss (learning rate × gradient).</li>
+          <li><strong style="color:#0f172a">Repeat</strong> over all training examples (one epoch). Repeat for many epochs.</li>
         </ol>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
         <pre><code class="language-python">import numpy as np
@@ -97,8 +97,8 @@ print(f"Prediction for 350 sqft: ${w*3.5 + b:.0f}k")</code></pre></div>
         <table class="def-table">
           <thead><tr><th>Type</th><th>Output</th><th>Examples</th><th>Common Algorithms</th></tr></thead>
           <tbody>
-            <tr><td><strong style="color:#60a5fa">Regression</strong></td><td>A continuous number</td><td>House price, temperature, stock price, customer lifetime value</td><td>Linear regression, Random Forest, XGBoost, Neural nets</td></tr>
-            <tr><td><strong style="color:#4ade80">Classification</strong></td><td>A category (class)</td><td>Spam/not spam, cat/dog, sentiment (pos/neg/neutral), disease diagnosis</td><td>Logistic regression, SVM, Random Forest, Neural nets</td></tr>
+            <tr><td><strong style="color:#1d4ed8">Regression</strong></td><td>A continuous number</td><td>House price, temperature, stock price, customer lifetime value</td><td>Linear regression, Random Forest, XGBoost, Neural nets</td></tr>
+            <tr><td><strong style="color:#16a34a">Classification</strong></td><td>A category (class)</td><td>Spam/not spam, cat/dog, sentiment (pos/neg/neutral), disease diagnosis</td><td>Logistic regression, SVM, Random Forest, Neural nets</td></tr>
           </tbody>
         </table>
         <div style="position:relative;"><button class="copy-btn">Copy</button>
@@ -128,15 +128,15 @@ print(f"Classification Accuracy: {accuracy_score(y_test, y_pred):.2%}")</code></
         <h3 id="overfitting">Overfitting vs Underfitting</h3>
         <div class="compare-grid" style="grid-template-columns:repeat(3,1fr);">
           <div class="compare-card"><div class="card-icon">📉</div><h4 style="color:#f87171">Underfitting</h4><p>Model is too simple to capture the patterns. High training error AND high test error. Fix: more complex model, more features, less regularization.</p></div>
-          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#4ade80">Good Fit</h4><p>Low training error AND low test error. The model generalizes. This is the goal.</p></div>
+          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#16a34a">Good Fit</h4><p>Low training error AND low test error. The model generalizes. This is the goal.</p></div>
           <div class="compare-card"><div class="card-icon">📈</div><h4 style="color:#fbbf24">Overfitting</h4><p>Model memorized training data. Low training error, HIGH test error. Fix: more data, dropout, regularization, simpler model.</p></div>
         </div>
       </div>
 
       <div class="concept-section">
         <h2 id="quick-check">Quick Check</h2>
-        <div class="reveal-block"><div class="reveal-question"><span>❓ A model has 99% training accuracy but 60% test accuracy. What is happening?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Overfitting.</strong> The model memorized training examples instead of learning general patterns. The 39-point gap between train and test accuracy is the telltale sign.</div></div>
-        <div class="reveal-block"><div class="reveal-question"><span>❓ Predict whether a customer will churn (leave) vs predict how much they'll spend next month. Which task type is each?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Churn prediction = Classification</strong> (binary: churn / not churn). <strong style="color:#4ade80">Spend prediction = Regression</strong> (continuous dollar amount).</div></div>
+        <div class="reveal-block"><div class="reveal-question"><span>❓ A model has 99% training accuracy but 60% test accuracy. What is happening?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#16a34a">Overfitting.</strong> The model memorized training examples instead of learning general patterns. The 39-point gap between train and test accuracy is the telltale sign.</div></div>
+        <div class="reveal-block"><div class="reveal-question"><span>❓ Predict whether a customer will churn (leave) vs predict how much they'll spend next month. Which task type is each?</span><span class="reveal-icon">▼</span></div><div class="reveal-answer" style="display:none"><strong style="color:#16a34a">Churn prediction = Classification</strong> (binary: churn / not churn). <strong style="color:#16a34a">Spend prediction = Regression</strong> (continuous dollar amount).</div></div>
       </div>
     </div>
 

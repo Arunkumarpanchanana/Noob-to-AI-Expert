@@ -37,19 +37,19 @@
         <p>LLMs have two fundamental problems for enterprise use: they hallucinate, and their knowledge is frozen at training cutoff. RAG solves both by giving the model fresh, real documents at inference time.</p>
         <div class="compare-grid" style="grid-template-columns:1fr 1fr;">
           <div class="compare-card"><div class="card-icon">❌</div><h4 style="color:#f87171">Without RAG</h4><p>"What is our refund policy?" → LLM guesses or hallucinates a policy that doesn't exist. Knowledge cutoff makes it unable to answer about recent events.</p></div>
-          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#4ade80">With RAG</h4><p>"What is our refund policy?" → System retrieves your actual policy document → LLM reads it and answers accurately with citations. Always current, never hallucinated.</p></div>
+          <div class="compare-card"><div class="card-icon">✅</div><h4 style="color:#16a34a">With RAG</h4><p>"What is our refund policy?" → System retrieves your actual policy document → LLM reads it and answers accurately with citations. Always current, never hallucinated.</p></div>
         </div>
       </div>
 
       <div class="concept-section">
         <h2 id="rag-pipeline">The RAG Pipeline: 6 Steps</h2>
         <ol class="step-list">
-          <li><strong style="color:#e2e8f0">Load documents</strong> — PDFs, markdown files, web pages, databases. Parse text from raw files.</li>
-          <li><strong style="color:#e2e8f0">Chunk</strong> — Split documents into smaller pieces (e.g., 500 tokens with 50-token overlap). Smaller chunks = more precise retrieval.</li>
-          <li><strong style="color:#e2e8f0">Embed chunks</strong> — Convert each chunk to a vector using an embedding model.</li>
-          <li><strong style="color:#e2e8f0">Store in vector DB</strong> — Save chunk text + embedding + metadata to ChromaDB, Pinecone, etc.</li>
-          <li><strong style="color:#e2e8f0">Retrieve</strong> — At query time: embed the query, find top-k most similar chunks.</li>
-          <li><strong style="color:#e2e8f0">Generate</strong> — Inject retrieved chunks into the LLM prompt. Model answers using only provided context.</li>
+          <li><strong style="color:#0f172a">Load documents</strong> — PDFs, markdown files, web pages, databases. Parse text from raw files.</li>
+          <li><strong style="color:#0f172a">Chunk</strong> — Split documents into smaller pieces (e.g., 500 tokens with 50-token overlap). Smaller chunks = more precise retrieval.</li>
+          <li><strong style="color:#0f172a">Embed chunks</strong> — Convert each chunk to a vector using an embedding model.</li>
+          <li><strong style="color:#0f172a">Store in vector DB</strong> — Save chunk text + embedding + metadata to ChromaDB, Pinecone, etc.</li>
+          <li><strong style="color:#0f172a">Retrieve</strong> — At query time: embed the query, find top-k most similar chunks.</li>
+          <li><strong style="color:#0f172a">Generate</strong> — Inject retrieved chunks into the LLM prompt. Model answers using only provided context.</li>
         </ol>
 
         <div style="position:relative;"><button class="copy-btn">Copy</button>
@@ -147,10 +147,10 @@ print(answer)</code></pre></div>
       <div class="concept-section">
         <h2 id="improving-rag">Improving RAG Quality</h2>
         <div class="compare-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
-          <div class="compare-card"><div class="card-icon">🔀</div><h4 style="color:#60a5fa">Hybrid Search</h4><p>Combine keyword (BM25) + semantic search. Keyword catches exact matches. Semantic catches paraphrases. Merge with RRF (Reciprocal Rank Fusion).</p></div>
-          <div class="compare-card"><div class="card-icon">🔄</div><h4 style="color:#4ade80">Re-ranking</h4><p>After retrieving top-20 chunks, use a cross-encoder model to re-rank and keep top-5. Cross-encoders are slower but much more accurate than bi-encoders.</p></div>
-          <div class="compare-card"><div class="card-icon">❓</div><h4 style="color:#c084fc">HyDE</h4><p>Hypothetical Document Embeddings — generate a hypothetical answer, embed it, search with that embedding. Outperforms query embeddings alone.</p></div>
-          <div class="compare-card"><div class="card-icon">📝</div><h4 style="color:#fb923c">Query Expansion</h4><p>Use an LLM to rewrite the query into 3 variations, search with all three, merge results. Handles vague or ambiguous queries.</p></div>
+          <div class="compare-card"><div class="card-icon">🔀</div><h4 style="color:#1d4ed8">Hybrid Search</h4><p>Combine keyword (BM25) + semantic search. Keyword catches exact matches. Semantic catches paraphrases. Merge with RRF (Reciprocal Rank Fusion).</p></div>
+          <div class="compare-card"><div class="card-icon">🔄</div><h4 style="color:#16a34a">Re-ranking</h4><p>After retrieving top-20 chunks, use a cross-encoder model to re-rank and keep top-5. Cross-encoders are slower but much more accurate than bi-encoders.</p></div>
+          <div class="compare-card"><div class="card-icon">❓</div><h4 style="color:#7c3aed">HyDE</h4><p>Hypothetical Document Embeddings — generate a hypothetical answer, embed it, search with that embedding. Outperforms query embeddings alone.</p></div>
+          <div class="compare-card"><div class="card-icon">📝</div><h4 style="color:#c2410c">Query Expansion</h4><p>Use an LLM to rewrite the query into 3 variations, search with all three, merge results. Handles vague or ambiguous queries.</p></div>
         </div>
       </div>
     </div>

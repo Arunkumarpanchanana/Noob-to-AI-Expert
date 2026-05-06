@@ -50,7 +50,7 @@
 
       <div class="concept-section">
         <h2 id="the-big-picture">The Big Picture: What Everyone Gets Wrong</h2>
-        <p>When most people hear "AI", they imagine robots, sci-fi, or magic black boxes. The reality is more interesting — and more accessible. AI is a <strong style="color:#e2e8f0">collection of techniques</strong> for making computers learn from data and make decisions.</p>
+        <p>When most people hear "AI", they imagine robots, sci-fi, or magic black boxes. The reality is more interesting — and more accessible. AI is a <strong style="color:#0f172a">collection of techniques</strong> for making computers learn from data and make decisions.</p>
         <p>Here's the confusion: people use "AI", "Machine Learning", "Deep Learning", and "ChatGPT" interchangeably. They're not the same thing. Understanding the difference is the foundation of everything else in this course.</p>
 
         <div class="callout callout-info">
@@ -68,25 +68,25 @@
         <div class="compare-grid">
           <div class="compare-card">
             <div class="card-icon">🧠</div>
-            <h4 style="color:#38bdf8">Artificial Intelligence (AI)</h4>
+            <h4 style="color:#0284c7">Artificial Intelligence (AI)</h4>
             <p>The broad field of making machines simulate human intelligence. Includes rule-based systems, search algorithms, planning, and more. Been around since the 1950s.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#0ea5e9;">Example: Chess engine that uses rules + search</p>
           </div>
           <div class="compare-card">
             <div class="card-icon">📊</div>
-            <h4 style="color:#4ade80">Machine Learning (ML)</h4>
+            <h4 style="color:#16a34a">Machine Learning (ML)</h4>
             <p>A subset of AI where systems <em>learn patterns from data</em> instead of being explicitly programmed with rules. The machine figures out the rules itself.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#22c55e;">Example: Spam filter that learns from 10,000 spam emails</p>
           </div>
           <div class="compare-card">
             <div class="card-icon">🕸️</div>
-            <h4 style="color:#c084fc">Deep Learning (DL)</h4>
+            <h4 style="color:#7c3aed">Deep Learning (DL)</h4>
             <p>A subset of ML using multi-layer neural networks. Excels at unstructured data: images, audio, text. Powers face recognition, speech-to-text, translation.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#a855f7;">Example: Image classifier that recognizes cats vs dogs</p>
           </div>
           <div class="compare-card">
             <div class="card-icon">✨</div>
-            <h4 style="color:#fb923c">Generative AI (GenAI)</h4>
+            <h4 style="color:#c2410c">Generative AI (GenAI)</h4>
             <p>A type of Deep Learning that <em>creates new content</em> — text, images, audio, code — rather than just classifying existing content. ChatGPT, DALL-E, Stable Diffusion.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#f97316;">Example: GPT-4 writing an essay from a prompt</p>
           </div>
@@ -96,19 +96,19 @@
         <p>This contrast is the most important concept in ML. Understanding it unlocks everything else.</p>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.5rem 0;">
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
-            <div style="font-weight:700; color:#f8fafc; margin-bottom:0.75rem;">🔧 Traditional Programming</div>
-            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.7;">
-              <strong style="color:#e2e8f0;">Input:</strong> Data + Rules<br>
-              <strong style="color:#e2e8f0;">Output:</strong> Answers<br><br>
+          <div style="background:#f1f5f9; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
+            <div style="font-weight:700; color:#0f172a; margin-bottom:0.75rem;">🔧 Traditional Programming</div>
+            <div style="font-size:0.85rem; color:#475569; line-height:1.7;">
+              <strong style="color:#0f172a;">Input:</strong> Data + Rules<br>
+              <strong style="color:#0f172a;">Output:</strong> Answers<br><br>
               You write explicit if/else rules. The computer follows them exactly. Changes require a programmer to update the rules.
             </div>
           </div>
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
-            <div style="font-weight:700; color:#f8fafc; margin-bottom:0.75rem;">🤖 Machine Learning</div>
-            <div style="font-size:0.85rem; color:#94a3b8; line-height:1.7;">
-              <strong style="color:#e2e8f0;">Input:</strong> Data + Answers<br>
-              <strong style="color:#e2e8f0;">Output:</strong> Rules (= the model)<br><br>
+          <div style="background:#f1f5f9; border:1px solid #334155; border-radius:12px; padding:1.25rem;">
+            <div style="font-weight:700; color:#0f172a; margin-bottom:0.75rem;">🤖 Machine Learning</div>
+            <div style="font-size:0.85rem; color:#475569; line-height:1.7;">
+              <strong style="color:#0f172a;">Input:</strong> Data + Answers<br>
+              <strong style="color:#0f172a;">Output:</strong> Rules (= the model)<br><br>
               You provide examples. The machine discovers the rules. Can generalize to new data it's never seen.
             </div>
           </div>
@@ -147,11 +147,11 @@
         <p>Every AI application — from spam filters to ChatGPT — has the same core anatomy:</p>
 
         <ol class="step-list">
-          <li><strong style="color:#e2e8f0;">Data</strong> — The fuel. Could be text, images, numbers, audio, or anything measurable.</li>
-          <li><strong style="color:#e2e8f0;">Model</strong> — The learned function. Takes input, produces output. Lives in memory as a file of numbers (weights).</li>
-          <li><strong style="color:#e2e8f0;">Training</strong> — The process of adjusting model weights until outputs match expected answers.</li>
-          <li><strong style="color:#e2e8f0;">Inference</strong> — Using the trained model on new data to make predictions or generate content.</li>
-          <li><strong style="color:#e2e8f0;">Evaluation</strong> — Measuring how good the model is (accuracy, F1, human rating, etc.).</li>
+          <li><strong style="color:#0f172a;">Data</strong> — The fuel. Could be text, images, numbers, audio, or anything measurable.</li>
+          <li><strong style="color:#0f172a;">Model</strong> — The learned function. Takes input, produces output. Lives in memory as a file of numbers (weights).</li>
+          <li><strong style="color:#0f172a;">Training</strong> — The process of adjusting model weights until outputs match expected answers.</li>
+          <li><strong style="color:#0f172a;">Inference</strong> — Using the trained model on new data to make predictions or generate content.</li>
+          <li><strong style="color:#0f172a;">Evaluation</strong> — Measuring how good the model is (accuracy, F1, human rating, etc.).</li>
         </ol>
       </div>
 
@@ -161,19 +161,19 @@
         <div class="compare-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
           <div class="compare-card">
             <div class="card-icon">🏷️</div>
-            <h4 style="color:#4ade80">Supervised Learning</h4>
+            <h4 style="color:#16a34a">Supervised Learning</h4>
             <p>Trained on labeled examples. For every input, there's a correct answer. The model learns to predict the label.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#22c55e;">Used for: spam detection, image classification, price prediction</p>
           </div>
           <div class="compare-card">
             <div class="card-icon">🔍</div>
-            <h4 style="color:#60a5fa">Unsupervised Learning</h4>
+            <h4 style="color:#1d4ed8">Unsupervised Learning</h4>
             <p>No labels. The model finds patterns and structure in raw data on its own. Clusters, groups, anomalies.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#3b82f6;">Used for: customer segmentation, anomaly detection, compression</p>
           </div>
           <div class="compare-card">
             <div class="card-icon">🎮</div>
-            <h4 style="color:#c084fc">Reinforcement Learning</h4>
+            <h4 style="color:#7c3aed">Reinforcement Learning</h4>
             <p>An agent takes actions in an environment and receives rewards or penalties. Learns by trial and error to maximize reward.</p>
             <p style="margin-top:0.5rem; font-size:0.8rem; color:#a855f7;">Used for: game-playing AI, robotics, RLHF in LLMs</p>
           </div>
@@ -195,17 +195,17 @@
         <div class="compare-grid" style="grid-template-columns: repeat(3, 1fr);">
           <div class="compare-card" style="text-align:center;">
             <div class="card-icon">💾</div>
-            <h4 style="color:#f8fafc">Massive Data</h4>
+            <h4 style="color:#0f172a">Massive Data</h4>
             <p>The internet created an ocean of text, images, and behavior data that models can learn from.</p>
           </div>
           <div class="compare-card" style="text-align:center;">
             <div class="card-icon">⚡</div>
-            <h4 style="color:#f8fafc">GPU Compute</h4>
+            <h4 style="color:#0f172a">GPU Compute</h4>
             <p>NVIDIA GPUs made training billion-parameter models practical. Cost dropped 1000x in 10 years.</p>
           </div>
           <div class="compare-card" style="text-align:center;">
             <div class="card-icon">🔬</div>
-            <h4 style="color:#f8fafc">The Transformer</h4>
+            <h4 style="color:#0f172a">The Transformer</h4>
             <p>A 2017 architecture breakthrough ("Attention Is All You Need") that made LLMs possible.</p>
           </div>
         </div>
@@ -229,7 +229,7 @@
             <span class="reveal-icon">▼</span>
           </div>
           <div class="reveal-answer" style="display:none">
-            <strong style="color:#4ade80;">✓ Supervised Machine Learning</strong> — It uses labeled training data (fraud/not fraud) to learn a classification rule. Not deep learning unless it uses neural networks, and not generative AI because it's classifying, not generating content.
+            <strong style="color:#16a34a;">✓ Supervised Machine Learning</strong> — It uses labeled training data (fraud/not fraud) to learn a classification rule. Not deep learning unless it uses neural networks, and not generative AI because it's classifying, not generating content.
           </div>
         </div>
 
@@ -239,7 +239,7 @@
             <span class="reveal-icon">▼</span>
           </div>
           <div class="reveal-answer" style="display:none">
-            <strong style="color:#4ade80;">✓ Unsupervised Learning</strong> — Specifically clustering (like K-means or DBSCAN). No labels, no predefined segments — the algorithm discovers structure on its own.
+            <strong style="color:#16a34a;">✓ Unsupervised Learning</strong> — Specifically clustering (like K-means or DBSCAN). No labels, no predefined segments — the algorithm discovers structure on its own.
           </div>
         </div>
 
@@ -249,7 +249,7 @@
             <span class="reveal-icon">▼</span>
           </div>
           <div class="reveal-answer" style="display:none">
-            <strong style="color:#4ade80;">✓ Generative AI (LLM)</strong> — Copilot is powered by an LLM (based on OpenAI Codex / GPT-4) that was trained on billions of lines of code and generates new tokens (code) based on your context.
+            <strong style="color:#16a34a;">✓ Generative AI (LLM)</strong> — Copilot is powered by an LLM (based on OpenAI Codex / GPT-4) that was trained on billions of lines of code and generates new tokens (code) based on your context.
           </div>
         </div>
       </div>
@@ -272,8 +272,8 @@
           </div>
         </div>
 
-        <h3 style="color:#e2e8f0; margin:1.5rem 0 1rem;">Lab Objective</h3>
-        <p style="color:#94a3b8; margin-bottom:1.5rem;">You'll be given 20 real AI-powered products. Your job: classify each one as <strong style="color:#4ade80">AI/Rule-based</strong>, <strong style="color:#60a5fa">ML</strong>, <strong style="color:#c084fc">Deep Learning</strong>, or <strong style="color:#fb923c">Generative AI</strong>. Then check your answers.</p>
+        <h3 style="color:#0f172a; margin:1.5rem 0 1rem;">Lab Objective</h3>
+        <p style="color:#475569; margin-bottom:1.5rem;">You'll be given 20 real AI-powered products. Your job: classify each one as <strong style="color:#16a34a">AI/Rule-based</strong>, <strong style="color:#1d4ed8">ML</strong>, <strong style="color:#7c3aed">Deep Learning</strong>, or <strong style="color:#c2410c">Generative AI</strong>. Then check your answers.</p>
 
         <!-- Browser-based lab -->
         <div id="browser-lab" style="display:none;">
@@ -457,11 +457,11 @@ function startBrowserLab() {
   document.getElementById('browser-lab').style.display = 'block';
   const container = document.getElementById('lab-questions');
   container.innerHTML = LAB_ITEMS.map((item, i) => `
-    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
-      <div style="font-size:0.85rem; color:#e2e8f0; font-weight:600; margin-bottom:0.5rem;">${i+1}. ${item.product}</div>
+    <div style="background:#f1f5f9; border:1px solid #334155; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
+      <div style="font-size:0.85rem; color:#0f172a; font-weight:600; margin-bottom:0.5rem;">${i+1}. ${item.product}</div>
       <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
         ${['ML','DL','GenAI','Rule-based'].map(t => `
-          <label style="display:flex; align-items:center; gap:0.4rem; padding:0.35rem 0.75rem; border:1px solid #334155; border-radius:6px; cursor:pointer; font-size:0.8rem; color:#94a3b8; transition:all 0.15s;"
+          <label style="display:flex; align-items:center; gap:0.4rem; padding:0.35rem 0.75rem; border:1px solid #334155; border-radius:6px; cursor:pointer; font-size:0.8rem; color:#475569; transition:all 0.15s;"
             onmouseover="this.style.borderColor='#0ea5e9'" onmouseout="this.style.borderColor='#334155'">
             <input type="radio" name="lab-${i}" value="${t}" style="accent-color:#0ea5e9;"> ${t}
           </label>`).join('')}
@@ -479,9 +479,9 @@ function checkLabAnswers() {
     return `<div style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid #1e293b;">
       <span style="color:${isCorrect ? '#4ade80' : '#f87171'}; font-size:1rem; margin-top:0.1rem;">${isCorrect ? '✓' : '✗'}</span>
       <div>
-        <div style="font-size:0.85rem; font-weight:600; color:#e2e8f0;">${item.product}</div>
-        <div style="font-size:0.8rem; color:#64748b;">Your answer: <span style="color:${isCorrect ? '#4ade80' : '#f87171'}">${given}</span> · Correct: <span style="color:#4ade80">${item.answer}</span></div>
-        <div style="font-size:0.8rem; color:#94a3b8; margin-top:0.25rem;">${item.explanation}</div>
+        <div style="font-size:0.85rem; font-weight:600; color:#0f172a;">${item.product}</div>
+        <div style="font-size:0.8rem; color:#334155;">Your answer: <span style="color:${isCorrect ? '#4ade80' : '#f87171'}">${given}</span> · Correct: <span style="color:#16a34a">${item.answer}</span></div>
+        <div style="font-size:0.8rem; color:#475569; margin-top:0.25rem;">${item.explanation}</div>
       </div>
     </div>`;
   });
@@ -489,10 +489,10 @@ function checkLabAnswers() {
   const resultEl = document.getElementById('lab-results');
   resultEl.style.display = 'block';
   resultEl.innerHTML = `
-    <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:1.5rem;">
+    <div style="background:#f1f5f9; border:1px solid #334155; border-radius:12px; padding:1.5rem;">
       <div style="text-align:center; margin-bottom:1.25rem;">
         <div style="font-size:2rem; font-weight:800; color:${correct >= 8 ? '#4ade80' : '#f87171'}">${correct} / ${LAB_ITEMS.length}</div>
-        <div style="color:#94a3b8; font-size:0.9rem;">${correct >= 8 ? '🎉 Great work!' : 'Keep reviewing — try the session again!'}</div>
+        <div style="color:#475569; font-size:0.9rem;">${correct >= 8 ? '🎉 Great work!' : 'Keep reviewing — try the session again!'}</div>
       </div>
       ${results.join('')}
     </div>`;

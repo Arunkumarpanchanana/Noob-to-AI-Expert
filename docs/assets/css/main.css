@@ -16,7 +16,7 @@
   /* Text */
   --text:         #0f172a;   /* slate-900 — primary text */
   --text-muted:   #64748b;   /* slate-500 — secondary text */
-  --text-light:   #94a3b8;   /* slate-400 — placeholder / disabled */
+  --text-light:   #475569;   /* slate-600 — placeholder / disabled (boosted for light bg) */
 
   /* Border */
   --border:       #e2e8f0;   /* slate-200 */

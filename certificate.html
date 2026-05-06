@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate of Completion — Noob to AI Expert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/Noob-to-AI-Expert/assets/css/main.css" />
+  <style>
+    .cert-page { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* Name input form */
+    .cert-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+    .cert-form h2 { margin: 0 0 0.5rem; font-size: 1.5rem; }
+    .cert-form p { color: var(--text-muted); margin: 0 0 1.5rem; }
+    .cert-form input {
+      width: 100%; max-width: 400px;
+      padding: 0.85rem 1.25rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+      display: block;
+      margin: 0 auto 1rem;
+    }
+    .cert-form input:focus { border-color: var(--brand); }
+    .cert-form button {
+      background: linear-gradient(135deg, var(--brand), var(--purple));
+      color: #fff;
+      border: none;
+      padding: 0.85rem 2.5rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(2,132,199,0.25);
+    }
+    .cert-form button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Progress warning */
+    .progress-warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .progress-warning.show { display: block; }
+    .progress-warning strong { color: #92400e; }
+    .progress-warning p { color: #78350f; margin: 0.25rem 0 0; font-size: 0.9rem; }
+
+    /* Certificate */
+    .certificate {
+      display: none;
+      background: #fff;
+      border: 3px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 3.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .certificate.show { display: block; }
+
+    /* Decorative corner accents */
+    .cert-corner {
+      position: absolute;
+      width: 80px; height: 80px;
+    }
+    .cert-corner.tl { top: 16px; left: 16px; border-top: 3px solid var(--brand); border-left: 3px solid var(--brand); border-radius: 8px 0 0 0; }
+    .cert-corner.tr { top: 16px; right: 16px; border-top: 3px solid var(--brand); border-right: 3px solid var(--brand); border-radius: 0 8px 0 0; }
+    .cert-corner.bl { bottom: 16px; left: 16px; border-bottom: 3px solid var(--brand); border-left: 3px solid var(--brand); border-radius: 0 0 0 8px; }
+    .cert-corner.br { bottom: 16px; right: 16px; border-bottom: 3px solid var(--brand); border-right: 3px solid var(--brand); border-radius: 0 0 8px 0; }
+
+    /* Background watermark */
+    .cert-watermark {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14rem;
+      opacity: 0.025;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .cert-header { text-align: center; margin-bottom: 2.5rem; }
+    .cert-logo {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, var(--brand), var(--purple));
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 16px rgba(2,132,199,0.3);
+    }
+    .cert-issuer { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
+    .cert-title-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin: 2rem 0 0.5rem; }
+    .cert-title { font-family: 'Playfair Display', Georgia, serif; font-size: 2.25rem; font-weight: 800; color: var(--text); line-height: 1.2; margin: 0; }
+
+    .cert-recipient-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin: 2rem 0 0.5rem; }
+    .cert-recipient { font-family: 'Playfair Display', Georgia, serif; font-size: 2.5rem; font-weight: 700; color: var(--brand); line-height: 1.2; margin: 0; border-bottom: 2px solid var(--border); padding-bottom: 1rem; }
+
+    .cert-body { text-align: center; color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin: 1.5rem 0 2rem; }
+    .cert-body strong { color: var(--text); }
+
+    .cert-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1.5rem 0 2rem;
+    }
+    .cert-skill {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .cert-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .cert-sig { text-align: center; }
+    .cert-sig-name { font-family: 'Playfair Display', Georgia, serif; font-size: 1.3rem; color: var(--text); }
+    .cert-sig-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .cert-date { font-size: 0.85rem; color: var(--text-muted); }
+    .cert-id { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-light); }
+
+    /* Actions */
+    .cert-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: linear-gradient(135deg, var(--brand), var(--purple));
+      color: #fff; padding: 0.8rem 2rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.95rem; cursor: pointer;
+      border: none; font-family: var(--font-sans);
+      box-shadow: 0 4px 14px rgba(2,132,199,0.25);
+      transition: all 0.2s;
+    }
+    .btn-download:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-share {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--surface); color: var(--text-muted);
+      padding: 0.8rem 1.5rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.95rem; cursor: pointer;
+      border: 1px solid var(--border); font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+    .btn-share:hover { background: var(--surface-2); color: var(--text); }
+
+    @media print {
+      #site-nav, #site-footer, .cert-form, .cert-actions, .progress-warning { display: none !important; }
+      .certificate { display: block !important; box-shadow: none; border: 2px solid #e2e8f0; }
+      body { background: white; }
+    }
+    @media (max-width: 600px) {
+      .certificate { padding: 2rem 1.25rem; }
+      .cert-title { font-size: 1.5rem; }
+      .cert-recipient { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div style="padding-top:5rem;">
+  <div class="cert-page">
+    <div style="text-align:center; margin-bottom:2rem;">
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;padding:0.4rem 1rem;border-radius:999px;font-size:0.85rem;font-weight:600;margin-bottom:1rem;">
+        🎓 Certificate of Completion
+      </div>
+      <h1 style="margin:0 0 0.5rem;font-size:2rem;">Your AI Engineering Certificate</h1>
+      <p style="color:var(--text-muted);max-width:500px;margin:0 auto;">Complete all 20 sessions and pass every quiz to earn your certificate. Enter your name to generate it.</p>
+    </div>
+
+    <!-- Progress warning -->
+    <div class="progress-warning" id="progress-warning">
+      <strong>⚠️ Course not fully complete</strong>
+      <p id="warning-text">You've completed <span id="warning-count">0</span>/20 sessions. Finish all sessions and pass all quizzes to unlock your full certificate. You can still generate a preview!</p>
+    </div>
+
+    <!-- Name form -->
+    <div class="cert-form">
+      <h2>Generate Your Certificate</h2>
+      <p>Enter your full name as you'd like it to appear</p>
+      <input type="text" id="name-input" placeholder="e.g. Alex Johnson" maxlength="60" />
+      <br>
+      <button onclick="generateCertificate()">
+        <i class="fas fa-certificate"></i> Generate Certificate
+      </button>
+    </div>
+
+    <!-- Certificate -->
+    <div class="certificate" id="certificate">
+      <div class="cert-corner tl"></div>
+      <div class="cert-corner tr"></div>
+      <div class="cert-corner bl"></div>
+      <div class="cert-corner br"></div>
+      <div class="cert-watermark">🧠</div>
+
+      <div class="cert-header" style="text-align:center;">
+        <div class="cert-logo">🧠</div>
+        <div class="cert-issuer">Noob to AI Expert</div>
+
+        <div class="cert-title-label">Certificate of Completion</div>
+        <h2 class="cert-title">AI Engineering Mastery</h2>
+
+        <div class="cert-recipient-label">Proudly awarded to</div>
+        <div class="cert-recipient" id="cert-name">Your Name</div>
+      </div>
+
+      <div class="cert-body">
+        This certifies that <strong id="cert-name-2">Your Name</strong> has successfully completed
+        the <strong>Noob to AI Expert</strong> course — a rigorous, hands-on curriculum spanning
+        <strong>20 sessions</strong> across Beginner, Intermediate, and Expert tracks.
+        The recipient has demonstrated proficiency in AI engineering through
+        real labs, code projects, and graded assessments.
+      </div>
+
+      <div class="cert-skills">
+        <span class="cert-skill">Prompt Engineering</span>
+        <span class="cert-skill">Python for AI</span>
+        <span class="cert-skill">Machine Learning</span>
+        <span class="cert-skill">Neural Networks</span>
+        <span class="cert-skill">LLMs & Transformers</span>
+        <span class="cert-skill">RAG Pipelines</span>
+        <span class="cert-skill">Vector Embeddings</span>
+        <span class="cert-skill">AI Agents</span>
+        <span class="cert-skill">LLM Evaluation</span>
+        <span class="cert-skill">Fine-Tuning</span>
+        <span class="cert-skill">Responsible AI</span>
+        <span class="cert-skill">Production Deployment</span>
+      </div>
+
+      <div class="cert-footer">
+        <div class="cert-sig">
+          <div class="cert-sig-name" style="font-style:italic;">Noob to AI Expert</div>
+          <div class="cert-sig-title">Course Issuer</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;">🏆</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">20 Sessions Completed</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="cert-date" id="cert-date">—</div>
+          <div class="cert-id" id="cert-id">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions (shown after generating) -->
+    <div class="cert-actions" id="cert-actions" style="display:none;">
+      <button class="btn-download" onclick="downloadCertificate()">
+        <i class="fas fa-download"></i> Download as PDF
+      </button>
+      <button class="btn-share" onclick="copyCertLink()">
+        <i class="fas fa-share-nodes"></i> <span id="share-label">Copy Link</span>
+      </button>
+      <button class="btn-share" onclick="window.print()">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="/Noob-to-AI-Expert/assets/js/progress.js"></script>
+<script src="/Noob-to-AI-Expert/assets/js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const completed = window.Progress ? Progress.getCompletedCount() : 0;
+  const warning = document.getElementById('progress-warning');
+  const countEl = document.getElementById('warning-count');
+  if (countEl) countEl.textContent = completed;
+  if (completed < 20) warning.classList.add('show');
+
+  // Pre-fill name if saved
+  const saved = localStorage.getItem('noob2ai_cert_name');
+  if (saved) document.getElementById('name-input').value = saved;
+
+  // Auto-generate from URL param ?name=...
+  const params = new URLSearchParams(location.search);
+  if (params.get('name')) {
+    document.getElementById('name-input').value = decodeURIComponent(params.get('name'));
+    generateCertificate();
+  }
+});
+
+function generateCertificate() {
+  const input = document.getElementById('name-input');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+
+  localStorage.setItem('noob2ai_cert_name', name);
+
+  // Fill certificate
+  document.getElementById('cert-name').textContent = name;
+  document.getElementById('cert-name-2').textContent = name;
+
+  // Date
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('cert-date').textContent = `Issued: ${dateStr}`;
+
+  // Unique cert ID
+  const hash = btoa(name + now.getFullYear()).replace(/[^a-zA-Z0-9]/g,'').substring(0,12).toUpperCase();
+  document.getElementById('cert-id').textContent = `Cert ID: NAE-${hash}`;
+
+  // Show certificate and actions
+  document.getElementById('certificate').classList.add('show');
+  document.getElementById('cert-actions').style.display = 'flex';
+
+  // Scroll to certificate
+  document.getElementById('certificate').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function downloadCertificate() {
+  // Use print dialog in landscape for best PDF output
+  const style = document.createElement('style');
+  style.innerHTML = '@page { size: landscape; margin: 0.5cm; }';
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(() => style.remove(), 1000);
+}
+
+function copyCertLink() {
+  const name = document.getElementById('name-input').value.trim();
+  const url = `${location.origin}/Noob-to-AI-Expert/certificate.html?name=${encodeURIComponent(name)}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const label = document.getElementById('share-label');
+    label.textContent = 'Copied!';
+    setTimeout(() => label.textContent = 'Copy Link', 2000);
+  });
+}
+
+// Allow Enter key to generate
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generateCertificate();
+});
+</script>
+</body>
+</html>

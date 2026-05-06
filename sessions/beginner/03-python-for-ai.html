@@ -252,11 +252,11 @@ def safe_llm_call(prompt: str, retries: int = 3) -> str:
         <h2 id="quick-check">Quick Check</h2>
         <div class="reveal-block">
           <div class="reveal-question"><span>❓ What does <code>messages[-1]</code> return?</span><span class="reveal-icon">▼</span></div>
-          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">The last item in the list.</strong> Python negative indexing counts from the end. <code>[-1]</code> = last, <code>[-2]</code> = second to last, etc. This is extremely useful for getting the most recent message in a chat history.</div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#16a34a">The last item in the list.</strong> Python negative indexing counts from the end. <code>[-1]</code> = last, <code>[-2]</code> = second to last, etc. This is extremely useful for getting the most recent message in a chat history.</div>
         </div>
         <div class="reveal-block">
           <div class="reveal-question"><span>❓ How do you safely access a dict key that might not exist?</span><span class="reveal-icon">▼</span></div>
-          <div class="reveal-answer" style="display:none"><strong style="color:#4ade80">Use <code>.get(key, default)</code></strong> — e.g., <code>response.get("error", None)</code>. If the key doesn't exist, it returns the default instead of raising a <code>KeyError</code>.</div>
+          <div class="reveal-answer" style="display:none"><strong style="color:#16a34a">Use <code>.get(key, default)</code></strong> — e.g., <code>response.get("error", None)</code>. If the key doesn't exist, it returns the default instead of raising a <code>KeyError</code>.</div>
         </div>
       </div>
     </div>
@@ -271,7 +271,7 @@ def safe_llm_call(prompt: str, retries: int = 3) -> str:
             <a href="https://colab.research.google.com/github/your-repo/noob-to-ai-expert/blob/main/notebooks/session-03-lab.ipynb" target="_blank" class="btn-colab" data-track="lab-start"><i class="fab fa-google"></i> Open in Google Colab</a>
           </div>
         </div>
-        <p style="color:#94a3b8;margin-bottom:1.5rem;">You'll write Python code to: load a CSV dataset of student grades, compute statistics, then use an LLM to generate a natural-language summary for a teacher.</p>
+        <p style="color:#475569;margin-bottom:1.5rem;">You'll write Python code to: load a CSV dataset of student grades, compute statistics, then use an LLM to generate a natural-language summary for a teacher.</p>
         <div class="lab-step"><div class="lab-step-header"><span class="step-num">1</span><h4>Load and Explore the Dataset</h4></div>
           <div style="position:relative;"><button class="copy-btn">Copy</button>
           <pre><code class="language-python">import csv

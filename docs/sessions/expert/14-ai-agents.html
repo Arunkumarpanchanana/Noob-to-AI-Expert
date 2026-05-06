@@ -37,7 +37,7 @@
         <p>An agent is an LLM with tools, a goal, and a loop. Unlike a one-shot prompt, an agent can take actions, observe results, and adapt its plan until the task is done.</p>
         <div class="compare-grid" style="grid-template-columns:repeat(2,1fr);">
           <div class="compare-card"><div class="card-icon">💬</div><h4 style="color:#f87171">Chatbot (not an agent)</h4><p>Responds to one message at a time. No tools. No persistent state. Can't take actions in the real world. Task ends when it outputs text.</p></div>
-          <div class="compare-card"><div class="card-icon">🤖</div><h4 style="color:#4ade80">Agent</h4><p>Has tools (search, code execution, API calls). Runs in a loop until goal is achieved. Can plan sub-tasks, use memory, and coordinate with other agents.</p></div>
+          <div class="compare-card"><div class="card-icon">🤖</div><h4 style="color:#16a34a">Agent</h4><p>Has tools (search, code execution, API calls). Runs in a loop until goal is achieved. Can plan sub-tasks, use memory, and coordinate with other agents.</p></div>
         </div>
       </div>
 
@@ -135,9 +135,9 @@ print(answer)</code></pre></div>
         <table class="def-table">
           <thead><tr><th>Memory Type</th><th>Storage</th><th>Scope</th><th>Use Case</th></tr></thead>
           <tbody>
-            <tr><td><strong style="color:#60a5fa">In-context</strong></td><td>Messages array</td><td>Current session</td><td>Conversation history, recent tool results</td></tr>
-            <tr><td><strong style="color:#4ade80">External (vector)</strong></td><td>Vector DB</td><td>Persistent</td><td>Long-term knowledge, user preferences</td></tr>
-            <tr><td><strong style="color:#c084fc">External (key-value)</strong></td><td>Redis / DB</td><td>Persistent</td><td>Facts, user profile, session state</td></tr>
+            <tr><td><strong style="color:#1d4ed8">In-context</strong></td><td>Messages array</td><td>Current session</td><td>Conversation history, recent tool results</td></tr>
+            <tr><td><strong style="color:#16a34a">External (vector)</strong></td><td>Vector DB</td><td>Persistent</td><td>Long-term knowledge, user preferences</td></tr>
+            <tr><td><strong style="color:#7c3aed">External (key-value)</strong></td><td>Redis / DB</td><td>Persistent</td><td>Facts, user profile, session state</td></tr>
             <tr><td><strong style="color:#fbbf24">Cached summary</strong></td><td>Compressed context</td><td>Session</td><td>Long conversations — summarize old turns</td></tr>
           </tbody>
         </table>
