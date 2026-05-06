@@ -2,6 +2,27 @@
    main.js — Nav injection, theme, mobile menu
    =========================== */
 (async function () {
+  // ---- Base path (GitHub Pages support) ----
+  const BASE = document.querySelector('meta[name="base-path"]')?.content || '';
+
+  // Rewrite all internal absolute links to include the base path.
+  // Runs immediately so links work before any user interaction.
+  function rewriteLinks(root) {
+    if (!BASE) return;
+    (root || document).querySelectorAll('a[href]').forEach(a => {
+      const h = a.getAttribute('href');
+      // Only rewrite absolute paths that don't already have the base prefix
+      if (h && h.startsWith('/') && !h.startsWith('//') && !h.startsWith(BASE)) {
+        a.setAttribute('href', BASE + h);
+      }
+    });
+  }
+
+  // Rewrite links already in the page
+  document.addEventListener('DOMContentLoaded', () => rewriteLinks(document));
+  // Also rewrite immediately in case DOM is already ready
+  if (document.readyState !== 'loading') rewriteLinks(document);
+
   // ---- Theme toggle ----
   const THEME_KEY = 'noob2ai_theme';
   const saved = localStorage.getItem(THEME_KEY);
@@ -19,10 +40,10 @@
   const navHolder = document.getElementById('nav-placeholder');
   if (navHolder) {
     try {
-      const base = document.querySelector('meta[name="base-path"]')?.content || '';
-      const res = await fetch(base + '/components/nav.html');
+      const res = await fetch(BASE + '/components/nav.html');
       if (res.ok) {
         navHolder.innerHTML = await res.text();
+        rewriteLinks(navHolder); // Fix nav links too
         initNav();
       }
     } catch {}
@@ -32,9 +53,11 @@
   const footerHolder = document.getElementById('footer-placeholder');
   if (footerHolder) {
     try {
-      const base = document.querySelector('meta[name="base-path"]')?.content || '';
-      const res = await fetch(base + '/components/footer.html');
-      if (res.ok) footerHolder.innerHTML = await res.text();
+      const res = await fetch(BASE + '/components/footer.html');
+      if (res.ok) {
+        footerHolder.innerHTML = await res.text();
+        rewriteLinks(footerHolder); // Fix footer links too
+      }
     } catch {}
   }
 
@@ -59,15 +82,15 @@
       });
     }
 
-    // Active link
+    // Active link highlight
     const path = window.location.pathname;
     document.querySelectorAll('.navbar-links a, .mobile-menu a').forEach(a => {
-      if (a.getAttribute('href') && path.includes(a.getAttribute('href').replace(/^\//, ''))) {
+      const href = a.getAttribute('href');
+      if (href && path.includes(href.replace(BASE, '').replace(/^\//, ''))) {
         a.classList.add('active');
       }
     });
 
-    // Progress bar update
     updateTopProgress();
   }
 
@@ -93,4 +116,8 @@
     Progress.markViewed(SESSION_META.id);
     updateTopProgress();
   }
+
+  // Expose for use by session.js
+  window.BASE_PATH = BASE;
+  window.rewriteLinks = rewriteLinks;
 })();
