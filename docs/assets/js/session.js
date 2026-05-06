@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load sessions data and build sidebar
   try {
-    const jsonUrl = (window.resolveUrl ? resolveUrl('/data/sessions.json') : '/data/sessions.json');
-    const res = await fetch(jsonUrl);
+    const res = await fetch('/Noob-to-AI-Expert/data/sessions.json');
     const data = await res.json();
     buildSidebar(data, meta);
     buildNavButtons(data, meta);
@@ -50,7 +49,7 @@ function buildSidebar(data, meta) {
       const isPassed = state.quizPassed;
 
       const link = document.createElement('a');
-      link.href = (window.BASE_PATH || '') + s.path;
+      link.href = s.path;
       link.className = `sidebar-session-link ${isActive ? 'active' : ''} ${isPassed ? 'completed' : ''}`;
 
       const check = document.createElement('span');
@@ -110,7 +109,7 @@ function buildNavButtons(data, meta) {
 
   if (prevBtn && idx > 0) {
     const prev = allSessions[idx - 1];
-    prevBtn.href = (window.BASE_PATH || '') + prev.path;
+    prevBtn.href = prev.path;
     prevBtn.querySelector('.nav-label') && (prevBtn.querySelector('.nav-label').textContent = `Session ${prev.id}`);
     prevBtn.querySelector('.nav-title') && (prevBtn.querySelector('.nav-title').textContent = prev.title);
   } else if (prevBtn) {
@@ -119,7 +118,7 @@ function buildNavButtons(data, meta) {
 
   if (nextBtn && idx < allSessions.length - 1) {
     const next = allSessions[idx + 1];
-    nextBtn.href = (window.BASE_PATH || '') + next.path;
+    nextBtn.href = next.path;
     if (window.SESSION_META) window.SESSION_META.nextPath = next.path;
     nextBtn.querySelector('.nav-label') && (nextBtn.querySelector('.nav-label').textContent = `Session ${next.id}`);
     nextBtn.querySelector('.nav-title') && (nextBtn.querySelector('.nav-title').textContent = next.title);
